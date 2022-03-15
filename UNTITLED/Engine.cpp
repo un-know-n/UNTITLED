@@ -17,8 +17,10 @@ enum ELetter_Type {
     ELT_Circle
 };
 
-HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, Rectangle_Platform_Pen, Arc_Pen;
-HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, Rectangle_Platform_Brush;
+HWND Hwnd;
+HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, Rectangle_Platform_Pen, Arc_Pen, BG_Pen;
+HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, Rectangle_Platform_Brush, BG_Brush;
+RECT Platform_Rect, Prev_Platform_Rect;
 
 const int Global_Scale = 3;
 const int Brick_Width = 15;
@@ -28,8 +30,13 @@ const int Cell_Height = (Brick_Height + 1);
 const int Level_X_Offset = 8;
 const int Level_Y_Offset = 6;
 const int Circle_Size = 7;
+const int Platform_Y_Position = 185;
+const int Platform_Height = 7;
 
 int Inner_Platform_Width = 21;
+int Platform_X_Position = 0;
+int Platform_Step = Global_Scale;
+int Platform_Width = 28;
 
 char Level_01[14][12] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -53,15 +60,32 @@ void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &p
     brush = CreateSolidBrush(RGB(r, g, b));
 }
 
-void Init_Art_Items() {//It initializes pens/brushes
+void Redraw_Platform() {
+    Prev_Platform_Rect = Platform_Rect;
 
+    Platform_Rect.left = (Level_X_Offset + Platform_X_Position) * Global_Scale;
+    Platform_Rect.top = Platform_Y_Position * Global_Scale;
+    Platform_Rect.right = Platform_Rect.left + Platform_Width * Global_Scale;
+    Platform_Rect.bottom = Platform_Rect.top + Platform_Height * Global_Scale;
+
+    InvalidateRect(Hwnd, &Prev_Platform_Rect, FALSE);
+    InvalidateRect(Hwnd, &Platform_Rect, FALSE);
+}
+
+void Init_Engine(HWND hwnd) {//It initializes game engine
+
+    Hwnd = hwnd;
     Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
+
     Create_PenNBrush(43, 97, 49, Green_Pen, Green_Brush);
     Create_PenNBrush(43, 63, 97, Blue_Pen, Blue_Brush);
     Create_PenNBrush(97, 43, 43, Red_Pen, Red_Brush);
     Create_PenNBrush(112, 101, 46, Yellow_Pen, Yellow_Brush);
     Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
     Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
+    Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
+
+    Redraw_Platform();
 }
 
 void Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws game brick
@@ -213,6 +237,11 @@ void Draw_Level(HDC hdc) {//It draws level map
 
 void Draw_Platform(HDC hdc, int x, int y) {//It draws platform
 
+    SelectObject(hdc, BG_Pen);
+    SelectObject(hdc, BG_Brush);
+
+    Rectangle(hdc, Prev_Platform_Rect.left, Prev_Platform_Rect.top, Prev_Platform_Rect.right, Prev_Platform_Rect.bottom);
+
     SelectObject(hdc, Ellipse_Platform_Pen);
     SelectObject(hdc, Ellipse_Platform_Brush);
 
@@ -236,17 +265,44 @@ void Draw_Platform(HDC hdc, int x, int y) {//It draws platform
         (y + 6) * Global_Scale, 3, 3);
 }
 
-void Draw_Frame(HDC hdc) {//It draws game screen(hdc - handle to device context)
+void Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
     //Draw_Level(hdc);
 
-    //Draw_Platform(hdc, 50, 100);
+    Draw_Platform(hdc, Level_X_Offset + Platform_X_Position, Platform_Y_Position);
 
-    for (int i = 0; i < 16; i++) {
+    /*for (int i = 0; i < 16; i++) {
         Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 100, i);
         Draw_Brick_Animation(hdc, EBT_Yellow, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 140, i);
         Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 180, i);
         Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 220, i);
-    }
+    }*/
     
+}
+
+int On_Key_Down(EKey_Type key_type, int button) {
+    switch (key_type) {
+        case EKT_Left:
+            Platform_X_Position -= Platform_Step;
+            Redraw_Platform();
+        break;
+        case EKT_Right:
+            Platform_X_Position += Platform_Step;
+            Redraw_Platform();
+        break;
+        case EKT_Space:
+            //Throw_Ball();
+        break;
+    }
+    switch (button) {
+    case Button_A:
+        Platform_X_Position -= Platform_Step;
+        Redraw_Platform();
+        break;
+    case Button_D:
+        Platform_X_Position += Platform_Step;
+        Redraw_Platform();
+        break;
+    }
+    return 0;
 }
