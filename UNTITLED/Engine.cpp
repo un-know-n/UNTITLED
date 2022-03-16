@@ -21,6 +21,7 @@ HWND Hwnd;
 HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, Rectangle_Platform_Pen, Arc_Pen, BG_Pen;
 HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, Rectangle_Platform_Brush, BG_Brush;
 RECT Platform_Rect, Prev_Platform_Rect;
+RECT Level_Area;
 
 const int Global_Scale = 3;
 const int Brick_Width = 15;
@@ -29,6 +30,8 @@ const int Cell_Width = (Brick_Width + 1);
 const int Cell_Height = (Brick_Height + 1);
 const int Level_X_Offset = 8;
 const int Level_Y_Offset = 6;
+const int Level_X_Elems = 14;
+const int Level_Y_Elems = 12;
 const int Circle_Size = 7;
 const int Platform_Y_Position = 185;
 const int Platform_Height = 7;
@@ -38,7 +41,7 @@ int Platform_X_Position = 0;
 int Platform_Step = Global_Scale;
 int Platform_Width = 28;
 
-char Level_01[14][12] = {
+char Level_01[Level_X_Elems][Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -84,6 +87,11 @@ void Init_Engine(HWND hwnd) {//It initializes game engine
     Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
     Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
     Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
+
+    Level_Area.left = Level_X_Offset * Global_Scale;
+    Level_Area.top = Level_Y_Offset * Global_Scale;
+    Level_Area.right = Level_Area.left + Cell_Width * Level_X_Elems * Global_Scale;
+    Level_Area.bottom = Level_Area.top + Cell_Height * Level_Y_Elems * Global_Scale;
 
     Redraw_Platform();
 }
@@ -267,8 +275,12 @@ void Draw_Platform(HDC hdc, int x, int y) {//It draws platform
 
 void Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
-    //Draw_Level(hdc);
+    RECT destination_rect;
 
+    if(IntersectRect(&destination_rect, &paint_area, &Level_Area))
+    Draw_Level(hdc);
+
+    if(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))
     Draw_Platform(hdc, Level_X_Offset + Platform_X_Position, Platform_Y_Position);
 
     /*for (int i = 0; i < 16; i++) {
