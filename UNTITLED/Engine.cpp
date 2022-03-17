@@ -18,8 +18,10 @@ enum ELetter_Type {
 };
 
 HWND Hwnd;
-HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, Rectangle_Platform_Pen, Arc_Pen, BG_Pen, Ball_Pen;
-HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, Rectangle_Platform_Brush, BG_Brush, Ball_Brush;
+HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, 
+    Rectangle_Platform_Pen, Arc_Pen, BG_Pen, Ball_Pen, Border_Main_Pen, Border_White_Pen;
+HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, 
+    Rectangle_Platform_Brush, BG_Brush, Ball_Brush, Border_Main_Brush, Border_White_Brush;
 RECT Platform_Rect, Prev_Platform_Rect;
 RECT Level_Area;
 RECT Ball_Rect, Prev_Ball_Rect;
@@ -37,8 +39,12 @@ const int Circle_Size = 7;
 const int Platform_Y_Position = 185;
 const int Platform_Height = 7;
 const int Ball_Size = 4;
-const int Max_X_Pos = Level_X_Offset + Cell_Width * Level_X_Elems - Ball_Size;
-const int Max_Y_Pos = (180 - Platform_Height + Ball_Size);
+const int Max_X_Pos = 188;//Level_X_Offset + Cell_Width * Level_X_Elems - Ball_Size;
+const int Max_Y_Pos = (200 - Platform_Height + Ball_Size);
+const int Min_Platform_X = 0;
+const int Max_Platform_X = Max_X_Pos - 3 * Level_X_Offset;
+const int Border_X_Offset = 6;
+const int Border_Y_Offset = 4;
 
 int Inner_Platform_Width = 21;
 int Platform_X_Position = 0;
@@ -97,6 +103,8 @@ void Init_Engine(HWND hwnd) {//It initializes game engine
     Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
     Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
     Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+    Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
 
     Level_Area.left = Level_X_Offset * Global_Scale;
     Level_Area.top = Level_Y_Offset * Global_Scale;
@@ -300,6 +308,50 @@ void Draw_Ball(HDC hdc, RECT &paint_area) {
     Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
 }
 
+void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
+    //Draw main line
+    SelectObject(hdc, Border_Main_Pen);
+    SelectObject(hdc, Border_Main_Brush);
+
+    if (is_vertical) 
+        Rectangle(hdc, (x + 1) * Global_Scale, y * Global_Scale, (x + 4) * Global_Scale, (y + 4) * Global_Scale);
+    else 
+        Rectangle(hdc, x * Global_Scale, (y + 1) * Global_Scale, (x + 4) * Global_Scale, (y + 4) * Global_Scale);
+
+    //White line
+    SelectObject(hdc, Border_White_Pen);
+    SelectObject(hdc, Border_White_Brush);
+
+    if(is_vertical)
+        Rectangle(hdc, x * Global_Scale, y * Global_Scale, (x + 1) * Global_Scale - 1, (y + 4) * Global_Scale);
+    else
+        Rectangle(hdc, x * Global_Scale, y * Global_Scale, (x + 4) * Global_Scale, (y + 1) * Global_Scale - 1);
+
+    //White inner-dot
+    SelectObject(hdc, Border_White_Pen);
+    SelectObject(hdc, Border_White_Brush);
+
+    if(is_vertical)
+        Rectangle(hdc, (x + 2) * Global_Scale, (y + 1) * Global_Scale, (x + 3) * Global_Scale, (y + 2) * Global_Scale);
+    else
+        Rectangle(hdc, (x + 2) * Global_Scale, (y + 2) * Global_Scale, (x + 3) * Global_Scale, (y + 3) * Global_Scale);
+    
+}
+
+void Draw_Border(HDC hdc, RECT &paint_area) {
+
+    //Drawing left/right border
+    for(int i = 0; i < 50; i++)
+        Draw_Border_Element(hdc, 2, 1 + i * 4, TRUE);
+
+    for(int i = 0; i < 50; i++)
+        Draw_Border_Element(hdc, 201, 1 + i * 4, TRUE);
+
+    //Drawing top border
+    for(int i = 0; i < 50; i++)
+        Draw_Border_Element(hdc, 3 + i * 4, 0, FALSE);
+}
+
 void Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
     RECT destination_rect;
@@ -319,16 +371,26 @@ void Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle 
     if(IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
     Draw_Ball(hdc, paint_area);
     
+    Draw_Border(hdc, paint_area);
+}
+
+void Platform_Condition() {
+    if (Platform_X_Position < Min_Platform_X-2)
+        Platform_X_Position = Min_Platform_X-2;
+    if (Platform_X_Position > Max_Platform_X+1)
+        Platform_X_Position = Max_Platform_X+1;
 }
 
 int On_Key_Down(EKey_Type key_type, int button) {
     switch (key_type) {
         case EKT_Left:
             Platform_X_Position -= Platform_Step;
+            Platform_Condition();
             Redraw_Platform();
         break;
         case EKT_Right:
             Platform_X_Position += Platform_Step;
+            Platform_Condition();
             Redraw_Platform();
         break;
         case EKT_Space:
@@ -338,53 +400,88 @@ int On_Key_Down(EKey_Type key_type, int button) {
     switch (button) {
     case Button_A:
         Platform_X_Position -= Platform_Step;
+        Platform_Condition();
         Redraw_Platform();
         break;
     case Button_D:
         Platform_X_Position += Platform_Step;
+        Platform_Condition();
         Redraw_Platform();
         break;
     }
     return 0;
 }
 
-void Move_Ball() {
-    int next_x_pos, next_y_pos;
-
-    Prev_Ball_Rect = Ball_Rect;
-
-    next_x_pos = Ball_X_Pos + (int)Ball_Speed * cos(Ball_Direction);
-    next_y_pos = Ball_Y_Pos - (int)Ball_Speed * sin(Ball_Direction);
-
-    if (next_x_pos < 0) {
-        next_x_pos = -next_x_pos;
+void Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
+    //if we`ve collided with wall
+    if (next_x_pos < Level_X_Offset) {
+        next_x_pos = Level_X_Offset - (Level_X_Offset - next_x_pos);
         Ball_Direction = M_PI - Ball_Direction;
     }
 
-    if (next_y_pos < Level_Y_Offset) {
-        next_y_pos = Level_Y_Offset - (next_y_pos - Level_Y_Offset);
+    if (next_y_pos < 0) {
+        next_y_pos = Border_Y_Offset - (Border_Y_Offset - next_y_pos);
         Ball_Direction = -Ball_Direction;
     }
 
-    if (next_x_pos > Max_X_Pos) {
-        next_x_pos = Max_X_Pos - (next_x_pos - Max_X_Pos);
+    if (next_x_pos > Max_X_Pos + Level_X_Offset) {
+        next_x_pos = Level_X_Offset - (Level_X_Offset - next_x_pos);
         Ball_Direction = M_PI - Ball_Direction;
     }
 
     if (next_y_pos > Max_Y_Pos) {
-        next_y_pos = Max_Y_Pos - (next_y_pos - Max_Y_Pos);
-        Ball_Direction -= 2 * Ball_Direction;
+        next_y_pos = Level_X_Offset - (Level_X_Offset - next_y_pos);
+        Ball_Direction = -Ball_Direction;
     }
+
+    //If struck with platform
+
+    if (next_y_pos > Platform_Y_Position - 12) {
+        if (next_x_pos >= Platform_X_Position && next_x_pos <= Platform_X_Position + Platform_Width) {
+            next_y_pos = Platform_Y_Position - (Platform_Y_Position - next_y_pos);
+            Ball_Direction = -Ball_Direction;
+        }
+
+    }
+
+    //If struck woth bricks
+
+    int brick_y_pos = Level_X_Elems * Cell_Height;
+
+    for (int i = Level_X_Elems - 1; i >= 0; i--) {
+        for (int j = 0; j < Level_Y_Elems; j++) {
+            if (Level_01[i][j] == 0) continue;
+            else {
+                if (next_y_pos < brick_y_pos) {
+                    next_y_pos = brick_y_pos - (next_y_pos - brick_y_pos);
+                    Ball_Direction = -Ball_Direction;
+                }
+            }
+        }
+        brick_y_pos -= Cell_Height;
+    }
+}
+
+void Move_Ball() {
+    int next_x_pos, next_y_pos;
+    Prev_Ball_Rect = Ball_Rect;
+
+    //Calculating new coords
+    next_x_pos = Ball_X_Pos + (int)(Ball_Speed * cos(Ball_Direction));
+    next_y_pos = Ball_Y_Pos - (int)(Ball_Speed * sin(Ball_Direction));
+
+    Check_Ball_Colision(next_x_pos, next_y_pos);
+
+    //Ball translation
     Ball_X_Pos = next_x_pos;
     Ball_Y_Pos = next_y_pos;
 
-
-
-    Ball_Rect.left = (Ball_X_Pos + Level_X_Offset) * Global_Scale;
-    Ball_Rect.top = (Ball_Y_Pos + Level_Y_Offset) * Global_Scale;
-    Ball_Rect.right = Ball_Rect.left + Ball_Size * Global_Scale - 1;
-    Ball_Rect.bottom = Ball_Rect.top + Ball_Size * Global_Scale - 1;
-
+    Ball_Rect.left =  Ball_X_Pos * Global_Scale;
+    Ball_Rect.top = (Level_Y_Offset + Ball_Y_Pos) * Global_Scale;
+    Ball_Rect.right = Ball_Rect.left + Ball_Size * Global_Scale;
+    Ball_Rect.bottom = Ball_Rect.top + Ball_Size * Global_Scale;
+    
+    //Redraw ball
     InvalidateRect(Hwnd, &Prev_Ball_Rect, FALSE);
     InvalidateRect(Hwnd, &Ball_Rect, FALSE);
 }
