@@ -11,7 +11,9 @@ enum EKey_Type {
 
 const int Button_A = 0x41;
 const int Button_D = 0x44;
+const int Timer_ID = WM_USER + 1;
 
 void Init_Engine(HWND hwnd);
 void Draw_Frame(HDC hdc, RECT &paint_area);
 int On_Key_Down(EKey_Type key_type, int button);
+int On_Timer();

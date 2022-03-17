@@ -182,6 +182,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
+    case WM_TIMER:
+        if (wParam == Timer_ID)
+            return On_Timer();
+        break;
 
     case WM_DESTROY:
         PostQuitMessage(0);

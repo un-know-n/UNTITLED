@@ -1,2 +1,4 @@
 ﻿  Engine.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(356,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(357,29): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\Debug\UNTITLED.exe
