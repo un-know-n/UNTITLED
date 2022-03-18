@@ -7,6 +7,7 @@
 #define MAX_LOADSTRING 100
 
 // Global Variables:
+CsEngine Engine;
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -110,7 +111,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (hWnd == 0)
       return FALSE;
 
-   Init_Engine(hWnd);
+   Engine.Init_Engine(hWnd);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
@@ -157,7 +158,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
 
-            Draw_Frame(hdc, ps.rcPaint);
+            Engine.Draw_Frame(hdc, ps.rcPaint);
             EndPaint(hWnd, &ps);
         }
         break;
@@ -165,26 +166,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam) {
             case VK_LEFT:
-                return On_Key_Down(EKT_Left, NULL);
+                return Engine.On_Key_Down(EKT_Left, NULL);
                 break;
             case VK_RIGHT:
-                return On_Key_Down(EKT_Right, NULL);
+                return Engine.On_Key_Down(EKT_Right, NULL);
                 break;
             case VK_SPACE:
-                return On_Key_Down(EKT_Space, NULL);
+                return Engine.On_Key_Down(EKT_Space, NULL);
                 break;
             case 0x41:
-                return On_Key_Down(EKT_None, Button_A);
+                return Engine.On_Key_Down(EKT_None, Button_A);
                 break;
             case 0x44:
-                return On_Key_Down(EKT_None, Button_D);
+                return Engine.On_Key_Down(EKT_None, Button_D);
                 break;
         }
         break;
 
     case WM_TIMER:
         if (wParam == Timer_ID)
-            return On_Timer();
+            return Engine.On_Timer();
         break;
 
     case WM_DESTROY:

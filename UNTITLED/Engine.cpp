@@ -1,21 +1,11 @@
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Engine.h"
 
 //Main variables
 
-enum EBrick_Type {
-    EBT_None,
-    EBT_Green,
-    EBT_Blue, 
-    EBT_Red,
-    EBT_Yellow
-};
 
-enum ELetter_Type {
-    ELT_None,
-    ELT_Circle
-};
 
 HWND Hwnd;
 HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, 
@@ -73,12 +63,15 @@ char Level_01[Level_X_Elems][Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush) {
+
+
+
+void CsEngine::Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush) {
     pen = CreatePen(PS_SOLID, 0, RGB(r, g, b));
     brush = CreateSolidBrush(RGB(r, g, b));
 }
 
-void Redraw_Platform() {
+void CsEngine::Redraw_Platform() {
     Prev_Platform_Rect = Platform_Rect;
 
     Platform_Rect.left = (Level_X_Offset + Platform_X_Position) * Global_Scale;
@@ -90,33 +83,7 @@ void Redraw_Platform() {
     InvalidateRect(Hwnd, &Platform_Rect, FALSE);
 }
 
-void Init_Engine(HWND hwnd) {//It initializes game engine
-
-    Hwnd = hwnd;
-    Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
-
-    Create_PenNBrush(43, 97, 49, Green_Pen, Green_Brush);
-    Create_PenNBrush(43, 63, 97, Blue_Pen, Blue_Brush);
-    Create_PenNBrush(97, 43, 43, Red_Pen, Red_Brush);
-    Create_PenNBrush(112, 101, 46, Yellow_Pen, Yellow_Brush);
-    Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
-    Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
-    Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
-    Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
-    Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
-    Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
-
-    Level_Area.left = Level_X_Offset * Global_Scale;
-    Level_Area.top = Level_Y_Offset * Global_Scale;
-    Level_Area.right = Level_Area.left + Cell_Width * Level_X_Elems * Global_Scale;
-    Level_Area.bottom = Level_Area.top + Cell_Height * Level_Y_Elems * Global_Scale;
-
-    Redraw_Platform();
-
-    SetTimer(Hwnd, Timer_ID, 50, 0);
-}
-
-void Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws game brick
+void CsEngine::Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws game brick
 
     HPEN pen;
     HBRUSH brush;
@@ -148,7 +115,7 @@ void Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws game brick
         (y + Brick_Height) * Global_Scale, 3, 3);
 }
 
-void Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush) {
+void CsEngine::Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush) {
     //We can change only existing bricks
     if (!(type == EBT_Blue || type == EBT_Green || type == EBT_Red || type == EBT_Yellow)) return;
     else {
@@ -183,7 +150,7 @@ void Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPE
     }
 }
 
-void Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, int x, int y, int step) {//It draws falling of the bonuses
+void CsEngine::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, int x, int y, int step) {//It draws falling of the bonuses
 
     XFORM xForm, old_xForm;
     double offset;
@@ -254,7 +221,7 @@ void Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, i
     }
 }
 
-void Draw_Level(HDC hdc) {//It draws level map
+void CsEngine::Draw_Level(HDC hdc) {//It draws level map
     for (int i = 0; i < 14; i++) {
         for (int j = 0; j < 12; j++) {
             Draw_Brick(hdc, Level_X_Offset + j * Cell_Width,
@@ -263,7 +230,7 @@ void Draw_Level(HDC hdc) {//It draws level map
     }
 }
 
-void Draw_Platform(HDC hdc, int x, int y) {//It draws platform
+void CsEngine::Draw_Platform(HDC hdc, int x, int y) {//It draws platform
 
     SelectObject(hdc, BG_Pen);
     SelectObject(hdc, BG_Brush);
@@ -293,7 +260,7 @@ void Draw_Platform(HDC hdc, int x, int y) {//It draws platform
         (y + 6) * Global_Scale, 3, 3);
 }
 
-void Draw_Ball(HDC hdc, RECT &paint_area) {
+void CsEngine::Draw_Ball(HDC hdc, RECT &paint_area) {
 
     //Clear BG
     SelectObject(hdc, BG_Pen);
@@ -308,7 +275,7 @@ void Draw_Ball(HDC hdc, RECT &paint_area) {
     Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
 }
 
-void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
+void CsEngine::Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     //Draw main line
     SelectObject(hdc, Border_Main_Pen);
     SelectObject(hdc, Border_Main_Brush);
@@ -338,7 +305,7 @@ void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     
 }
 
-void Draw_Border(HDC hdc, RECT &paint_area) {
+void CsEngine::Draw_Border(HDC hdc, RECT &paint_area) {
 
     //Drawing left/right border
     for(int i = 0; i < 50; i++)
@@ -352,67 +319,14 @@ void Draw_Border(HDC hdc, RECT &paint_area) {
         Draw_Border_Element(hdc, 3 + i * 4, 0, FALSE);
 }
 
-void Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
-
-    RECT destination_rect;
-
-    if(IntersectRect(&destination_rect, &paint_area, &Level_Area))
-    Draw_Level(hdc);
-
-    if(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))
-    Draw_Platform(hdc, Level_X_Offset + Platform_X_Position, Platform_Y_Position);
-
-    /*for (int i = 0; i < 16; i++) {
-        Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 100, i);
-        Draw_Brick_Animation(hdc, EBT_Yellow, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 140, i);
-        Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 180, i);
-        Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 220, i);
-    }*/
-    if(IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
-    Draw_Ball(hdc, paint_area);
-    
-    Draw_Border(hdc, paint_area);
-}
-
-void Platform_Condition() {
+void CsEngine::Platform_Condition() {
     if (Platform_X_Position < Min_Platform_X-2)
         Platform_X_Position = Min_Platform_X-2;
     if (Platform_X_Position > Max_Platform_X+1)
         Platform_X_Position = Max_Platform_X+1;
 }
 
-int On_Key_Down(EKey_Type key_type, int button) {
-    switch (key_type) {
-        case EKT_Left:
-            Platform_X_Position -= Platform_Step;
-            Platform_Condition();
-            Redraw_Platform();
-        break;
-        case EKT_Right:
-            Platform_X_Position += Platform_Step;
-            Platform_Condition();
-            Redraw_Platform();
-        break;
-        case EKT_Space:
-            //Throw_Ball();
-        break;
-    }
-    switch (button) {
-    case Button_A:
-        Platform_X_Position -= Platform_Step;
-        Platform_Condition();
-        Redraw_Platform();
-        break;
-    case Button_D:
-        Platform_X_Position += Platform_Step;
-        Platform_Condition();
-        Redraw_Platform();
-        break;
-    }
-    return 0;
-}
-
-void Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
+void CsEngine::Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
     //if we`ve collided with wall
     if (next_x_pos < Level_X_Offset) {
         next_x_pos = Level_X_Offset - (Level_X_Offset - next_x_pos);
@@ -462,7 +376,7 @@ void Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
     }
 }
 
-void Move_Ball() {
+void CsEngine::Move_Ball() {
     int next_x_pos, next_y_pos;
     Prev_Ball_Rect = Ball_Rect;
 
@@ -486,7 +400,86 @@ void Move_Ball() {
     InvalidateRect(Hwnd, &Ball_Rect, FALSE);
 }
 
-int On_Timer() {
+void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
+
+    Hwnd = hwnd;
+    Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
+
+    Create_PenNBrush(43, 97, 49, Green_Pen, Green_Brush);
+    Create_PenNBrush(43, 63, 97, Blue_Pen, Blue_Brush);
+    Create_PenNBrush(97, 43, 43, Red_Pen, Red_Brush);
+    Create_PenNBrush(112, 101, 46, Yellow_Pen, Yellow_Brush);
+    Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
+    Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
+    Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
+    Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+    Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
+
+    Level_Area.left = Level_X_Offset * Global_Scale;
+    Level_Area.top = Level_Y_Offset * Global_Scale;
+    Level_Area.right = Level_Area.left + Cell_Width * Level_X_Elems * Global_Scale;
+    Level_Area.bottom = Level_Area.top + Cell_Height * Level_Y_Elems * Global_Scale;
+
+    Redraw_Platform();
+
+    SetTimer(Hwnd, Timer_ID, 50, 0);
+}
+
+void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
+
+    RECT destination_rect;
+
+    if(IntersectRect(&destination_rect, &paint_area, &Level_Area))
+        Draw_Level(hdc);
+
+    if(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))
+        Draw_Platform(hdc, Level_X_Offset + Platform_X_Position, Platform_Y_Position);
+
+    /*for (int i = 0; i < 16; i++) {
+    Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 100, i);
+    Draw_Brick_Animation(hdc, EBT_Yellow, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 140, i);
+    Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 180, i);
+    Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 220, i);
+    }*/
+    if(IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
+        Draw_Ball(hdc, paint_area);
+
+    Draw_Border(hdc, paint_area);
+}
+
+int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
+    switch (key_type) {
+    case EKT_Left:
+        Platform_X_Position -= Platform_Step;
+        Platform_Condition();
+        Redraw_Platform();
+        break;
+    case EKT_Right:
+        Platform_X_Position += Platform_Step;
+        Platform_Condition();
+        Redraw_Platform();
+        break;
+    case EKT_Space:
+        //Throw_Ball();
+        break;
+    }
+    switch (button) {
+    case Button_A:
+        Platform_X_Position -= Platform_Step;
+        Platform_Condition();
+        Redraw_Platform();
+        break;
+    case Button_D:
+        Platform_X_Position += Platform_Step;
+        Platform_Condition();
+        Redraw_Platform();
+        break;
+    }
+    return 0;
+}
+
+int CsEngine::On_Timer() {
     Move_Ball();
     return 0;
 }
