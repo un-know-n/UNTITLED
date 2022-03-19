@@ -1,52 +1,7 @@
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 #include "Engine.h"
 
-//Main variables
-
-
-
-HWND Hwnd;
-HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen, Ellipse_Platform_Pen, 
-    Rectangle_Platform_Pen, Arc_Pen, BG_Pen, Ball_Pen, Border_Main_Pen, Border_White_Pen;
-HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush, Ellipse_Platform_Brush, 
-    Rectangle_Platform_Brush, BG_Brush, Ball_Brush, Border_Main_Brush, Border_White_Brush;
-RECT Platform_Rect, Prev_Platform_Rect;
-RECT Level_Area;
-RECT Ball_Rect, Prev_Ball_Rect;
-
-const int Global_Scale = 3;
-const int Brick_Width = 15;
-const int Brick_Height = 7;
-const int Cell_Width = (Brick_Width + 1);
-const int Cell_Height = (Brick_Height + 1);
-const int Level_X_Offset = 8;
-const int Level_Y_Offset = 6;
-const int Level_X_Elems = 14;
-const int Level_Y_Elems = 12;
-const int Circle_Size = 7;
-const int Platform_Y_Position = 185;
-const int Platform_Height = 7;
-const int Ball_Size = 4;
-const int Max_X_Pos = 188;//Level_X_Offset + Cell_Width * Level_X_Elems - Ball_Size;
-const int Max_Y_Pos = (200 - Platform_Height + Ball_Size);
-const int Min_Platform_X = 0;
-const int Max_Platform_X = Max_X_Pos - 3 * Level_X_Offset;
-const int Border_X_Offset = 6;
-const int Border_Y_Offset = 4;
-
-int Inner_Platform_Width = 21;
-int Platform_X_Position = 0;
-int Platform_Step = Global_Scale * 2;
-int Platform_Width = 28;
-int Ball_X_Pos = 20;
-int Ball_Y_Pos = 170;
-
-double Ball_Speed = 3.0;
-double Ball_Direction = M_PI - M_PI_4;
-
-char Level_01[Level_X_Elems][Level_Y_Elems] = {
+char Level_01[CsEngine::Level_X_Elems][CsEngine::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -63,8 +18,12 @@ char Level_01[Level_X_Elems][Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-
-
+CsEngine::CsEngine() : Inner_Platform_Width(21),
+Platform_X_Position(0), Platform_Step(6), Platform_Width(28),
+Ball_X_Pos(20), Ball_Y_Pos(170), Ball_Speed(3.0),
+Ball_Direction(M_PI - M_PI_4)
+{//Constructor
+}
 
 void CsEngine::Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush) {
     pen = CreatePen(PS_SOLID, 0, RGB(r, g, b));
