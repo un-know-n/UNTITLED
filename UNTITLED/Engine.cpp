@@ -18,10 +18,89 @@ char Level_01[CsEngine::Level_X_Elems][CsEngine::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-CsEngine::CsEngine() : Inner_Platform_Width(21),
-Platform_X_Position(0), Platform_Step(6), Platform_Width(28),
-Ball_X_Pos(20), Ball_Y_Pos(170), Ball_Speed(3.0),
+CBall::CBall() : Ball_X_Pos(20), Ball_Y_Pos(170), Ball_Speed(3.0), 
 Ball_Direction(M_PI - M_PI_4)
+{//Constructor
+}
+
+void CBall::Draw_Ball(HDC hdc, RECT &paint_area, CsEngine *engine) {
+    RECT destination_rect;
+    if(!IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
+        return;
+
+    //Clear BG
+    SelectObject(hdc, engine->BG_Pen);
+    SelectObject(hdc, engine->BG_Brush);
+
+    Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 1, Prev_Ball_Rect.bottom - 1);
+
+    //Draw the Ball
+    SelectObject(hdc, engine->Ball_Pen);
+    SelectObject(hdc, engine->Ball_Brush);
+
+    Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
+}
+
+void CBall::Move_Ball(CsEngine *engine) {
+    int next_x_pos, next_y_pos;
+    Prev_Ball_Rect = Ball_Rect;
+
+    //Calculating new coords
+    next_x_pos = Ball_X_Pos + (int)(Ball_Speed * cos(Ball_Direction));
+    next_y_pos = Ball_Y_Pos - (int)(Ball_Speed * sin(Ball_Direction));
+
+    //if we`ve collided with wall
+    if (next_x_pos < CsEngine::Level_X_Offset) {
+        next_x_pos = CsEngine::Level_X_Offset - (CsEngine::Level_X_Offset - next_x_pos);
+        Ball_Direction = M_PI - Ball_Direction;
+    }
+
+    if (next_y_pos < 0) {
+        next_y_pos = CsEngine::Border_Y_Offset - (CsEngine::Border_Y_Offset - next_y_pos);
+        Ball_Direction = -Ball_Direction;
+    }
+
+    if (next_x_pos > CsEngine::Max_X_Pos + CsEngine::Level_X_Offset) {
+        next_x_pos = CsEngine::Level_X_Offset - (CsEngine::Level_X_Offset - next_x_pos);
+        Ball_Direction = M_PI - Ball_Direction;
+    }
+
+    if (next_y_pos > CsEngine::Max_Y_Pos) {
+        next_y_pos = CsEngine::Level_X_Offset - (CsEngine::Level_X_Offset - next_y_pos);
+        Ball_Direction = -Ball_Direction;
+    }
+
+    //If struck with platform
+
+    if (next_y_pos > CsEngine::Platform_Y_Position - 12) {
+        if (next_x_pos >= engine->Platform_X_Position && next_x_pos <= engine->Platform_X_Position + engine->Platform_Width) {
+            next_y_pos = CsEngine::Platform_Y_Position - (CsEngine::Platform_Y_Position - next_y_pos);
+            Ball_Direction = -Ball_Direction;
+        }
+
+    }
+
+    engine->Check_Ball_Colision(next_y_pos);
+
+    //Ball translation
+    Ball_X_Pos = next_x_pos;
+    Ball_Y_Pos = next_y_pos;
+
+    Ball_Rect.left =  Ball_X_Pos * CsEngine::Global_Scale;
+    Ball_Rect.top = (CsEngine::Level_Y_Offset + Ball_Y_Pos) * CsEngine::Global_Scale;
+    Ball_Rect.right = Ball_Rect.left + Ball_Size * CsEngine::Global_Scale;
+    Ball_Rect.bottom = Ball_Rect.top + Ball_Size * CsEngine::Global_Scale;
+
+    //Redraw ball
+    InvalidateRect(engine->Hwnd, &Prev_Ball_Rect, FALSE);
+    InvalidateRect(engine->Hwnd, &Ball_Rect, FALSE);
+}
+
+
+
+
+CsEngine::CsEngine() : Inner_Platform_Width(21),
+Platform_X_Position(0), Platform_Step(6), Platform_Width(28)
 {//Constructor
 }
 
@@ -219,20 +298,7 @@ void CsEngine::Draw_Platform(HDC hdc, int x, int y) {//It draws platform
         (y + 6) * Global_Scale, 3, 3);
 }
 
-void CsEngine::Draw_Ball(HDC hdc, RECT &paint_area) {
 
-    //Clear BG
-    SelectObject(hdc, BG_Pen);
-    SelectObject(hdc, BG_Brush);
-
-    Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 1, Prev_Ball_Rect.bottom - 1);
-
-    //Draw the Ball
-    SelectObject(hdc, Ball_Pen);
-    SelectObject(hdc, Ball_Brush);
-
-    Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
-}
 
 void CsEngine::Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     //Draw main line
@@ -285,37 +351,7 @@ void CsEngine::Platform_Condition() {
         Platform_X_Position = Max_Platform_X+1;
 }
 
-void CsEngine::Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
-    //if we`ve collided with wall
-    if (next_x_pos < Level_X_Offset) {
-        next_x_pos = Level_X_Offset - (Level_X_Offset - next_x_pos);
-        Ball_Direction = M_PI - Ball_Direction;
-    }
-
-    if (next_y_pos < 0) {
-        next_y_pos = Border_Y_Offset - (Border_Y_Offset - next_y_pos);
-        Ball_Direction = -Ball_Direction;
-    }
-
-    if (next_x_pos > Max_X_Pos + Level_X_Offset) {
-        next_x_pos = Level_X_Offset - (Level_X_Offset - next_x_pos);
-        Ball_Direction = M_PI - Ball_Direction;
-    }
-
-    if (next_y_pos > Max_Y_Pos) {
-        next_y_pos = Level_X_Offset - (Level_X_Offset - next_y_pos);
-        Ball_Direction = -Ball_Direction;
-    }
-
-    //If struck with platform
-
-    if (next_y_pos > Platform_Y_Position - 12) {
-        if (next_x_pos >= Platform_X_Position && next_x_pos <= Platform_X_Position + Platform_Width) {
-            next_y_pos = Platform_Y_Position - (Platform_Y_Position - next_y_pos);
-            Ball_Direction = -Ball_Direction;
-        }
-
-    }
+void CsEngine::Check_Ball_Colision(int &next_y_pos) {
 
     //If struck woth bricks
 
@@ -327,36 +363,12 @@ void CsEngine::Check_Ball_Colision(int &next_x_pos, int &next_y_pos) {
             else {
                 if (next_y_pos < brick_y_pos) {
                     next_y_pos = brick_y_pos - (next_y_pos - brick_y_pos);
-                    Ball_Direction = -Ball_Direction;
+                    Ball.Ball_Direction = -Ball.Ball_Direction;
                 }
             }
         }
         brick_y_pos -= Cell_Height;
     }
-}
-
-void CsEngine::Move_Ball() {
-    int next_x_pos, next_y_pos;
-    Prev_Ball_Rect = Ball_Rect;
-
-    //Calculating new coords
-    next_x_pos = Ball_X_Pos + (int)(Ball_Speed * cos(Ball_Direction));
-    next_y_pos = Ball_Y_Pos - (int)(Ball_Speed * sin(Ball_Direction));
-
-    Check_Ball_Colision(next_x_pos, next_y_pos);
-
-    //Ball translation
-    Ball_X_Pos = next_x_pos;
-    Ball_Y_Pos = next_y_pos;
-
-    Ball_Rect.left =  Ball_X_Pos * Global_Scale;
-    Ball_Rect.top = (Level_Y_Offset + Ball_Y_Pos) * Global_Scale;
-    Ball_Rect.right = Ball_Rect.left + Ball_Size * Global_Scale;
-    Ball_Rect.bottom = Ball_Rect.top + Ball_Size * Global_Scale;
-    
-    //Redraw ball
-    InvalidateRect(Hwnd, &Prev_Ball_Rect, FALSE);
-    InvalidateRect(Hwnd, &Ball_Rect, FALSE);
 }
 
 void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
@@ -401,8 +413,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 180, i);
     Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Global_Scale, 220, i);
     }*/
-    if(IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
-        Draw_Ball(hdc, paint_area);
+    Ball.Draw_Ball(hdc, paint_area, this);
 
     Draw_Border(hdc, paint_area);
 }
@@ -439,6 +450,6 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
 }
 
 int CsEngine::On_Timer() {
-    Move_Ball();
+    Ball.Move_Ball(this);
     return 0;
 }
