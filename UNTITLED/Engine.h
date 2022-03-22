@@ -35,34 +35,33 @@ class CsBorder;
 
 class CBall {
 public:
+    CBall();
+
+    static const int Ball_Size = 4;
+
     double Ball_Speed;
     double Ball_Direction;
 
-    int Ball_X_Pos;
-    int Ball_Y_Pos;
-
-    static const int Ball_Size = 4;
+    int X_Pos;
+    int Y_Pos;
 
     RECT Ball_Rect, Prev_Ball_Rect;
     HPEN Ball_Pen;
     HBRUSH Ball_Brush;
 
-    CBall();
-
-    void Init_Ball();
-    void Draw_Ball(HDC hdc, RECT &paint_area, CsEngine *engine);
-    void Move_Ball(CsEngine *engine, CLevel *level, CsPlatform *platform);
-    
+    void Init();
+    void Draw(HDC hdc, RECT &paint_area, CsEngine *engine);
+    void Move(CsEngine *engine, CLevel *level, CsPlatform *platform);
 };
 
 class CLevel{
 public:
     static const int Brick_Width = 15;
     static const int Brick_Height = 7;
-    static const int Level_X_Elems = 14;
-    static const int Level_Y_Elems = 12;
-    static const int Level_X_Offset = 8;
-    static const int Level_Y_Offset = 6;
+    static const int X_Elems = 14;
+    static const int Y_Elems = 12;
+    static const int X_Offset = 8;
+    static const int Y_Offset = 6;
     static const int Cell_Width = (Brick_Width + 1);
     static const int Cell_Height = (Brick_Height + 1);
 
@@ -70,46 +69,52 @@ public:
     HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen;
     RECT Level_Area;
 
-    void Init_Level();
+    void Init();
     void Check_Ball_Colision(int &next_y_pos, double &ball_direction);
+    void Draw(HDC hdc, RECT &paint_area);
+
+private:
     void Draw_Brick(HDC hdc, int x, int y, EBrick_Type type);
     void Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, int x, int y, int step, CsEngine *engine);
-    void Draw_Level(HDC hdc, RECT &paint_area);
+    
 };
 
 class CsPlatform{
 public:
     CsPlatform();
-    void Init_Platform();
-    void Redraw_Platform(CsEngine *engine);
-    void Draw_Platform(HDC hdc, int x, int y, CsEngine *engine, RECT &paint_area);
-    void Platform_Condition();
+
+    static const int Y_Position = 185;
+    static const int Circle_Size = 5;
+    static const int Height = 7;
+    static const int Min_X = 0;
+    static const int Max_X = 188 - 3 * CLevel::X_Offset;//Max_X_Pos -...
 
     RECT Platform_Rect, Prev_Platform_Rect;
     HPEN Ellipse_Platform_Pen, Rectangle_Platform_Pen;
     HBRUSH Ellipse_Platform_Brush, Rectangle_Platform_Brush;
 
-    int Platform_X_Position;
-    int Platform_Width;
+    int X_Position;
+    int Width;
 
-    static const int Platform_Y_Position = 185;
-    static const int Circle_Size = 5;
-    static const int Platform_Height = 7;
-    static const int Min_Platform_X = 0;
-    static const int Max_Platform_X = 188 - 3 * CLevel::Level_X_Offset;//Max_X_Pos -...
+    void Init();
+    void Redraw(CsEngine *engine);
+    void Draw(HDC hdc, int x, int y, CsEngine *engine, RECT &paint_area);
+    void Condition();
 };
 
 class CsBorder{
 public:
-    static const int Border_X_Offset = 6;
-    static const int Border_Y_Offset = 4;
-
-    void Init_Border();
-    void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical);
-    void Draw_Border(HDC hdc, RECT &paint_area);
+    static const int X_Offset = 6;
+    static const int Y_Offset = 4;
 
     HPEN Arc_Pen, Border_Main_Pen, Border_White_Pen;
     HBRUSH Border_Main_Brush, Border_White_Brush;
+
+    void Init();
+    void Draw(HDC hdc, RECT &paint_area);
+
+private:
+    void Draw_Element(HDC hdc, int x, int y, BOOL is_vertical);
 };
 
 class CsEngine {
@@ -117,10 +122,9 @@ public:
     CsEngine();
 
     static const int Global_Scale = 3;
-    static const int Max_X_Pos = CLevel::Level_X_Offset + CLevel::Cell_Width * CLevel::Level_Y_Elems - CBall::Ball_Size * Global_Scale;
+    static const int Max_X_Pos = CLevel::X_Offset + CLevel::Cell_Width * CLevel::Y_Elems - CBall::Ball_Size * Global_Scale;
     static const int Max_Y_Pos = (195 - CBall::Ball_Size);
     
-
     HWND Hwnd;
     HPEN BG_Pen;
     HBRUSH BG_Brush;
