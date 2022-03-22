@@ -1,4 +1,3 @@
 ﻿  Engine.cpp
-  Main.cpp
-  Generating Code...
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(428,10): warning C4101: 'destination_rect': unreferenced local variable
   UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\Debug\UNTITLED.exe
