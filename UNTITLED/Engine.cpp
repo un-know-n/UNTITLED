@@ -46,7 +46,7 @@ void CBall::Draw_Ball(HDC hdc, RECT &paint_area, CsEngine *engine) {
     Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
 }
 
-void CBall::Move_Ball(CsEngine *engine, CLevel *level, CPlatform *platform) {
+void CBall::Move_Ball(CsEngine *engine, CLevel *level, CsPlatform *platform) {
     int next_x_pos, next_y_pos;
     Prev_Ball_Rect = Ball_Rect;
 
@@ -61,7 +61,7 @@ void CBall::Move_Ball(CsEngine *engine, CLevel *level, CPlatform *platform) {
     }
 
     if (next_y_pos < 0) {
-        next_y_pos = CsEngine::Border_Y_Offset - (CsEngine::Border_Y_Offset - next_y_pos);
+        next_y_pos = CsBorder::Border_Y_Offset - (CsBorder::Border_Y_Offset - next_y_pos);
         Ball_Direction = -Ball_Direction;
     }
 
@@ -77,9 +77,9 @@ void CBall::Move_Ball(CsEngine *engine, CLevel *level, CPlatform *platform) {
 
     //If struck with platform
 
-    if (next_y_pos > CPlatform::Platform_Y_Position - 12) {
+    if (next_y_pos > CsPlatform::Platform_Y_Position - 12) {
         if (next_x_pos >= platform->Platform_X_Position && next_x_pos <= platform->Platform_X_Position + platform->Platform_Width) {
-            next_y_pos = CPlatform::Platform_Y_Position - (CPlatform::Platform_Y_Position - next_y_pos);
+            next_y_pos = CsPlatform::Platform_Y_Position - (CsPlatform::Platform_Y_Position - next_y_pos);
             Ball_Direction = -Ball_Direction;
         }
 
@@ -102,7 +102,7 @@ void CBall::Move_Ball(CsEngine *engine, CLevel *level, CPlatform *platform) {
 }
 
 
-void CPlatform::Init_Platform(){
+void CsPlatform::Init_Platform(){
     CsEngine::Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
     CsEngine::Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
 }
@@ -120,8 +120,13 @@ void CLevel::Init_Level(){
     Level_Area.bottom = Level_Area.top + Cell_Height * Level_Y_Elems * CsEngine::Global_Scale;
 }
 
+void CsBorder::Init_Border(){
+    CsEngine::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    CsEngine::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
+}
 
-CPlatform::CPlatform() : Platform_X_Position(0), Platform_Width(28)
+
+CsPlatform::CsPlatform() : Platform_X_Position(0), Platform_Width(28)
 {//Constructor
 }
 
@@ -134,7 +139,7 @@ void CsEngine::Create_PenNBrush(unsigned char r, unsigned char g, unsigned char 
     brush = CreateSolidBrush(RGB(r, g, b));
 }
 
-void CPlatform::Redraw_Platform(CsEngine *engine) {
+void CsPlatform::Redraw_Platform(CsEngine *engine) {
     Prev_Platform_Rect = Platform_Rect;
 
     Platform_Rect.left = (CLevel::Level_X_Offset + Platform_X_Position) * CsEngine::Global_Scale;
@@ -298,7 +303,7 @@ void CLevel::Draw_Level(HDC hdc, RECT &paint_area) {//It draws level map
     }
 }
 
-void CPlatform::Draw_Platform(HDC hdc, int x, int y, CsEngine *engine, RECT &paint_area) {//It draws platform
+void CsPlatform::Draw_Platform(HDC hdc, int x, int y, CsEngine *engine, RECT &paint_area) {//It draws platform
     RECT destination_rect;
 
     if(!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
@@ -333,37 +338,37 @@ void CPlatform::Draw_Platform(HDC hdc, int x, int y, CsEngine *engine, RECT &pai
 
 
 
-void CsEngine::Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
+void CsBorder::Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     //Draw main line
     SelectObject(hdc, Border_Main_Pen);
     SelectObject(hdc, Border_Main_Brush);
 
     if (is_vertical) 
-        Rectangle(hdc, (x + 1) * Global_Scale, y * Global_Scale, (x + 4) * Global_Scale, (y + 4) * Global_Scale);
+        Rectangle(hdc, (x + 1) * CsEngine::Global_Scale, y * CsEngine::Global_Scale, (x + 4) * CsEngine::Global_Scale, (y + 4) * CsEngine::Global_Scale);
     else 
-        Rectangle(hdc, x * Global_Scale, (y + 1) * Global_Scale, (x + 4) * Global_Scale, (y + 4) * Global_Scale);
+        Rectangle(hdc, x * CsEngine::Global_Scale, (y + 1) * CsEngine::Global_Scale, (x + 4) * CsEngine::Global_Scale, (y + 4) * CsEngine::Global_Scale);
 
     //White line
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
-        Rectangle(hdc, x * Global_Scale, y * Global_Scale, (x + 1) * Global_Scale - 1, (y + 4) * Global_Scale);
+        Rectangle(hdc, x * CsEngine::Global_Scale, y * CsEngine::Global_Scale, (x + 1) * CsEngine::Global_Scale - 1, (y + 4) * CsEngine::Global_Scale);
     else
-        Rectangle(hdc, x * Global_Scale, y * Global_Scale, (x + 4) * Global_Scale, (y + 1) * Global_Scale - 1);
+        Rectangle(hdc, x * CsEngine::Global_Scale, y * CsEngine::Global_Scale, (x + 4) * CsEngine::Global_Scale, (y + 1) * CsEngine::Global_Scale - 1);
 
     //White inner-dot
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
-        Rectangle(hdc, (x + 2) * Global_Scale, (y + 1) * Global_Scale, (x + 3) * Global_Scale, (y + 2) * Global_Scale);
+        Rectangle(hdc, (x + 2) * CsEngine::Global_Scale, (y + 1) * CsEngine::Global_Scale, (x + 3) * CsEngine::Global_Scale, (y + 2) * CsEngine::Global_Scale);
     else
-        Rectangle(hdc, (x + 2) * Global_Scale, (y + 2) * Global_Scale, (x + 3) * Global_Scale, (y + 3) * Global_Scale);
+        Rectangle(hdc, (x + 2) * CsEngine::Global_Scale, (y + 2) * CsEngine::Global_Scale, (x + 3) * CsEngine::Global_Scale, (y + 3) * CsEngine::Global_Scale);
     
 }
 
-void CsEngine::Draw_Border(HDC hdc, RECT &paint_area) {
+void CsBorder::Draw_Border(HDC hdc, RECT &paint_area) {
 
     //Drawing left/right border
     for(int i = 0; i < 50; i++)
@@ -377,7 +382,7 @@ void CsEngine::Draw_Border(HDC hdc, RECT &paint_area) {
         Draw_Border_Element(hdc, 3 + i * 4, 0, FALSE);
 }
 
-void CPlatform::Platform_Condition() {
+void CsPlatform::Platform_Condition() {
     if (Platform_X_Position < Min_Platform_X-2)
         Platform_X_Position = Min_Platform_X-2;
     if (Platform_X_Position > Max_Platform_X+1)
@@ -407,16 +412,14 @@ void CLevel::Check_Ball_Colision(int &next_y_pos, double &ball_direction) {
 void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
 
     Hwnd = hwnd;
-    Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
+    //Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
 
     Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
-    Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
-    Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
 
     Level.Init_Level();
     Ball.Init_Ball();
     Platform.Init_Platform();
-    
+    Border.Init_Border();
 
     Platform.Redraw_Platform(this);
 
@@ -439,7 +442,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     }*/
     Ball.Draw_Ball(hdc, paint_area, this);
 
-    Draw_Border(hdc, paint_area);
+    Border.Draw_Border(hdc, paint_area);
 }
 
 int CsEngine::On_Key_Down(EKey_Type key_type, int button) {

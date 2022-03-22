@@ -29,8 +29,9 @@ const int Timer_ID = WM_USER + 1;
 
 
 class CLevel;
-class CPlatform;
+class CsPlatform;
 class CsEngine;
+class CsBorder;
 
 class CBall {
 public:
@@ -50,7 +51,7 @@ public:
 
     void Init_Ball();
     void Draw_Ball(HDC hdc, RECT &paint_area, CsEngine *engine);
-    void Move_Ball(CsEngine *engine, CLevel *level, CPlatform *platform);
+    void Move_Ball(CsEngine *engine, CLevel *level, CsPlatform *platform);
     
 };
 
@@ -76,9 +77,9 @@ public:
     void Draw_Level(HDC hdc, RECT &paint_area);
 };
 
-class CPlatform{
+class CsPlatform{
 public:
-    CPlatform();
+    CsPlatform();
     void Init_Platform();
     void Redraw_Platform(CsEngine *engine);
     void Draw_Platform(HDC hdc, int x, int y, CsEngine *engine, RECT &paint_area);
@@ -98,6 +99,19 @@ public:
     static const int Max_Platform_X = 188 - 3 * CLevel::Level_X_Offset;//Max_X_Pos -...
 };
 
+class CsBorder{
+public:
+    static const int Border_X_Offset = 6;
+    static const int Border_Y_Offset = 4;
+
+    void Init_Border();
+    void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical);
+    void Draw_Border(HDC hdc, RECT &paint_area);
+
+    HPEN Arc_Pen, Border_Main_Pen, Border_White_Pen;
+    HBRUSH Border_Main_Brush, Border_White_Brush;
+};
+
 class CsEngine {
 public:
     CsEngine();
@@ -105,8 +119,7 @@ public:
     static const int Global_Scale = 3;
     static const int Max_X_Pos = CLevel::Level_X_Offset + CLevel::Cell_Width * CLevel::Level_Y_Elems - CBall::Ball_Size * Global_Scale;
     static const int Max_Y_Pos = (195 - CBall::Ball_Size);
-    static const int Border_X_Offset = 6;
-    static const int Border_Y_Offset = 4;
+    
 
     HWND Hwnd;
     HPEN BG_Pen;
@@ -121,16 +134,10 @@ public:
     int On_Timer();
     void Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush);
     static void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush);   
-private:
-    
-    void Draw_Border_Element(HDC hdc, int x, int y, BOOL is_vertical);
-    void Draw_Border(HDC hdc, RECT &paint_area);
-    
-    HPEN Arc_Pen, Border_Main_Pen, Border_White_Pen;
-    HBRUSH Border_Main_Brush, Border_White_Brush;
 
+private:
     CBall Ball;
     CLevel Level;
-    CPlatform Platform;
-    
+    CsPlatform Platform;
+    CsBorder Border;
 };
