@@ -100,7 +100,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    RECT window_rect;
    window_rect.left = 0;
    window_rect.top = 0;
-   window_rect.right = 320 * 3;
+   window_rect.right = 207 * 3;//320
    window_rect.bottom = 200 * 3;
 
    AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, TRUE);
