@@ -121,6 +121,7 @@ void CLevel::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter
     }
     else {
         rotation_angle = 2.0 * M_PI / 16.0 * (step - 8);
+       //ahsdbjabsdjb
     }
 
     Change_BG_Color(type, front_pen, front_brush, back_pen, back_brush);
