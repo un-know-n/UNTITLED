@@ -5,11 +5,25 @@
 
 #include <Windows.h>
 
+class CColor{
+public:
+    CColor(unsigned char r, unsigned char g, unsigned char b);
+    unsigned char R, G, B;
+};
+
+
 class CsConfig{
 public:
+    static const CColor BG_Color, Blue_Brick, Green_Brick, Yellow_Brick, Red_Brick;
+
+    static HPEN BG_Pen;
+    static HBRUSH BG_Brush;
+
     static const int Extent = 3;
+    static const int FPS = 20;
     //static const int Level_X_Offset = 6;
     //static const int Level_Y_Offset = 4;
+
 //Level
     static const int Brick_Width = 15;
     static const int Brick_Height = 7;
@@ -32,5 +46,8 @@ public:
 
     static const int Max_X_Pos = Level_X_Offset + Cell_Width * Level_Y_Elems - Ball_Size * Extent;
     static const int Max_Y_Pos = (195 - Ball_Size);
+
+    static void Setup_Colors();
+    static void Create_PenNBrush(const CColor &color, HPEN &pen, HBRUSH &brush);
     static void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush);   
 };

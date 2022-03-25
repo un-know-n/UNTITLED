@@ -33,13 +33,13 @@ void CsBorder::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
         Rectangle(hdc, x * CsConfig::Extent, y * CsConfig::Extent, (x + 4) * CsConfig::Extent, (y + 1) * CsConfig::Extent - 1);
 
     //White inner-dot
-    SelectObject(hdc, Border_White_Pen);
+    /*SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
         Rectangle(hdc, (x + 2) * CsConfig::Extent, (y + 1) * CsConfig::Extent, (x + 3) * CsConfig::Extent, (y + 6) * CsConfig::Extent);
     else
-        Rectangle(hdc, (x + 1) * CsConfig::Extent, (y + 2) * CsConfig::Extent, (x + 6) * CsConfig::Extent, (y + 3) * CsConfig::Extent);
+        Rectangle(hdc, (x + 1) * CsConfig::Extent, (y + 2) * CsConfig::Extent, (x + 6) * CsConfig::Extent, (y + 3) * CsConfig::Extent);*/
 
 }
 

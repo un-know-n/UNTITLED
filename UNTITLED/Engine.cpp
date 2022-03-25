@@ -5,8 +5,7 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() : Platform_Step(6),
-BG_Brush(0), BG_Pen(0), Hwnd(0)
+CsEngine::CsEngine() : Platform_Step(6), Hwnd(0)
 {//Constructor
 }
 
@@ -17,7 +16,9 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
     Hwnd = hwnd;
     //Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
 
-    CsConfig::Create_PenNBrush(29, 31, 29, BG_Pen, BG_Brush);
+    CsConfig::Setup_Colors();
+
+    CFade_Brick::Set_Color();
 
     Level.Init();
     Ball.Init();
@@ -26,16 +27,16 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
 
     Platform.Redraw(Hwnd);
 
-    SetTimer(Hwnd, Timer_ID, 50, 0);
+    SetTimer(Hwnd, Timer_ID, 1000 / CsConfig::FPS, 0);
 }
 
 void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
     RECT destination_rect;
 
-    Level.Draw(hdc, paint_area);
+    Level.Draw(Hwnd, hdc, paint_area);
     
-    Platform.Draw(hdc, CsConfig::Level_X_Offset + Platform.X_Position, CsConfig::Platform_Y_Position, BG_Pen, BG_Brush, Platform.Inner_Platform_Width, paint_area);
+    Platform.Draw(hdc, CsConfig::Level_X_Offset + Platform.X_Position, CsConfig::Platform_Y_Position, CsConfig::BG_Pen, CsConfig::BG_Brush, Platform.Inner_Platform_Width, paint_area);
 
     /*for (int i = 0; i < 16; i++) {
     Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 100, i);
@@ -43,7 +44,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 180, i);
     Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 220, i);
     }*/
-    Ball.Draw(hdc, paint_area, BG_Pen, BG_Brush);
+    Ball.Draw(hdc, paint_area, CsConfig::BG_Pen, CsConfig::BG_Brush);
 
     Border.Draw(hdc, paint_area);
 }
@@ -81,6 +82,7 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
 
 int CsEngine::On_Timer() {
     Ball.Move(Hwnd, &Level, Platform.X_Position, Platform.Width);
+    Level.Fade.Act(Hwnd);
     return 0;
 }
 

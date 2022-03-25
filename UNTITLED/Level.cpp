@@ -19,18 +19,20 @@ char Level_01[CsConfig::Level_X_Elems][CsConfig::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
+
+
 //          CLEVEL
 
-CLevel::CLevel() : Green_Brush(0), Blue_Brush(0), Red_Brush(0), Yellow_Brush(0),
+CLevel::CLevel() : Fade(EBT_Blue), Green_Brush(0), Blue_Brush(0), Red_Brush(0), Yellow_Brush(0),
 Green_Pen(0), Blue_Pen(0), Red_Pen(0), Yellow_Pen(0), Level_Area{}
 {//Constructor
 }
 
 void CLevel::Init(){
-    CsConfig::Create_PenNBrush(43, 97, 49, Green_Pen, Green_Brush);
-    CsConfig::Create_PenNBrush(43, 63, 97, Blue_Pen, Blue_Brush);
-    CsConfig::Create_PenNBrush(97, 43, 43, Red_Pen, Red_Brush);
-    CsConfig::Create_PenNBrush(112, 101, 46, Yellow_Pen, Yellow_Brush);
+    CsConfig::Create_PenNBrush(CsConfig::Green_Brick, Green_Pen, Green_Brush);
+    CsConfig::Create_PenNBrush(CsConfig::Blue_Brick, Blue_Pen, Blue_Brush);
+    CsConfig::Create_PenNBrush(CsConfig::Red_Brick, Red_Pen, Red_Brush);
+    CsConfig::Create_PenNBrush(CsConfig::Yellow_Brick, Yellow_Pen, Yellow_Brush);
 
     Level_Area.left = CsConfig::Level_X_Offset * CsConfig::Extent;
     Level_Area.top = CsConfig::Level_Y_Offset * CsConfig::Extent;
@@ -121,7 +123,6 @@ void CLevel::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter
     }
     else {
         rotation_angle = 2.0 * M_PI / 16.0 * (step - 8);
-       //ahsdbjabsdjb
     }
 
     Change_BG_Color(type, front_pen, front_brush, back_pen, back_brush);
@@ -177,7 +178,7 @@ void CLevel::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter
     }
 }
 
-void CLevel::Draw(HDC hdc, RECT &paint_area) {//It draws level map
+void CLevel::Draw(HWND hwnd, HDC hdc, RECT &paint_area) {//It draws level map
 
     RECT destination_rect;
 
@@ -189,6 +190,8 @@ void CLevel::Draw(HDC hdc, RECT &paint_area) {//It draws level map
                 CsConfig::Level_Y_Offset + i * CsConfig::Cell_Height, (EBrick_Type)Level_01[i][j]);
         }
     }
+
+    Fade.Draw(hdc);
 }
 
 void CLevel::Check_Ball_Colision(int &next_y_pos, double &ball_direction) {

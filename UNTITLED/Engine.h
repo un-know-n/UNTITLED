@@ -5,6 +5,7 @@
 #include "Ball.h"
 #include "Platform.h"
 
+
 enum EKey_Type {
     EKT_None,
     EKT_Left,
@@ -24,8 +25,6 @@ public:
     CsEngine();
     
     HWND Hwnd;
-    HPEN BG_Pen;
-    HBRUSH BG_Brush;
 
     int Platform_Step;
 
