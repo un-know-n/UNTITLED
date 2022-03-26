@@ -109,6 +109,7 @@ void CLevel::Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_br
 
 void CLevel::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, int x, int y, int step) {//It draws falling of the bonuses
 
+    //Translation of old drawing area to new, which can be rotated in every angle we want to
     XFORM xForm, old_xForm;
     double offset;
     double rotation_angle;
@@ -117,6 +118,7 @@ void CLevel::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter
     HPEN front_pen, back_pen;
     HBRUSH front_brush, back_brush;
 
+    //Check if rotation step is more than 16 -> change it
     step = step % 16;
     if (step < 8) {
         rotation_angle = 2.0 * M_PI / 16.0 * step;

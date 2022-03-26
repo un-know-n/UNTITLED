@@ -9,18 +9,18 @@ Ball_Direction(M_PI - M_PI_4), Ball_Rect{}
 }
 
 void CBall::Init(){
-
     CsConfig::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
 }
 
-void CBall::Draw(HDC hdc, RECT &paint_area, HPEN bg_pen, HBRUSH bg_brush) {
+void CBall::Draw(HDC hdc, RECT &paint_area) {
+    //if there`s no collision with painting area -> there`s no ball
     RECT destination_rect;
     if(!IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
         return;
 
     //Clear BG
-    SelectObject(hdc, bg_pen);
-    SelectObject(hdc, bg_brush);
+    SelectObject(hdc, CsConfig::BG_Pen);
+    SelectObject(hdc, CsConfig::BG_Brush);
 
     Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 1, Prev_Ball_Rect.bottom - 1);
 

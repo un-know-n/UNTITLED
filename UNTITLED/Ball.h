@@ -18,6 +18,6 @@ public:
     HBRUSH Ball_Brush;
 
     void Init();
-    void Draw(HDC hdc, RECT &paint_area, HPEN bg_pen, HBRUSH bg_brush);
+    void Draw(HDC hdc, RECT &paint_area);
     void Move(HWND hwnd, CLevel *level, int x_pos, int width);
 };

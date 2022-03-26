@@ -27,13 +27,14 @@ void CsPlatform::Redraw(HWND hwnd) {
     InvalidateRect(hwnd, &Platform_Rect, FALSE);
 }
 
-void CsPlatform::Draw(HDC hdc, int x, int y, HPEN bg_pen, HBRUSH bg_brush, int inner_pl_width, RECT &paint_area) {//It draws platform
-    RECT destination_rect;
+void CsPlatform::Draw(HDC hdc, int x, int y, int inner_pl_width, RECT &paint_area) {
 
+    //if there`s collision with paint area -> draw the platform
+    RECT destination_rect;
     if(!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
 
-    SelectObject(hdc, bg_pen);
-    SelectObject(hdc, bg_brush);
+    SelectObject(hdc, CsConfig::BG_Pen);
+    SelectObject(hdc, CsConfig::BG_Brush);
 
     Rectangle(hdc, Prev_Platform_Rect.left, Prev_Platform_Rect.top, Prev_Platform_Rect.right, Prev_Platform_Rect.bottom);
 
@@ -44,13 +45,6 @@ void CsPlatform::Draw(HDC hdc, int x, int y, HPEN bg_pen, HBRUSH bg_brush, int i
         (x + 1 + CsConfig::Circle_Size) * CsConfig::Extent, (y + 1 + CsConfig::Circle_Size) * CsConfig::Extent);
     Ellipse(hdc, (x + 1 + inner_pl_width) * CsConfig::Extent, (y+1) * CsConfig::Extent,
         (x + 1 + CsConfig::Circle_Size + inner_pl_width) * CsConfig::Extent, (y + 1 + CsConfig::Circle_Size) * CsConfig::Extent);
-
-    /*SelectObject(hdc, Arc_Pen);
-
-    Arc(hdc, (x + 1) * CsConfig::Extent, (y + 1) * CsConfig::Extent,
-    (x + Circle_Size - 1) * CsConfig::Extent, (y + Circle_Size - 1) * CsConfig::Extent,
-    (x + 2) * CsConfig::Extent, (y + 1) * CsConfig::Extent,
-    (x + 1) * CsConfig::Extent, (y + 3) * CsConfig::Extent);*/
 
     SelectObject(hdc, Rectangle_Platform_Pen);
     SelectObject(hdc, Rectangle_Platform_Brush);

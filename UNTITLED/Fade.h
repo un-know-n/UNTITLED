@@ -32,5 +32,7 @@ public:
     void Draw(HDC hdc);
     void Act(HWND hwnd);
     static void Set_Color();
+    static unsigned char Get_Fade_Channel(unsigned char color, unsigned char bg_color, int step);
+    static void Get_Fade_Color(const CColor &color, const CColor &bg_color,int step, HPEN &pen, HBRUSH &brush);
 };
 

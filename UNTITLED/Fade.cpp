@@ -62,19 +62,29 @@ void CFade_Brick::Act(HWND hwnd){
 }
 
 void CFade_Brick::Set_Color(){
-
-    unsigned char r, g, b;
+    //unsigned char r, g, b;
 
     for(int i = 0; i < Max_Fade_Step; i++){
-        r = CsConfig::Blue_Brick.R - i * (CsConfig::Blue_Brick.R - CsConfig::BG_Color.R) / (Max_Fade_Step - 1);
-        g = CsConfig::Blue_Brick.G - i * (CsConfig::Blue_Brick.G - CsConfig::BG_Color.G) / (Max_Fade_Step - 1);
-        b = CsConfig::Blue_Brick.B - i * (CsConfig::Blue_Brick.B - CsConfig::BG_Color.B) / (Max_Fade_Step - 1);
-
-        CsConfig::Create_PenNBrush(r, g, b, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
+        Get_Fade_Color(CsConfig::Blue_Brick, CsConfig::BG_Color, i, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
+        Get_Fade_Color(CsConfig::Red_Brick, CsConfig::BG_Color, i, Fade_Red_Pen[i], Fade_Red_Brush[i]);
+        Get_Fade_Color(CsConfig::Green_Brick, CsConfig::BG_Color, i, Fade_Green_Pen[i], Fade_Green_Brush[i]);
+        Get_Fade_Color(CsConfig::Yellow_Brick, CsConfig::BG_Color, i, Fade_Yellow_Pen[i], Fade_Yellow_Brush[i]);
     }
 
-    
-    
+}
+
+unsigned char CFade_Brick::Get_Fade_Channel(unsigned char color, unsigned char bg_color, int step){
+    const int max_step = Max_Fade_Step - 1;
+    //g = CsConfig::Blue_Brick.G - step * (CsConfig::Blue_Brick.G - CsConfig::BG_Color.G) / (Max_Fade_Step - 1);
+    return color - step * (color - bg_color) / max_step;
+}
+
+void CFade_Brick::Get_Fade_Color(const CColor &color, const CColor &bg_color,int step, HPEN &pen, HBRUSH &brush){
+    unsigned char r, g, b;
+    r = Get_Fade_Channel(color.R, bg_color.R, step);
+    g = Get_Fade_Channel(color.G, bg_color.G, step);
+    b = Get_Fade_Channel(color.B, bg_color.B, step);
+    CsConfig::Create_PenNBrush(r, g, b, pen, brush);
 }
 
 //////////////////////////////////////////////////////////////////

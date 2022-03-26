@@ -36,7 +36,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
 
     Level.Draw(Hwnd, hdc, paint_area);
     
-    Platform.Draw(hdc, CsConfig::Level_X_Offset + Platform.X_Position, CsConfig::Platform_Y_Position, CsConfig::BG_Pen, CsConfig::BG_Brush, Platform.Inner_Platform_Width, paint_area);
+    Platform.Draw(hdc, CsConfig::Level_X_Offset + Platform.X_Position, CsConfig::Platform_Y_Position, Platform.Inner_Platform_Width, paint_area);
 
     /*for (int i = 0; i < 16; i++) {
     Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 100, i);
@@ -44,7 +44,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     Draw_Brick_Animation(hdc, EBT_Green, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 180, i);
     Draw_Brick_Animation(hdc, EBT_Red, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 220, i);
     }*/
-    Ball.Draw(hdc, paint_area, CsConfig::BG_Pen, CsConfig::BG_Brush);
+    Ball.Draw(hdc, paint_area);
 
     Border.Draw(hdc, paint_area);
 }
