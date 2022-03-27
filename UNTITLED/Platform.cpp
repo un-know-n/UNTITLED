@@ -5,7 +5,7 @@
 //          CSPLATFORM
 
 CsPlatform::CsPlatform() : X_Position(0), Width(28), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), 
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_Normal),
 Platform_Rect{}
 {//Constructor
 }
@@ -27,9 +27,25 @@ void CsPlatform::Redraw(HWND hwnd) {
     InvalidateRect(hwnd, &Platform_Rect, FALSE);
 }
 
-void CsPlatform::Draw(HDC hdc, int x, int y, int inner_pl_width, RECT &paint_area) {
+void CsPlatform::Draw(HDC hdc, RECT &paint_area) {
 
+    switch(Platform_State){
+    case EPS_Normal:
+        Draw_Normal(hdc, paint_area);
+        break;
+
+    case EPS_Animation:
+        Draw_Animation(hdc, paint_area);
+        break;
+    }
+    
+}
+
+void CsPlatform::Draw_Normal(HDC hdc, RECT &paint_area){
     //if there`s collision with paint area -> draw the platform
+    int x = CsConfig::Level_X_Offset + X_Position;
+    int y = CsConfig::Platform_Y_Position;
+    int inner_pl_width = Inner_Platform_Width;
     RECT destination_rect;
     if(!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
 
@@ -52,6 +68,32 @@ void CsPlatform::Draw(HDC hdc, int x, int y, int inner_pl_width, RECT &paint_are
     RoundRect(hdc, (x + 4) * CsConfig::Extent, (y + 1) * CsConfig::Extent,
         (x + inner_pl_width + 3) * CsConfig::Extent,
         (y + 6) * CsConfig::Extent, 3, 3);
+}
+
+void CsPlatform::Draw_Animation(HDC hdc, RECT &paint_area){
+
+     int x, y, y_offset = 1;
+     int area_width = Width * CsConfig::Extent;
+     int area_height = CsConfig::Platform_Height * CsConfig::Extent;
+
+     for(int i = 0; i < area_width; i++){
+         ++y_offset;
+         x = Platform_Rect.left + i;
+         for(int j = 0; j < area_height; j++){
+             
+              y = Platform_Rect.bottom - j;
+
+              //pixel = Get_Pixel(x, y);
+              //Set_Pixel(x, y + y_offset, pixel);
+         }
+     }
+}
+
+void CsPlatform::Act(HWND hwnd){
+
+    Platform_State = EPS_Animation;
+
+    if(Platform_State == EPS_Animation) Redraw(hwnd);
 }
 
 void CsPlatform::Condition() {

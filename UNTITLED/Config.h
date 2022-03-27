@@ -45,7 +45,7 @@ public:
     static const int Platform_Height = 7;
 
     static const int Max_X_Pos = Level_X_Offset + Cell_Width * Level_Y_Elems - Ball_Size * Extent;
-    static const int Max_Y_Pos = (195 - Ball_Size);
+    static const int Max_Y_Pos = (192 - Ball_Size);
 
     static void Setup_Colors();
     static void Create_PenNBrush(const CColor &color, HPEN &pen, HBRUSH &brush);

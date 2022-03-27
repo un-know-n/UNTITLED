@@ -36,7 +36,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
 
     Level.Draw(Hwnd, hdc, paint_area);
     
-    Platform.Draw(hdc, CsConfig::Level_X_Offset + Platform.X_Position, CsConfig::Platform_Y_Position, Platform.Inner_Platform_Width, paint_area);
+    Platform.Draw(hdc, paint_area);
 
     /*for (int i = 0; i < 16; i++) {
     Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 100, i);
@@ -83,6 +83,7 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
 int CsEngine::On_Timer() {
     Ball.Move(Hwnd, &Level, Platform.X_Position, Platform.Width);
     Level.Fade.Act(Hwnd);
+    Platform.Act(Hwnd);
     return 0;
 }
 
