@@ -3,9 +3,10 @@
 
 //      CBALL
 
-CBall::CBall() : Ball_Pen(0), Ball_Brush(0), X_Pos(20), Y_Pos(170), Ball_Speed(3.0), 
+CBall::CBall() : Ball_Pen(0), Ball_Brush(0), Y_Pos(165), Ball_Speed(3.0), 
 Ball_Direction(M_PI - M_PI_4), Ball_Rect{}
 {//Constructor
+    X_Pos = CsConfig::Max_X / 2;
 }
 
 void CBall::Init(){

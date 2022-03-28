@@ -8,6 +8,7 @@ CsPlatform::CsPlatform() : X_Position(0), Width(28), Inner_Platform_Width(21),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_Normal),
 Platform_Rect{}
 {//Constructor
+    X_Position = (CsConfig::Max_X) / 2;
 }
 
 void CsPlatform::Init(){
@@ -22,6 +23,10 @@ void CsPlatform::Redraw(HWND hwnd) {
     Platform_Rect.top = CsConfig::Platform_Y_Position * CsConfig::Extent;
     Platform_Rect.right = Platform_Rect.left + Width * CsConfig::Extent;
     Platform_Rect.bottom = Platform_Rect.top + CsConfig::Platform_Height * CsConfig::Extent;
+
+    if(Platform_State == EPS_Animation){
+        Prev_Platform_Rect.bottom = 199 * CsConfig::Extent;//Anim_Position;
+    }
 
     InvalidateRect(hwnd, &Prev_Platform_Rect, FALSE);
     InvalidateRect(hwnd, &Platform_Rect, FALSE);
@@ -75,23 +80,34 @@ void CsPlatform::Draw_Animation(HDC hdc, RECT &paint_area){
      int x, y, y_offset = 1;
      int area_width = Width * CsConfig::Extent;
      int area_height = CsConfig::Platform_Height * CsConfig::Extent;
+     COLORREF pixel;
+     COLORREF bg_pixel = RGB(CsConfig::BG_Color.R, CsConfig::BG_Color.G, CsConfig::BG_Color.B);
 
      for(int i = 0; i < area_width; i++){
-         ++y_offset;
+         y_offset = 1;
          x = Platform_Rect.left + i;
          for(int j = 0; j < area_height; j++){
              
-              y = Platform_Rect.bottom - j;
+              y = Anim_Position - j;
 
-              //pixel = Get_Pixel(x, y);
-              //Set_Pixel(x, y + y_offset, pixel);
+              pixel = GetPixel(hdc, x, y);
+              SetPixel(hdc, x, y + y_offset, pixel);
+         }
+         for(int j = 0; j < y_offset; j++){
+             y = Anim_Position - area_height + j;
+             SetPixel(hdc, x, y, bg_pixel);
          }
      }
+
+     ++Anim_Position;
 }
 
 void CsPlatform::Act(HWND hwnd){
-
-    Platform_State = EPS_Animation;
+    
+    if(Platform_State != EPS_Animation){
+        Platform_State = EPS_Animation;
+        Anim_Position = Platform_Rect.bottom;
+    }
 
     if(Platform_State == EPS_Animation) Redraw(hwnd);
 }

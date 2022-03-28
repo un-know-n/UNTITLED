@@ -21,6 +21,7 @@ public:
     int X_Position;
     int Width;
     int Inner_Platform_Width;
+    int Anim_Position;
 
     void Init();
     void Redraw(HWND hwnd);
