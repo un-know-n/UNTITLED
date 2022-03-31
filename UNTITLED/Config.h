@@ -21,6 +21,7 @@ public:
 
     static const int Extent = 3;
     static const int FPS = 20;
+    static int Current_Timer_Tick;
     //static const int Level_X_Offset = 6;
     //static const int Level_Y_Offset = 4;
 

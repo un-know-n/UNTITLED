@@ -196,7 +196,7 @@ void CLevel::Draw(HWND hwnd, HDC hdc, RECT &paint_area) {//It draws level map
     Fade.Draw(hdc);
 }
 
-void CLevel::Check_Ball_Colision(int &next_y_pos, double &ball_direction) {
+void CLevel::Check_Ball_Colision(double &next_y_pos, double &ball_direction) {
 
     //If struck woth bricks
 

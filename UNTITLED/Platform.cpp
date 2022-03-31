@@ -4,8 +4,8 @@
 
 //          CSPLATFORM
 
-CsPlatform::CsPlatform() : X_Position(0), Width(28), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_Normal),
+CsPlatform::CsPlatform() : Y_Position(185), X_Position(0), Width(Normal_Width), Inner_Platform_Width(21),
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_Normal), Rolling_Step(2.0),
 Platform_Rect{}
 {//Constructor
     X_Position = (CsConfig::Max_X) / 2;
@@ -42,7 +42,11 @@ void CsPlatform::Draw(HDC hdc, RECT &paint_area) {
     case EPS_Animation:
         Draw_Animation(hdc, paint_area);
         break;
+    /*case EPS_Start:
+        Draw_Start(hdc, paint_area);
+        break;*/
     }
+    
     
 }
 
@@ -77,13 +81,23 @@ void CsPlatform::Draw_Normal(HDC hdc, RECT &paint_area){
 
 void CsPlatform::Draw_Animation(HDC hdc, RECT &paint_area){
 
+    RECT destination_rect;
+    if(!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
+
      int x, y, y_offset = 1;
      int area_width = Width * CsConfig::Extent;
      int area_height = CsConfig::Platform_Height * CsConfig::Extent;
+     int moved_colls = 0;
+     int max_y_pos = CsConfig::Max_Y_Pos * CsConfig::Extent + area_height;
      COLORREF pixel;
      COLORREF bg_pixel = RGB(CsConfig::BG_Color.R, CsConfig::BG_Color.G, CsConfig::BG_Color.B);
 
      for(int i = 0; i < area_width; i++){
+         if(Anim_Position > max_y_pos){
+            continue;
+         } else {
+            ++moved_colls;
+         }
          y_offset = 1;
          x = Platform_Rect.left + i;
          for(int j = 0; j < area_height; j++){
@@ -99,16 +113,37 @@ void CsPlatform::Draw_Animation(HDC hdc, RECT &paint_area){
          }
      }
 
+     if(moved_colls == 0){
+        Platform_State = EPS_None;
+     }
+
      ++Anim_Position;
 }
 
-void CsPlatform::Act(HWND hwnd){
-    
-    if(Platform_State != EPS_Animation){
-        Platform_State = EPS_Animation;
-        Anim_Position = Platform_Rect.bottom;
-    }
+//void CsPlatform::Draw_Start(HDC hdc, RECT &paint_area){
+//    Clear_BG(hdc);
+//
+//    SelectObject(hdc, Ellipse_Platform_Pen);
+//    SelectObject(hdc, Ellipse_Platform_Brush);
+//
+//    Ellipse(hdc, X_Position * CsConfig::Extent, Y_Position * CsConfig::Extent,
+//        (X_Position + CsConfig::Circle_Size) * CsConfig::Extent, (Y_Position + CsConfig::Circle_Size) * CsConfig::Extent);
+//
+//    --Y_Position;
+//}
 
+EPlatform_State CsPlatform::Get_State(){
+    return Platform_State;
+}
+
+void CsPlatform::Set_State(EPlatform_State platform_state){
+    if(Platform_State == platform_state) return;
+    if(platform_state == EPS_Animation)Anim_Position = Platform_Rect.bottom;
+    Platform_State = platform_state;
+
+}
+
+void CsPlatform::Act(HWND hwnd){
     if(Platform_State == EPS_Animation) Redraw(hwnd);
 }
 
@@ -117,6 +152,15 @@ void CsPlatform::Condition() {
         X_Position = CsConfig::Min_X-2;
     if (X_Position > CsConfig::Max_X+1)
         X_Position = CsConfig::Max_X+1;
+}
+
+void CsPlatform::Clear_BG(HDC hdc){
+
+    SelectObject(hdc, CsConfig::BG_Pen);
+    SelectObject(hdc, CsConfig::BG_Brush);
+
+    Rectangle(hdc, Prev_Platform_Rect.left, Prev_Platform_Rect.top, Prev_Platform_Rect.right, Prev_Platform_Rect.bottom);
+        
 }
 
 /////////////////////////////////////////////////////////////////////

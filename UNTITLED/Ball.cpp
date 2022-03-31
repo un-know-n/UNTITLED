@@ -3,20 +3,21 @@
 
 //      CBALL
 
-CBall::CBall() : Ball_Pen(0), Ball_Brush(0), Y_Pos(165), Ball_Speed(3.0), 
-Ball_Direction(M_PI - M_PI_4), Ball_Rect{}
+CBall::CBall() : Ball_Pen(0), Ball_Brush(0), Y_Pos(172.0), Ball_Speed(4.6), 
+Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Ball_State(EBS_Normal)
 {//Constructor
-    X_Pos = CsConfig::Max_X / 2;
+    //X_Pos = CsConfig::Max_X / 2;
 }
 
-void CBall::Init(){
+void CBall::Init(int x_pos){
+    X_Pos = x_pos;
     CsConfig::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
 }
 
 void CBall::Draw(HDC hdc, RECT &paint_area) {
     //if there`s no collision with painting area -> there`s no ball
     RECT destination_rect;
-    if(!IntersectRect(&destination_rect, &paint_area, &Ball_Rect))
+    if(!IntersectRect(&destination_rect, &paint_area, &Prev_Ball_Rect))
         return;
 
     //Clear BG
@@ -33,12 +34,14 @@ void CBall::Draw(HDC hdc, RECT &paint_area) {
 }
 
 void CBall::Move(HWND hwnd, CLevel *level, int x_pos, int width) {
-    int next_x_pos, next_y_pos;
+    double next_x_pos, next_y_pos;
     Prev_Ball_Rect = Ball_Rect;
 
+    if(Ball_State == EBS_None) return;
+
     //Calculating new coords
-    next_x_pos = X_Pos + (int)(Ball_Speed * cos(Ball_Direction));
-    next_y_pos = Y_Pos - (int)(Ball_Speed * sin(Ball_Direction));
+    next_x_pos = X_Pos + Ball_Speed * cos(Ball_Direction);
+    next_y_pos = Y_Pos - Ball_Speed * sin(Ball_Direction);
 
     //if we`ve collided with wall
     if (next_x_pos < CsConfig::Level_X_Offset) {
@@ -56,9 +59,10 @@ void CBall::Move(HWND hwnd, CLevel *level, int x_pos, int width) {
         Ball_Direction = M_PI - Ball_Direction;
     }
 
-    if (next_y_pos > CsConfig::Max_Y_Pos) {
-        next_y_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_y_pos);
-        Ball_Direction = -Ball_Direction;
+    if (next_y_pos > CsConfig::Max_Y_Pos + CsConfig::Level_X_Offset + CsConfig::Ball_Size) {
+        Ball_State = EBS_None;
+        //next_y_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_y_pos);
+        //Ball_Direction = -Ball_Direction;
     }
 
     //If struck with platform
@@ -77,8 +81,8 @@ void CBall::Move(HWND hwnd, CLevel *level, int x_pos, int width) {
     X_Pos = next_x_pos;
     Y_Pos = next_y_pos;
 
-    Ball_Rect.left =  X_Pos * CsConfig::Extent;
-    Ball_Rect.top = (CsConfig::Level_Y_Offset + Y_Pos) * CsConfig::Extent;
+    Ball_Rect.left =  (int)(X_Pos * CsConfig::Extent);
+    Ball_Rect.top = (int)(CsConfig::Level_Y_Offset + Y_Pos) * CsConfig::Extent;
     Ball_Rect.right = Ball_Rect.left + CsConfig::Ball_Size * CsConfig::Extent;
     Ball_Rect.bottom = Ball_Rect.top + CsConfig::Ball_Size * CsConfig::Extent;
 

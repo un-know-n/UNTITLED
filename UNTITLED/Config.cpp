@@ -18,6 +18,8 @@ HBRUSH CsConfig::BG_Brush;
 
 //          CSCONFIG
 
+int CsConfig::Current_Timer_Tick = 0;
+
 void CsConfig::Setup_Colors(){
     CsConfig::Create_PenNBrush(CsConfig::BG_Color, CsConfig::BG_Pen, CsConfig::BG_Brush);
 }

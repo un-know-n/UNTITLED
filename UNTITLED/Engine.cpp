@@ -5,7 +5,7 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() : Platform_Step(6), Hwnd(0)
+CsEngine::CsEngine() : Platform_Step(6), Hwnd(0), Game_State(EGS_Normal)
 {//Constructor
 }
 
@@ -21,9 +21,11 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
     CFade_Brick::Set_Color();
 
     Level.Init();
-    Ball.Init();
+    Ball.Init(Platform.X_Position + CsConfig::Extent + 2 * Platform.Width / 3);
     Platform.Init();
     Border.Init();
+
+    Platform.Set_State(EPS_Normal);
 
     Platform.Redraw(Hwnd);
 
@@ -81,9 +83,29 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
 }
 
 int CsEngine::On_Timer() {
-    Ball.Move(Hwnd, &Level, Platform.X_Position, Platform.Width);
-    Level.Fade.Act(Hwnd);
+    ++CsConfig::Current_Timer_Tick;
+
+    switch(Game_State){
+    case EGS_Normal:
+        Ball.Move(Hwnd, &Level, Platform.X_Position, Platform.Width);
+        if(Ball.Ball_State == EBS_None){
+            Game_State = EGS_Over;
+            Platform.Set_State(EPS_Animation);
+        }
+        break;
+    case EGS_Over:
+        if(Platform.Get_State() == EPS_None){
+            Game_State = EGS_Restart;
+            //Platform.Set_State(EPS_);
+        }
+        break;
+    case EGS_Restart:
+        break;
+    }
+
     Platform.Act(Hwnd);
+    //Level.Fade.Act(Hwnd);
+    //if(CsConfig::Current_Timer_Tick % 2 == 0) Platform.Act(Hwnd);
     return 0;
 }
 
