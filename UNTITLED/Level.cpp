@@ -67,9 +67,13 @@ void CLevel::Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws gam
     }
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
-    RoundRect(hdc, x * CsConfig::Extent, y * CsConfig::Extent,
+    /*RoundRect(hdc, x * CsConfig::Extent, y * CsConfig::Extent,
         (x + CsConfig::Brick_Width) * CsConfig::Extent,
-        (y + CsConfig::Brick_Height) * CsConfig::Extent, 3, 3);
+        (y + CsConfig::Brick_Height) * CsConfig::Extent, 3, 3);*/
+
+    Rectangle(hdc, x * CsConfig::Extent, y * CsConfig::Extent,
+        (x + CsConfig::Brick_Width) * CsConfig::Extent,
+        (y + CsConfig::Brick_Height) * CsConfig::Extent);
 }
 
 void CLevel::Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush) {
@@ -196,7 +200,7 @@ void CLevel::Draw(HWND hwnd, HDC hdc, RECT &paint_area) {//It draws level map
     Fade.Draw(hdc);
 }
 
-void CLevel::Check_Ball_Colision(double &next_y_pos, double &ball_direction) {
+void CLevel::Check_Ball_Colision(int &next_y_pos, double &ball_direction) {
 
     //If struck woth bricks
 

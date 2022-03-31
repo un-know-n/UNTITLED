@@ -18,12 +18,11 @@ public:
 
     static HPEN BG_Pen;
     static HBRUSH BG_Brush;
+    static HWND Hwnd;
 
     static const int Extent = 3;
-    static const int FPS = 20;
-    static int Current_Timer_Tick;
-    //static const int Level_X_Offset = 6;
-    //static const int Level_Y_Offset = 4;
+    static const int FPS = 40;
+    static int Tick;
 
 //Level
     static const int Brick_Width = 15;

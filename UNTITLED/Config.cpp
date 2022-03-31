@@ -15,10 +15,10 @@ const CColor CsConfig::Red_Brick(97, 43, 43);
 
 HPEN CsConfig::BG_Pen;
 HBRUSH CsConfig::BG_Brush;
+HWND CsConfig::Hwnd;
+int CsConfig::Tick = 0;
 
 //          CSCONFIG
-
-int CsConfig::Current_Timer_Tick = 0;
 
 void CsConfig::Setup_Colors(){
     CsConfig::Create_PenNBrush(CsConfig::BG_Color, CsConfig::BG_Pen, CsConfig::BG_Brush);

@@ -13,12 +13,6 @@ enum EKey_Type {
     EKT_Space
 };
 
-enum EGame_State{
-    EGS_Restart,
-    EGS_Normal,
-    EGS_Over
-};
-
 const int Button_A = 0x41;
 const int Button_D = 0x44;
 const int Timer_ID = WM_USER + 1;
@@ -29,10 +23,6 @@ const int Timer_ID = WM_USER + 1;
 class CsEngine {
 public:
     CsEngine();
-    
-    HWND Hwnd;
-
-    int Platform_Step;
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
@@ -44,5 +34,4 @@ private:
     CLevel Level;
     CsPlatform Platform;
     CsBorder Border;
-    EGame_State Game_State;
 };

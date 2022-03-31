@@ -19,7 +19,7 @@ public:
     CFade_Brick Fade;
 
     void Init();
-    void Check_Ball_Colision(double &next_y_pos, double &ball_direction);
+    void Check_Ball_Colision(int &next_y_pos, double &ball_direction);
     void Draw(HWND hwnd, HDC hdc, RECT &paint_area);
     void Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush);
 

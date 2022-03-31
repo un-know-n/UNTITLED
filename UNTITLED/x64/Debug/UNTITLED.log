@@ -1,0 +1,11 @@
+﻿  Ball.cpp
+  Border.cpp
+  Config.cpp
+  Engine.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(36,10): warning C4101: 'destination_rect': unreferenced local variable
+  Fade.cpp
+  Level.cpp
+  Main.cpp
+  Platform.cpp
+  Generating Code...
+  UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe
