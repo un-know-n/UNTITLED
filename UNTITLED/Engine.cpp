@@ -5,11 +5,9 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() 
+CsEngine::CsEngine() : Game_State(EGS_Play)
 {//Constructor
 }
-
-
 
 void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
 
@@ -21,10 +19,11 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
     CFade_Brick::Set_Color();
 
     Level.Init();
-    Ball.Init();
-    Platform.Init();
     Border.Init();
-
+    Platform.Init();
+    Ball.Init();
+    
+    Ball.Set_State(EBS_Start, Platform.X_Position + Platform.Width / 2);
     Platform.Set_State(EPS_StartGame);
     Platform.Redraw();
 
@@ -35,7 +34,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
 
     RECT destination_rect;
 
-    Level.Draw(CsConfig::Hwnd, hdc, paint_area);
+    Level.Draw(hdc, paint_area);
     /*for (int i = 0; i < 16; i++) {
     Draw_Brick_Animation(hdc, EBT_Blue, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 100, i);
     Draw_Brick_Animation(hdc, EBT_Yellow, ELT_Circle, 20 + i * (Brick_Width + 1) * Extent, 140, i);
@@ -61,6 +60,10 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
         break;
     case EKT_Space:
         //Throw_Ball();
+        if (Platform.Get_State() == EPS_Ready) {
+            Ball.Set_State(EBS_Free, Platform.X_Position + Platform.Width / 2 + Platform.Width / 4);
+            Platform.Set_State(EPS_Normal);
+        }
         break;
     }
     switch (button) {
@@ -82,13 +85,38 @@ int CsEngine::On_Timer() {
 
     ++CsConfig::Tick;
 
-    Ball.Move(CsConfig::Hwnd, &Level, Platform.X_Position, Platform.Width);
+    switch (Game_State) {
+    case EGS_Play:
+        Ball.Move(&Level, Platform.X_Position, Platform.Width);
+        if (Ball.Get_State() == EBS_None) {
+            Game_State = EGS_GameOver;
+            Platform.Set_State(EPS_EndGame);
+        } 
+        break;
 
-    //Level.Fade.Act(Hwnd);
+    case EGS_GameOver:
+        if (Platform.Get_State() == EPS_None) {
+            Game_State = EGS_Restart;
+            Platform.Set_State(EPS_StartGame);
+        }
+        break;
 
+    case EGS_Restart:
+        if (Platform.Get_State() == EPS_Ready) {
+            Ball.Set_State(EBS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4);
+            Ball.Ball_Speed = 0.0;
+            Game_State = EGS_Play;
+            //Platform.Set_State(EPS_Ready);
+        }
+        
+        break;
+
+    }
+    Platform.Act();
+    
+    //Level.Fade.Act();
     //if(CsConfig::Tick % 2 == 0) 
-        Platform.Act();
-
+    //Platform.Act();
     return 0;
 }
 

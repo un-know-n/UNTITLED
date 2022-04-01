@@ -5,10 +5,10 @@
 //          CSPLATFORM
 
 CsPlatform::CsPlatform() : X_Position(0), Y_Position(CsConfig::Platform_Y_Position), Width(28), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_Normal), Step_Up(0), Platform_Step(3),
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_StartGame), Step_Up(0), Platform_Step(3),
 Platform_Rect{}
 {//Constructor
-    X_Position = (CsConfig::Max_X) / 2;
+    X_Position = (CsConfig::Max_X) / 2 + 2 * CsConfig::Extent;
 }
 
 void CsPlatform::Init(){
@@ -30,6 +30,9 @@ void CsPlatform::Redraw() {
     if(Platform_State == EPS_EndGame || Platform_State == EPS_StartGame){
         Prev_Platform_Rect.bottom = 200 * CsConfig::Extent;//EndGame_Position;
         //Prev_Platform_Rect.top -= 100;
+    }
+    if (Platform_State == EPS_StartGame) {
+        X_Position = (CsConfig::Max_X) / 2 + 2 * CsConfig::Extent;
     }
 
     InvalidateRect(CsConfig::Hwnd, &Prev_Platform_Rect, FALSE);
@@ -87,12 +90,18 @@ void CsPlatform::Draw_Normal(HDC hdc, RECT &paint_area){
 void CsPlatform::Draw_EndGame(HDC hdc, RECT &paint_area){
 
      int x, y, y_offset;
+     int column_counter = 0;
      int area_width = Width * CsConfig::Extent;
      int area_height = CsConfig::Platform_Height * CsConfig::Extent;
+     const int max_position = CsConfig::Max_Y_Pos * CsConfig::Extent + area_height;
      COLORREF pixel;
      COLORREF bg_pixel = RGB(CsConfig::BG_Color.R, CsConfig::BG_Color.G, CsConfig::BG_Color.B);
 
      for (int i = 0; i < area_width; i++) {
+         if (EndGame_Elem_Position[i] > max_position) continue;
+
+         ++column_counter;
+
          y_offset = rand() % 4 + 1;
          x = Platform_Rect.left + i;
          for (int j = 0; j < area_height; j++) {
@@ -109,6 +118,12 @@ void CsPlatform::Draw_EndGame(HDC hdc, RECT &paint_area){
 
          EndGame_Elem_Position[i] += y_offset;
      }
+     
+     if (column_counter == 0) {
+         Platform_State = EPS_None;
+         Sleep(500);
+     }
+
 }
 
 void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
@@ -150,6 +165,7 @@ void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
         Platform_State = EPS_Extension;
         Inner_Platform_Width = 1;
     }
+
     if (Step_Up >= Max_Rotation) Step_Up -= Max_Rotation;
     
     SetWorldTransform(hdc, &old_xForm);
@@ -157,11 +173,20 @@ void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
 
 void CsPlatform::Draw_Extension(HDC hdc, RECT& paint_area) {
     Draw_Normal(hdc, paint_area);
-    
-    if(Inner_Platform_Width <= 21){
+
+    if (Inner_Platform_Width <= 21) {
         --X_Position;
         Inner_Platform_Width += 3;
-    } else Platform_State = EPS_Normal;
+    }
+    else {
+        Platform_State = EPS_Ready;
+        Redraw();
+        Inner_Platform_Width = 21;
+    }
+}
+
+EPlatform_State CsPlatform::Get_State() {
+    return Platform_State;
 }
 
 void CsPlatform::Set_State(EPlatform_State platform_state) {

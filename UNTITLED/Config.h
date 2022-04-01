@@ -21,8 +21,10 @@ public:
     static HWND Hwnd;
 
     static const int Extent = 3;
-    static const int FPS = 40;
+    static const int FPS = 20;
     static int Tick;
+    //static const int Level_X_Offset = 6;
+    //static const int Level_Y_Offset = 4;
 
 //Level
     static const int Brick_Width = 15;
@@ -45,7 +47,7 @@ public:
     static const int Platform_Height = 7;
 
     static const int Max_X_Pos = Level_X_Offset + Cell_Width * Level_Y_Elems - Ball_Size * Extent;
-    static const int Max_Y_Pos = (192 - Ball_Size);
+    static const int Max_Y_Pos = 199;
 
     static void Setup_Colors();
     static void Create_PenNBrush(const CColor &color, HPEN &pen, HBRUSH &brush);

@@ -7,7 +7,8 @@ enum EPlatform_State{
     EPS_Normal,
     EPS_EndGame,
     EPS_StartGame,
-    EPS_Extension
+    EPS_Extension,
+    EPS_Ready
 };
 
 class CsPlatform{
@@ -39,6 +40,7 @@ public:
     void Draw_EndGame(HDC hdc, RECT &paint_area);
     void Draw_StartGame(HDC hdc, RECT& paint_area);
     void Draw_Extension(HDC hdc, RECT& paint_area);
+    EPlatform_State Get_State();
     void Set_State(EPlatform_State platform_state);
     void Clear_BG(HDC hdc);
     void Act();
