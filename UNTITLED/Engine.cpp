@@ -23,6 +23,14 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
     Platform.Init();
     Ball.Init();
     
+    CBall::Add_Hit_Checker(&Border);
+    CBall::Add_Hit_Checker(&Level);
+    CBall::Add_Hit_Checker(&Platform);
+
+    /*CBall::Hit_Check[0] = &Border;
+    CBall::Hit_Check[1] = &Level;
+    CBall::Hit_Check[2] = &Platform;*/
+
     Ball.Set_State(EBS_Start, Platform.X_Position + Platform.Width / 2);
     Platform.Set_State(EPS_StartGame);
     Platform.Redraw();
@@ -87,7 +95,7 @@ int CsEngine::On_Timer() {
 
     switch (Game_State) {
     case EGS_Play:
-        Ball.Move(&Level, Platform.X_Position, Platform.Width);
+        Ball.Move();
         if (Ball.Get_State() == EBS_None) {
             Game_State = EGS_GameOver;
             Platform.Set_State(EPS_EndGame);

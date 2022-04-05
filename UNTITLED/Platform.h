@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Config.h"
+//#include "Config.h"
+#include "Ball.h"
 
 enum EPlatform_State{
     EPS_None,
@@ -11,7 +12,7 @@ enum EPlatform_State{
     EPS_Ready
 };
 
-class CsPlatform{
+class CsPlatform: public Hit_Checker{
 public:
     CsPlatform();
 
@@ -30,9 +31,9 @@ public:
     int Step_Up;
     int Inner_Platform_Width;
     int Width;
-//  int EndGame_Position;
     int EndGame_Elem_Position[Default_Width * CsConfig::Extent];
 
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, CBall* ball);
     void Init();
     void Redraw();
     void Draw(HDC hdc, RECT &paint_area);

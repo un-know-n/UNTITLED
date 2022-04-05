@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Config.h"
-#include "Level.h"
 
 enum EBall_State {
     EBS_None,
@@ -9,16 +8,26 @@ enum EBall_State {
     EBS_Free
 };
 
+class CBall;
+
+class Hit_Checker {
+public:
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, CBall* ball) = 0;
+};
+
 class CBall {
 public:
     CBall();
 
     double Ball_Speed;
-    double Ball_Direction;
+    static const double Radius;
+    static const double Start_Y_Pos;
+    double Central_X;
+    double Central_Y;
+    double Rest_Size;
+    static int Hit_Counter;
 
-    int X_Pos;
-    int Y_Pos;
-
+    static Hit_Checker *Hit_Check[3];
     RECT Ball_Rect, Prev_Ball_Rect;
     HPEN Ball_Pen;
     HBRUSH Ball_Brush;
@@ -26,8 +35,15 @@ public:
 
     void Init();
     void Draw(HDC hdc, RECT &paint_area);
-    void Move(CLevel *level, int x_pos, int width);
+    void Move();
     void Redraw();
     EBall_State Get_State();
     void Set_State(EBall_State state, int x_pos);
+    double Get_Direction();
+    void Set_Direction(double new_direction);
+    void Reflect(bool is_vertical);
+    static void Add_Hit_Checker(Hit_Checker* hit_check);
+
+private:
+    double Ball_Direction;
 };

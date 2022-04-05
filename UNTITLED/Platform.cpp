@@ -121,7 +121,7 @@ void CsPlatform::Draw_EndGame(HDC hdc, RECT &paint_area){
      
      if (column_counter == 0) {
          Platform_State = EPS_None;
-         Sleep(500);
+         Sleep(200);
      }
 
 }
@@ -181,7 +181,7 @@ void CsPlatform::Draw_Extension(HDC hdc, RECT& paint_area) {
     else {
         Platform_State = EPS_Ready;
         Redraw();
-        Inner_Platform_Width = 21;
+        //Inner_Platform_Width = 21;
     }
 }
 
@@ -223,6 +223,19 @@ void CsPlatform::Condition() {
         X_Position = CsConfig::Min_X-2;
     if (X_Position > CsConfig::Max_X+1)
         X_Position = CsConfig::Max_X+1;
+}
+
+bool CsPlatform::Check_Colision(double next_x_pos, double next_y_pos, CBall* ball) {
+    if (next_y_pos + ball->Radius > CsConfig::Platform_Y_Position - 5) {
+        /*ball->Ball_Direction = -ball->Ball_Direction;
+        return true;*/
+        if (next_x_pos + ball->Radius > (double)X_Position && next_x_pos - ball->Radius < (double)(X_Position + Width)) {
+            //next_y_pos = CsConfig::Platform_Y_Position - (CsConfig::Platform_Y_Position - next_y_pos);
+            ball->Set_Direction(M_PI + (M_PI - ball->Get_Direction()));
+            return true;
+        }
+    }
+    return false;
 }
 
 /////////////////////////////////////////////////////////////////////

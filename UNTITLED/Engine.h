@@ -2,8 +2,8 @@
 
 #include "Config.h"
 #include "Border.h"
-#include "Ball.h"
 #include "Platform.h"
+#include "Level.h"
 
 
 enum EKey_Type {
