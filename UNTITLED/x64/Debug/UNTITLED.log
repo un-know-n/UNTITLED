@@ -1,14 +1,4 @@
-﻿  Ball.cpp
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball.cpp(15,26): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Border.cpp
-  Config.cpp
-  Engine.cpp
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(43,10): warning C4101: 'destination_rect': unreferenced local variable
-  Fade.cpp
-  Level.cpp
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(206,15): warning C4101: 'y': unreferenced local variable
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(206,12): warning C4101: 'x': unreferenced local variable
-  Main.cpp
-  Platform.cpp
-  Generating Code...
+﻿  Level.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(223,15): warning C4101: 'y': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(223,12): warning C4101: 'x': unreferenced local variable
   UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

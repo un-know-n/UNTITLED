@@ -5,7 +5,7 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() : Game_State(EGS_Play)
+CsEngine::CsEngine() : Game_State(EGS_Test)
 {//Constructor
 }
 
@@ -94,12 +94,21 @@ int CsEngine::On_Timer() {
     ++CsConfig::Tick;
 
     switch (Game_State) {
+    case EGS_Test:
+        Ball.Set_Test();
+        Platform.Set_State(EPS_None);
+        Game_State = EGS_Play;
+        break;
+
     case EGS_Play:
         Ball.Move();
         if (Ball.Get_State() == EBS_None) {
             Game_State = EGS_GameOver;
             Platform.Set_State(EPS_EndGame);
         } 
+        if(Ball.Is_Test_Finished()){
+            Game_State = EGS_Test;
+        }
         break;
 
     case EGS_GameOver:

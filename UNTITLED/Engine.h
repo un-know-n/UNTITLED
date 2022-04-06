@@ -14,6 +14,7 @@ enum EKey_Type {
 };
 
 enum EGame_State {
+    EGS_Test,
     EGS_Play,
     EGS_GameOver,
     EGS_Restart

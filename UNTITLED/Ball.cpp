@@ -9,7 +9,7 @@ int CBall::Hit_Counter = 0;
 Hit_Checker* CBall::Hit_Check[] = {};
 
 CBall::CBall() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
-Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Ball_State(EBS_Start) //M_PI - M_PI_4
+Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Test_Active(false), Move_Pos(0), Ball_State(EBS_Start) //M_PI - M_PI_4
 {//Constructor
     Central_X = CsConfig::Max_X / 2;
     Set_State(EBS_Start, Central_X);
@@ -76,8 +76,8 @@ void CBall::Move() { //Hit_Checker*level_hit, Hit_Checker *border_hit, Hit_Check
 
             Central_X = next_x_pos;
             Central_Y = next_y_pos;
-            
         }
+        if(Test_Active) Rest_Test_Size -= step_size;
         
     }
     Redraw();
@@ -103,6 +103,14 @@ void CBall::Set_State(EBall_State state, int x_pos) {
     /*if (Ball_State == state) return;
     else Ball_State = state;*/
     switch (state) {
+    case EBS_Test:
+        Central_X = x_pos;
+        Central_Y = 140;
+        Ball_Speed = 3.0;
+        Rest_Size = 0.0;
+        Ball_Direction = M_PI - M_PI_4;//M_PI - M_PI_4
+        break;
+
     case EBS_None:
         Ball_Speed = 0.0;
         Rest_Size = 0.0;
@@ -119,7 +127,7 @@ void CBall::Set_State(EBall_State state, int x_pos) {
 
     case EBS_Free:
         Central_X = x_pos;
-        Central_Y = Start_Y_Pos;
+        Central_Y = 82;
         Ball_Speed = 3.0;
         Rest_Size = 0.0;
         Ball_Direction = M_PI - M_PI_4;
@@ -153,5 +161,23 @@ void CBall::Add_Hit_Checker(Hit_Checker* hit_check) {
     if (Hit_Counter >= sizeof(Hit_Check) / sizeof(Hit_Check[0])) return;
     Hit_Check[Hit_Counter++] = hit_check;
 }
+
+void CBall::Set_Test(){
+    Rest_Test_Size = 30.0;
+    Set_State(EBS_Free, 115 + Move_Pos);//85
+    ++Move_Pos;
+    Test_Active = true;
+}
+
+bool CBall::Is_Test_Finished(){
+    if(Test_Active){
+        if(Rest_Test_Size <= 0) {
+            return true;
+            //Set_State(EBS_None, 0);
+            Test_Active = false;
+        } else return false;
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////

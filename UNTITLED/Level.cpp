@@ -1,16 +1,33 @@
 
 #include "Level.h"
 
+//char Level_01[CsConfig::Level_X_Elems][CsConfig::Level_Y_Elems] = {
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+//    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+//    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
+//    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
+//    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
+//    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+//};
+
 char Level_01[CsConfig::Level_X_Elems][CsConfig::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
-    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
-    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
-    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -205,26 +222,57 @@ bool CLevel::Check_Colision(double next_x_pos, double next_y_pos, CBall* ball) {
 
     double x, y;
     double direction = ball->Get_Direction();
+    bool got_horizontal_hit, got_vertical_hit;
+    double horizontal_reflect_pos, vertical_reflect_pos;
     //int brick_x_pos = CsConfig::Level_Y_Elems * CsConfig::Cell_Width;
 
-    for (int i = CsConfig::Level_X_Elems - 1; i >= 0; i--) {
+    if(next_y_pos > (CsConfig::Level_Y_Elems - 1) * CsConfig::Cell_Height + CsConfig::Brick_Height) return false;
+
+    double min_ball_x = next_x_pos - ball->Radius;
+    double max_ball_x = next_x_pos + ball->Radius;
+    double min_ball_y = next_y_pos - ball->Radius;
+    double max_ball_y = next_y_pos + ball->Radius;
+
+    int min_level_x = (int)(min_ball_x / CsConfig::Cell_Width);
+    int max_level_x = (int)(max_ball_x / CsConfig::Cell_Width);
+    int min_level_y = (int)(min_ball_y / CsConfig::Cell_Height);
+    int max_level_y = (int)(max_ball_y / CsConfig::Cell_Height);
+
+    for (int i = max_level_y; i >= min_level_y; i--) {
         Current_Brick_Top_Y_Pos = i * CsConfig::Cell_Height;
         Current_Brick_Bottom_Y_Pos = Current_Brick_Top_Y_Pos + CsConfig::Brick_Height; //CsConfig::Level_X_Elems * CsConfig::Cell_Height
         
-        for (int j = 0; j < CsConfig::Level_Y_Elems; j++) {
+        for (int j = min_level_x; j <= max_level_x; j++) {
             if (Level_01[i][j] == 0) continue;
 
             Current_Brick_Left_Side = CsConfig::Level_X_Offset + j * CsConfig::Cell_Width;
             Current_Brick_Right_Side = Current_Brick_Left_Side + CsConfig::Brick_Width;
 
-            if (Is_Horizontal_Check(next_x_pos, next_y_pos)) {
-                if (Check_Horizontal_Hit(i, j,next_x_pos, next_y_pos, ball)) return true;
-                if (Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball)) return true;
+            got_horizontal_hit = Check_Horizontal_Hit(i, j,next_x_pos, next_y_pos, ball, horizontal_reflect_pos);
+            got_vertical_hit = Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball, vertical_reflect_pos);
+
+            if(got_horizontal_hit && got_vertical_hit){
+                if(horizontal_reflect_pos <= vertical_reflect_pos){
+                    ball->Reflect(true);
+                } else {
+                    ball->Reflect(false);
+                }
+            } else if(got_horizontal_hit){
+                ball->Reflect(true);
+                return true;
+            } else if(got_vertical_hit){
+                ball->Reflect(false);
+                return true;
+            }
+
+            /*if (Is_Horizontal_Check(next_x_pos, next_y_pos)) {
+                if (Check_Horizontal_Hit(i, j,next_x_pos, next_y_pos, ball, horizontal_reflect_pos)) return true;
+                if (Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball, vertical_reflect_pos)) return true;
             }
             else {
                 if (Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball)) return true;
                 if (Check_Horizontal_Hit(i, j, next_x_pos, next_y_pos, ball)) return true;
-            }
+            }*/
 
             //if (next_y_pos - ball->Radius / 2 < Current_Brick_Bottom_Y_Pos) {
                 ////next_y_pos = Current_Brick_Bottom_Y_Pos - (next_y_pos - Current_Brick_Bottom_Y_Pos);
@@ -238,30 +286,30 @@ bool CLevel::Check_Colision(double next_x_pos, double next_y_pos, CBall* ball) {
     return false;
 }
 
-bool CLevel::Is_Horizontal_Check(double next_x_pos, double next_y_pos) {
-    double horizontal_min_line, vertical_min_line, another_min_line;
+//bool CLevel::Is_Horizontal_Check(double next_x_pos, double next_y_pos) {
+//    double horizontal_min_line, vertical_min_line, another_min_line;
+//
+//    //We`re making lines which can influence on future type of examination
+//
+//    horizontal_min_line = fabs(next_x_pos - Current_Brick_Left_Side);
+//    another_min_line = fabs(next_x_pos - Current_Brick_Right_Side);
+//
+//    if (another_min_line < horizontal_min_line) horizontal_min_line = another_min_line;
+//
+//    vertical_min_line = fabs(next_y_pos - Current_Brick_Top_Y_Pos);
+//    another_min_line = fabs(next_y_pos - Current_Brick_Bottom_Y_Pos);
+//
+//    if (another_min_line < vertical_min_line) vertical_min_line = another_min_line;
+//
+//    if (horizontal_min_line <= vertical_min_line) return true;
+//    else return false;
+//}
 
-    //We`re making lines which can influence on future type of examination
-
-    horizontal_min_line = fabs(next_x_pos - Current_Brick_Left_Side);
-    another_min_line = fabs(next_x_pos - Current_Brick_Right_Side);
-
-    if (another_min_line < horizontal_min_line) another_min_line = horizontal_min_line;
-
-    vertical_min_line = fabs(next_y_pos - Current_Brick_Top_Y_Pos);
-    another_min_line = fabs(next_y_pos - Current_Brick_Bottom_Y_Pos);
-
-    if (another_min_line < vertical_min_line) vertical_min_line = another_min_line;
-
-    if (horizontal_min_line <= vertical_min_line) return true;
-    else return false;
-}
-
-bool CLevel::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball) {
+bool CLevel::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double &reflection_pos) {
     double direction = ball->Get_Direction();
     //Check bottom line of the brick
-    if (direction > 0 && direction < M_PI) {
-        if (Circle_Horizontal_Hit(next_y_pos - Current_Brick_Bottom_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius)) {
+    if (direction >= 0 && direction < M_PI) {
+        if (Dot_Circle_Hit(next_y_pos - Current_Brick_Bottom_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius, reflection_pos)) {
             //Check if we can reflect our ball down
             if (level_y < CsConfig::Level_Y_Elems - 1 && Level_01[level_y + 1][level_x] == 0) {
                 ball->Reflect(false);
@@ -273,7 +321,7 @@ bool CLevel::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, dou
 
     //Check upper line of the brick
     if (direction >= M_PI && direction <= 2 * M_PI) {
-        if (Circle_Horizontal_Hit(next_y_pos - Current_Brick_Top_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius)) {
+        if (Dot_Circle_Hit(next_y_pos - Current_Brick_Top_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius, reflection_pos)) {
             //Check if we can reflect our ball up
             if (level_y > 0 && Level_01[level_y - 1][level_x] == 0) {
                 ball->Reflect(false);
@@ -286,14 +334,14 @@ bool CLevel::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, dou
     return false;
 }
 
-bool CLevel::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball) {
+bool CLevel::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double &reflection_pos) {
     double direction = ball->Get_Direction();
     //Check left side of the brick
     if (direction > 0.0 && direction < M_PI_2 || direction > 3 * M_PI_2 && direction < 2 * M_PI) {
-        if (Circle_Horizontal_Hit(Current_Brick_Left_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius)) {
+        if (Dot_Circle_Hit(Current_Brick_Left_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius, reflection_pos)) {
             //Check if we can reflect our ball to the left side
             if (level_x > 0 && Level_01[level_y][level_x - 1] == 0) {
-                ball->Reflect(true);
+                //ball->Reflect(true);
                 return true;
             }
             else return false;
@@ -302,10 +350,10 @@ bool CLevel::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, d
 
     //Check right side of the brick
     if (direction > M_PI_2 && direction < 3 * M_PI_2) {
-        if (Circle_Horizontal_Hit(Current_Brick_Right_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius)) {
+        if (Dot_Circle_Hit(Current_Brick_Right_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius, reflection_pos)) {
             //Check if we can reflect our ball to the right side
             if (level_x < CsConfig::Level_X_Elems && Level_01[level_y][level_x + 1] == 0) {
-                ball->Reflect(true);
+                //ball->Reflect(true);
                 return true;
             }
             else return false;
@@ -314,13 +362,12 @@ bool CLevel::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, d
     return false;
 }
 
-bool CLevel::Circle_Horizontal_Hit(double y, double next_x_pos, double left_x, double right_x, double radius) {
+bool CLevel::Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double &x) {
     //Check if we`ve collided with horizontal line of brick(from left_x to right_x)
     //x^2 + y^2 = R^2
     //x = sqrt(R^2 - y^2)
     //y = sqrt(R^2 - x^2)
 
-    double x;
     double min_x;
     double max_x;
 
