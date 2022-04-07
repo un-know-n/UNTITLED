@@ -45,7 +45,7 @@ public:
     void Set_State(EBall_State state, int x_pos);
     double Get_Direction();
     void Set_Direction(double new_direction);
-    void Reflect(bool is_vertical);
+    void Is_Vertical_Reflect(bool is_vertical);
     static void Add_Hit_Checker(Hit_Checker* hit_check);
     void Set_Test();
     bool Is_Test_Finished();

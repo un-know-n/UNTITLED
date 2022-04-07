@@ -6,12 +6,17 @@
 
 #define MAX_LOADSTRING 100
 
+#define IDB_Start_Btn 1
+#define IDB_Exit_Btn 2
+#define IDB_Title_Btn 3
+#define IDB_About_Btn 4
+
 // Global Variables:
+bool Drawing_Active = false;
 CsEngine Engine;
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
-
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -77,7 +82,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_UNTITLED));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = CsConfig::BG_Brush;//17, 46, 37
-	wcex.lpszMenuName = MAKEINTRESOURCEW(IDC_UNTITLED);//NULL
+	wcex.lpszMenuName = NULL;//MAKEINTRESOURCEW(IDC_UNTITLED);//NULL
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
@@ -102,7 +107,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	window_rect.left = 0;
 	window_rect.top = 0;
 	window_rect.right = 207 * 3;//320
-	window_rect.bottom = 200 * 3;
+	window_rect.bottom = 195 * 3;//200
 
 	AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, TRUE);
 
@@ -113,6 +118,28 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		return FALSE;
 
 	Engine.Init_Engine(hWnd);
+
+	HWND Start_Btn = CreateWindow( 
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"START",      // Button text 
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+		265,         // x position 
+		250,         // y position 
+		90,        // Button width
+		40,        // Button height
+		hWnd,     // Parent window
+		(HMENU)IDB_Start_Btn,       // No menu.
+		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), 
+		NULL);      // Pointer not needed.
+
+	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+
+	HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+
+	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
+		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -132,11 +159,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
 	switch (message)
 	{
 	case WM_COMMAND:
 	{
 		int wmId = LOWORD(wParam);
+
 		// Parse the menu selections:
 		switch (wmId)
 		{
@@ -145,6 +174,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
+			break;
+		case IDB_Start_Btn:
+			Drawing_Active = true;
+			ShowWindow(GetDlgItem(hWnd, 1), SW_HIDE);
+			ShowWindow(GetDlgItem(hWnd, 2), SW_HIDE);
+			ShowWindow(GetDlgItem(hWnd, 3), SW_HIDE);
+			ShowWindow(GetDlgItem(hWnd, 4), SW_HIDE);
+			break;
+		case IDB_Exit_Btn:
+			DestroyWindow(hWnd);
+			break;
+		case IDB_About_Btn:
+			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
+				L"About", MB_ICONINFORMATION | MB_OK);
+			//UpdateWindow(hWnd);
 			break;
 		default:
 			return DefWindowProc(hWnd, message, wParam, lParam);
@@ -155,31 +200,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code that uses hdc here...
+		if(Drawing_Active){
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			// TODO: Add any drawing code that uses hdc here...
 
-		Engine.Draw_Frame(hdc, ps.rcPaint);
-		EndPaint(hWnd, &ps);
+			Engine.Draw_Frame(hdc, ps.rcPaint);
+			EndPaint(hWnd, &ps);
+		}
 	}
 	break;
 
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_LEFT:
-			return Engine.On_Key_Down(EKT_Left, NULL);
+			return Engine.On_Key_Down(EKT_Left, NULL, hWnd);
 			break;
 		case VK_RIGHT:
-			return Engine.On_Key_Down(EKT_Right, NULL);
+			return Engine.On_Key_Down(EKT_Right, NULL, hWnd);
 			break;
 		case VK_SPACE:
-			return Engine.On_Key_Down(EKT_Space, NULL);
+			return Engine.On_Key_Down(EKT_Space, NULL, hWnd);
+			break;
+		case VK_ESCAPE:
+			return Engine.On_Key_Down(EKT_Escape, NULL, hWnd);
 			break;
 		case 0x41:
-			return Engine.On_Key_Down(EKT_None, Button_A);
+			return Engine.On_Key_Down(EKT_None, Button_A, hWnd);
 			break;
 		case 0x44:
-			return Engine.On_Key_Down(EKT_None, Button_D);
+			return Engine.On_Key_Down(EKT_None, Button_D, hWnd);
 			break;
 		}
 		break;

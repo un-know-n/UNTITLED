@@ -10,7 +10,8 @@ enum EKey_Type {
     EKT_None,
     EKT_Left,
     EKT_Right,
-    EKT_Space
+    EKT_Space,
+    EKT_Escape
 };
 
 enum EGame_State {
@@ -33,7 +34,7 @@ public:
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
-    int On_Key_Down(EKey_Type key_type, int button);
+    int On_Key_Down(EKey_Type key_type, int button, HWND hwnd);
     int On_Timer();
 
     EGame_State Game_State;

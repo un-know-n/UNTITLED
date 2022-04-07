@@ -47,14 +47,14 @@ void CsBorder::Draw(HDC hdc, RECT &paint_area) {
 
     //Drawing left/right border
     for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 2, 1 + i * 4, TRUE);
+        Draw_Element(hdc, 2, 3 + i * 4, TRUE);
 
     for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 201, 1 + i * 4, TRUE);
+        Draw_Element(hdc, 201, 3 + i * 4, TRUE);
 
     //Drawing top border
     for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 3 + i * 4, 0, FALSE);
+        Draw_Element(hdc, 3 + i * 4, 2, FALSE);
 }
 
 bool CsBorder::Check_Colision(double next_x_pos, double next_y_pos, CBall *ball) {
@@ -64,20 +64,20 @@ bool CsBorder::Check_Colision(double next_x_pos, double next_y_pos, CBall *ball)
     if (next_x_pos < CsConfig::Level_X_Offset) {
         //next_x_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_x_pos);
         collided = true;
-        ball->Reflect(true);
+        ball->Is_Vertical_Reflect(true);
     }
 
     if (next_y_pos - ball->Radius < 0) {
         //next_y_pos = CsConfig::Level_Y_Offset - (CsConfig::Level_Y_Offset - next_y_pos);
         collided = true;
-        ball->Reflect(false);
+        ball->Is_Vertical_Reflect(false);
     }
 
     if (next_x_pos - ball->Radius - 2 > CsConfig::Max_X_Pos + CsConfig::Level_X_Offset) {
         //next_x_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_x_pos);
         ////next_x_pos = CsConfig::Max_X_Pos - (next_x_pos - CsConfig::Max_X_Pos);
         collided = true;
-        ball->Reflect(true);
+        ball->Is_Vertical_Reflect(true);
     }
 
     if (next_y_pos > CsConfig::Max_Y_Pos + CsConfig::Level_Y_Offset) {

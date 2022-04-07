@@ -5,7 +5,7 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() : Game_State(EGS_Test)
+CsEngine::CsEngine() : Game_State(EGS_Play)
 {//Constructor
 }
 
@@ -40,6 +40,12 @@ void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
 
 void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
+    ///////////////// ENTRY-MENU REALIZATION ///////////////////////////
+
+
+
+    //////////////////////////////////////////////////////////////////
+
     RECT destination_rect;
 
     Level.Draw(hdc, paint_area);
@@ -52,9 +58,10 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     Ball.Draw(hdc, paint_area);
     Border.Draw(hdc, paint_area);
     Platform.Draw(hdc, paint_area);
+    //Sleep(125);
 }
 
-int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
+int CsEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     switch (key_type) {
     case EKT_Left:
         Platform.X_Position -= Platform.Platform_Step;
@@ -67,11 +74,13 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button) {
         Platform.Redraw();
         break;
     case EKT_Space:
-        //Throw_Ball();
         if (Platform.Get_State() == EPS_Ready) {
             Ball.Set_State(EBS_Free, Platform.X_Position + Platform.Width / 2 + Platform.Width / 4);
             Platform.Set_State(EPS_Normal);
         }
+        break;
+    case EKT_Escape:
+        DestroyWindow(hwnd);
         break;
     }
     switch (button) {

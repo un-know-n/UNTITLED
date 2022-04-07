@@ -23,9 +23,9 @@ public:
     void Draw(HDC hdc, RECT &paint_area);
     void Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush);
     //bool Is_Horizontal_Check(double next_x_pos, double next_y_pos);
-    bool Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double &reflection_pos);
-    bool Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double &reflection_pos);
-    bool Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double &x);
+    bool Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double & reflection_pos); //double &reflection_pos
+    bool Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, CBall* ball, double& reflection_pos); //double &reflection_pos
+    bool Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double& x);//double &x
 
 private:
     double Current_Brick_Left_Side, Current_Brick_Right_Side;

@@ -105,7 +105,7 @@ void CBall::Set_State(EBall_State state, int x_pos) {
     switch (state) {
     case EBS_Test:
         Central_X = x_pos;
-        Central_Y = 140;
+        Central_Y = Start_Y_Pos;//140
         Ball_Speed = 3.0;
         Rest_Size = 0.0;
         Ball_Direction = M_PI - M_PI_4;//M_PI - M_PI_4
@@ -127,7 +127,7 @@ void CBall::Set_State(EBall_State state, int x_pos) {
 
     case EBS_Free:
         Central_X = x_pos;
-        Central_Y = 82;
+        Central_Y = Start_Y_Pos;//82 - 52
         Ball_Speed = 3.0;
         Rest_Size = 0.0;
         Ball_Direction = M_PI - M_PI_4;
@@ -148,7 +148,7 @@ void CBall::Set_Direction(double new_direction) {
     else Ball_Direction = new_direction;
 }
 
-void CBall::Reflect(bool is_vertical) {
+void CBall::Is_Vertical_Reflect(bool is_vertical) {
     if (is_vertical) {
         Set_Direction(M_PI - Ball_Direction);
     }
@@ -173,7 +173,7 @@ bool CBall::Is_Test_Finished(){
     if(Test_Active){
         if(Rest_Test_Size <= 0) {
             return true;
-            //Set_State(EBS_None, 0);
+            Set_State(EBS_None, 0);
             Test_Active = false;
         } else return false;
     }
