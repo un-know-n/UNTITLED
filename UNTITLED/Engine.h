@@ -25,12 +25,12 @@ const int Button_A = 0x41;
 const int Button_D = 0x44;
 const int Timer_ID = WM_USER + 1;
 
-//class CsEngine;
-//class CsPlatform;
+//class Engine;
+//class Platform;
 
-class CsEngine {
+class Engine {
 public:
-    CsEngine();
+    Engine();
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
@@ -40,8 +40,8 @@ public:
     EGame_State Game_State;
 
 private:
-    CBall Ball;
-    CLevel Level;
-    CsPlatform Platform;
-    CsBorder Border;
+    Ball Ball;
+    Level Level;
+    Platform Platform;
+    Border Border;
 };

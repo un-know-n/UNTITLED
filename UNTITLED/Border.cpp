@@ -3,47 +3,49 @@
 
 //          CSBORDER
 
-CsBorder::CsBorder() : Arc_Pen(0), Border_Main_Pen(0), Border_White_Pen(0),
+bool Border::Have_Floor = true;
+
+Border::Border() : Arc_Pen(0), Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)
 {//Constructor
 }
 
-void CsBorder::Init(){
-    CsConfig::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
-    CsConfig::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
+void Border::Init(){
+    Config::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    Config::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
 }
 
-void CsBorder::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
+void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     //Draw main line
     SelectObject(hdc, Border_Main_Pen);
     SelectObject(hdc, Border_Main_Brush);
 
     if (is_vertical) 
-        Rectangle(hdc, (x + 1) * CsConfig::Extent, y * CsConfig::Extent, (x + 4) * CsConfig::Extent, (y + 4) * CsConfig::Extent);
+        Rectangle(hdc, (x + 1) * Config::Extent, y * Config::Extent, (x + 4) * Config::Extent, (y + 4) * Config::Extent);
     else 
-        Rectangle(hdc, x * CsConfig::Extent, (y + 1) * CsConfig::Extent, (x + 4) * CsConfig::Extent, (y + 4) * CsConfig::Extent);
+        Rectangle(hdc, x * Config::Extent, (y + 1) * Config::Extent, (x + 4) * Config::Extent, (y + 4) * Config::Extent);
 
     //White line
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
-        Rectangle(hdc, x * CsConfig::Extent, y * CsConfig::Extent, (x + 1) * CsConfig::Extent - 1, (y + 4) * CsConfig::Extent);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 1) * Config::Extent - 1, (y + 4) * Config::Extent);
     else
-        Rectangle(hdc, x * CsConfig::Extent, y * CsConfig::Extent, (x + 6) * CsConfig::Extent, (y + 1) * CsConfig::Extent - 1);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent, (y + 1) * Config::Extent - 1);
 
     //White inner-dot
     /*SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
-        Rectangle(hdc, (x + 2) * CsConfig::Extent, (y + 1) * CsConfig::Extent, (x + 3) * CsConfig::Extent, (y + 6) * CsConfig::Extent);
+        Rectangle(hdc, (x + 2) * Config::Extent, (y + 1) * Config::Extent, (x + 3) * Config::Extent, (y + 6) * Config::Extent);
     else
-        Rectangle(hdc, (x + 1) * CsConfig::Extent, (y + 2) * CsConfig::Extent, (x + 6) * CsConfig::Extent, (y + 3) * CsConfig::Extent);*/
+        Rectangle(hdc, (x + 1) * Config::Extent, (y + 2) * Config::Extent, (x + 6) * Config::Extent, (y + 3) * Config::Extent);*/
 
 }
 
-void CsBorder::Draw(HDC hdc, RECT &paint_area) {
+void Border::Draw(HDC hdc, RECT &paint_area) {
 
     //Drawing left/right border
     for(int i = 0; i < 50; i++)
@@ -57,33 +59,36 @@ void CsBorder::Draw(HDC hdc, RECT &paint_area) {
         Draw_Element(hdc, 3 + i * 4, 2, FALSE);
 }
 
-bool CsBorder::Check_Colision(double next_x_pos, double next_y_pos, CBall *ball) {
+bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     bool collided = false;
 
     //if we`ve collided with wall
-    if (next_x_pos < CsConfig::Level_X_Offset) {
-        //next_x_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_x_pos);
+    if (next_x_pos < Config::Level_X_Offset) {
+        //next_x_pos = Config::Level_X_Offset - (Config::Level_X_Offset - next_x_pos);
         collided = true;
         ball->Is_Vertical_Reflect(true);
     }
 
     if (next_y_pos - ball->Radius < 0) {
-        //next_y_pos = CsConfig::Level_Y_Offset - (CsConfig::Level_Y_Offset - next_y_pos);
+        //next_y_pos = Config::Level_Y_Offset - (Config::Level_Y_Offset - next_y_pos);
         collided = true;
         ball->Is_Vertical_Reflect(false);
     }
 
-    if (next_x_pos - ball->Radius - 2 > CsConfig::Max_X_Pos + CsConfig::Level_X_Offset) {
-        //next_x_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_x_pos);
-        ////next_x_pos = CsConfig::Max_X_Pos - (next_x_pos - CsConfig::Max_X_Pos);
+    if (next_x_pos - ball->Radius - 2 > Config::Max_X_Pos + Config::Level_X_Offset) {
+        //next_x_pos = Config::Level_X_Offset - (Config::Level_X_Offset - next_x_pos);
+        ////next_x_pos = Config::Max_X_Pos - (next_x_pos - Config::Max_X_Pos);
         collided = true;
         ball->Is_Vertical_Reflect(true);
     }
 
-    if (next_y_pos > CsConfig::Max_Y_Pos + CsConfig::Level_Y_Offset) {
-        /* next_y_pos = CsConfig::Level_X_Offset - (CsConfig::Level_X_Offset - next_y_pos);
+    if (next_y_pos > Config::Max_Y_Pos - Config::Ball_Size) {
+        if (Have_Floor) {
+            collided = true;
+            ball->Is_Vertical_Reflect(false);
+        } else ball->Ball_State = EBS_None;
+        /* next_y_pos = Config::Level_X_Offset - (Config::Level_X_Offset - next_y_pos);
          Ball_Direction = -Ball_Direction;*/
-        ball->Ball_State = EBS_None;
     }
 
     return collided;

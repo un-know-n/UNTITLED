@@ -3,31 +3,31 @@
 
 //      CBALL
 
-const double CBall::Start_Y_Pos = 173.0;
-const double CBall::Radius = 2.0;
-int CBall::Hit_Counter = 0;
-Hit_Checker* CBall::Hit_Check[] = {};
+const double Ball::Start_Y_Pos = 173.0;
+const double Ball::Radius = 2.0;
+int Ball::Hit_Counter = 0;
+Main_Hit_Checker* Ball::Hit_Check[] = {};
 
-CBall::CBall() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
+Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
 Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Test_Active(false), Move_Pos(0), Ball_State(EBS_Start) //M_PI - M_PI_4
 {//Constructor
-    Central_X = CsConfig::Max_X / 2;
+    Central_X = Config::Max_X / 2;
     Set_State(EBS_Start, Central_X);
     //Set_Direction(M_PI_4);
 }
 
-void CBall::Init(){
-    CsConfig::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+void Ball::Init(){
+    Config::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
 }
 
-void CBall::Draw(HDC hdc, RECT &paint_area) {
+void Ball::Draw(HDC hdc, RECT &paint_area) {
     //if there`s no collision with painting area -> there`s no ball
     RECT destination_rect;
 
     if (IntersectRect(&destination_rect, &paint_area, &Prev_Ball_Rect)) {
         //Clear BG
-        SelectObject(hdc, CsConfig::BG_Pen);
-        SelectObject(hdc, CsConfig::BG_Brush);
+        SelectObject(hdc, Config::BG_Pen);
+        SelectObject(hdc, Config::BG_Brush);
 
         Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 1, Prev_Ball_Rect.bottom - 1);
     }
@@ -42,9 +42,9 @@ void CBall::Draw(HDC hdc, RECT &paint_area) {
     
 }
 
-void CBall::Move() { //Hit_Checker*level_hit, Hit_Checker *border_hit, Hit_Checker*platform_hit
+void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, Main_Hit_Checker*platform_hit
     double next_x_pos, next_y_pos;
-    double step_size = 1.0 / CsConfig::Extent;
+    double step_size = 1.0 / Config::Extent;
     Rest_Size += Ball_Speed;
     bool collided;
     Prev_Ball_Rect = Ball_Rect;
@@ -84,22 +84,22 @@ void CBall::Move() { //Hit_Checker*level_hit, Hit_Checker *border_hit, Hit_Check
     
 }
 
-void CBall::Redraw() {
+void Ball::Redraw() {
 
-    Ball_Rect.left = (int)((Central_X - Radius) * CsConfig::Extent);
-    Ball_Rect.top = (int)(CsConfig::Level_Y_Offset + Central_Y - Radius) * CsConfig::Extent;
-    Ball_Rect.right = (int)((Central_X + Radius) * CsConfig::Extent);
-    Ball_Rect.bottom = (int)(CsConfig::Level_Y_Offset + Central_Y + Radius) * CsConfig::Extent;
+    Ball_Rect.left = (int)((Central_X - Radius) * Config::Extent);
+    Ball_Rect.top = (int)(Config::Level_Y_Offset + Central_Y - Radius) * Config::Extent;
+    Ball_Rect.right = (int)((Central_X + Radius) * Config::Extent);
+    Ball_Rect.bottom = (int)(Config::Level_Y_Offset + Central_Y + Radius) * Config::Extent;
 
-    InvalidateRect(CsConfig::Hwnd, &Prev_Ball_Rect, FALSE);
-    InvalidateRect(CsConfig::Hwnd, &Ball_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Prev_Ball_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Ball_Rect, FALSE);
 }
 
-EBall_State CBall::Get_State() {
+EBall_State Ball::Get_State() {
     return Ball_State;
 }
 
-void CBall::Set_State(EBall_State state, int x_pos) {
+void Ball::Set_State(EBall_State state, int x_pos) {
     /*if (Ball_State == state) return;
     else Ball_State = state;*/
     switch (state) {
@@ -137,18 +137,18 @@ void CBall::Set_State(EBall_State state, int x_pos) {
     Ball_State = state;
 }
 
-double CBall::Get_Direction() {
+double Ball::Get_Direction() {
     return Ball_Direction;
 }
 
-void CBall::Set_Direction(double new_direction) {
+void Ball::Set_Direction(double new_direction) {
     while (new_direction > 2.0 * M_PI) new_direction -= 2.0 * M_PI;
     while (new_direction < 0) new_direction += 2.0 * M_PI;
     if (Ball_Direction == new_direction) return;
     else Ball_Direction = new_direction;
 }
 
-void CBall::Is_Vertical_Reflect(bool is_vertical) {
+void Ball::Is_Vertical_Reflect(bool is_vertical) {
     if (is_vertical) {
         Set_Direction(M_PI - Ball_Direction);
     }
@@ -157,19 +157,19 @@ void CBall::Is_Vertical_Reflect(bool is_vertical) {
     }
 }
 
-void CBall::Add_Hit_Checker(Hit_Checker* hit_check) {
+void Ball::Add_Hit_Checker(Main_Hit_Checker* hit_check) {
     if (Hit_Counter >= sizeof(Hit_Check) / sizeof(Hit_Check[0])) return;
     Hit_Check[Hit_Counter++] = hit_check;
 }
 
-void CBall::Set_Test(){
+void Ball::Set_Test(){
     Rest_Test_Size = 30.0;
     Set_State(EBS_Free, 115 + Move_Pos);//85
     ++Move_Pos;
     Test_Active = true;
 }
 
-bool CBall::Is_Test_Finished(){
+bool Ball::Is_Test_Finished(){
     if(Test_Active){
         if(Rest_Test_Size <= 0) {
             return true;
@@ -179,5 +179,37 @@ bool CBall::Is_Test_Finished(){
     }
 }
 
+bool Ball::Is_Going_Up() {
+    if (Ball_Direction >= 0.0 && Ball_Direction < M_PI) return true;
+    else return false;
+}
+
+bool Ball::Is_Going_Left() {
+    if (Ball_Direction > M_PI_2 && Ball_Direction < 3 * M_PI_2) return true;
+    else return false;
+}
+
+/////////////////////////////////////////////////////////////////////
+
+bool Main_Hit_Checker::Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double& x) {//double &x
+    //Check if we`ve collided with horizontal line of brick(from left_x to right_x)
+    //x^2 + y^2 = R^2
+    //x = sqrt(R^2 - y^2)
+    //y = sqrt(R^2 - x^2)
+
+    //double x;
+    double min_x;
+    double max_x;
+
+    if (y > radius) return false;
+
+    x = sqrt(radius * radius - y * y);
+
+    min_x = next_x_pos - x;
+    max_x = next_x_pos + x;
+
+    if (max_x >= left_x && max_x <= right_x || min_x >= left_x && min_x <= right_x) return true;
+    else return false;
+}
 
 /////////////////////////////////////////////////////////////////////

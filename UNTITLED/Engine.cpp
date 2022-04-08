@@ -5,40 +5,40 @@
 
 //          CSENGINE
 
-CsEngine::CsEngine() : Game_State(EGS_Play)
-{//Constructor
+Engine::Engine() : Game_State(EGS_Play)
+{//Constructor6
 }
 
-void CsEngine::Init_Engine(HWND hwnd) {//It initializes game engine
+void Engine::Init_Engine(HWND hwnd) {//It initializes game engine
 
-    CsConfig::Hwnd = hwnd;
+    Config::Hwnd = hwnd;
     //Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
 
-    CsConfig::Setup_Colors();
+    Config::Setup_Colors();
 
-    CFade_Brick::Set_Color();
+    Fade_Brick::Set_Color();
 
     Level.Init();
     Border.Init();
     Platform.Init();
     Ball.Init();
     
-    CBall::Add_Hit_Checker(&Border);
-    CBall::Add_Hit_Checker(&Level);
-    CBall::Add_Hit_Checker(&Platform);
+    Ball::Add_Hit_Checker(&Border);
+    Ball::Add_Hit_Checker(&Level);
+    Ball::Add_Hit_Checker(&Platform);
 
-    /*CBall::Hit_Check[0] = &Border;
-    CBall::Hit_Check[1] = &Level;
-    CBall::Hit_Check[2] = &Platform;*/
+    /*Ball::Hit_Check[0] = &Border;
+    Ball::Hit_Check[1] = &Level;
+    Ball::Hit_Check[2] = &Platform;*/
 
     Ball.Set_State(EBS_Start, Platform.X_Position + Platform.Width / 2);
     Platform.Set_State(EPS_StartGame);
     Platform.Redraw();
 
-    SetTimer(CsConfig::Hwnd, Timer_ID, 1000 / CsConfig::FPS, 0);
+    SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
 }
 
-void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
+void Engine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
     ///////////////// ENTRY-MENU REALIZATION ///////////////////////////
 
@@ -61,7 +61,7 @@ void CsEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc
     //Sleep(125);
 }
 
-int CsEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
+int Engine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     switch (key_type) {
     case EKT_Left:
         Platform.X_Position -= Platform.Platform_Step;
@@ -98,9 +98,9 @@ int CsEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     return 0;
 }
 
-int CsEngine::On_Timer() {
+int Engine::On_Timer() {
 
-    ++CsConfig::Tick;
+    ++Config::Tick;
 
     switch (Game_State) {
     case EGS_Test:
@@ -141,7 +141,7 @@ int CsEngine::On_Timer() {
     Platform.Act();
     
     //Level.Fade.Act();
-    //if(CsConfig::Tick % 2 == 0) 
+    //if(Config::Tick % 2 == 0) 
     //Platform.Act();
     return 0;
 }

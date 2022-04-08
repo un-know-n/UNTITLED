@@ -5,16 +5,16 @@
 
 #include <Windows.h>
 
-class CColor{
+class Color{
 public:
-    CColor(unsigned char r, unsigned char g, unsigned char b);
+    Color(unsigned char r, unsigned char g, unsigned char b);
     unsigned char R, G, B;
 };
 
 
-class CsConfig{
+class Config{
 public:
-    static const CColor BG_Color, Blue_Brick, Green_Brick, Yellow_Brick, Red_Brick;
+    static const Color BG_Color, Blue_Brick, Green_Brick, Yellow_Brick, Red_Brick;
 
     static HPEN BG_Pen;
     static HBRUSH BG_Brush;
@@ -50,6 +50,6 @@ public:
     static const int Max_Y_Pos = 199;
 
     static void Setup_Colors();
-    static void Create_PenNBrush(const CColor &color, HPEN &pen, HBRUSH &brush);
+    static void Create_PenNBrush(const Color &color, HPEN &pen, HBRUSH &brush);
     static void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush);   
 };

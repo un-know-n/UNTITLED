@@ -3,15 +3,17 @@
 #include <Windows.h>
 #include "Ball.h"
 
-class CsBorder: public Hit_Checker{
+class Border: public Main_Hit_Checker{
 public:
-    CsBorder();
+    Border();
     
 
     HPEN Arc_Pen, Border_Main_Pen, Border_White_Pen;
     HBRUSH Border_Main_Brush, Border_White_Brush;
 
-    virtual bool Check_Colision(double next_x_pos, double next_y_pos, CBall* ball);
+    static bool Have_Floor;
+
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
     void Init();
     void Draw(HDC hdc, RECT &paint_area);
    

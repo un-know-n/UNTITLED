@@ -13,7 +13,7 @@
 
 // Global Variables:
 bool Drawing_Active = false;
-CsEngine Engine;
+Engine Engine;
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -33,7 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
-	CsConfig::Setup_Colors();
+	Config::Setup_Colors();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -81,7 +81,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_UNTITLED));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = CsConfig::BG_Brush;//17, 46, 37
+	wcex.hbrBackground = Config::BG_Brush;//17, 46, 37
 	wcex.lpszMenuName = NULL;//MAKEINTRESOURCEW(IDC_UNTITLED);//NULL
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -119,6 +119,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	Engine.Init_Engine(hWnd);
 
+	///////////////////////////////////// ENTRY BUTTONS /////////////////////////////////////////////
+
 	HWND Start_Btn = CreateWindow( 
 		L"BUTTON",  // Predefined class; Unicode assumed 
 		L"START",      // Button text 
@@ -129,7 +131,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		40,        // Button height
 		hWnd,     // Parent window
 		(HMENU)IDB_Start_Btn,       // No menu.
-		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), 
+		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 		NULL);      // Pointer not needed.
 
 	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
@@ -140,6 +142,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
 		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////
 
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
@@ -159,7 +163,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-
 	switch (message)
 	{
 	case WM_COMMAND:
@@ -186,12 +189,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		case IDB_About_Btn:
-			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), nullptr, About);
+			BeginPaint(hWnd, nullptr);
+			// TODO: Add any drawing code that uses hdc here...
 			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
 				L"About", MB_ICONINFORMATION | MB_OK);
-			//UpdateWindow(hWnd);
+			InvalidateRect(hWnd, NULL, FALSE);
+			EndPaint(hWnd, nullptr);
+			UpdateWindow(hWnd);
 			break;
 		default:
+			UpdateWindow(hWnd);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 	}
@@ -232,6 +240,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			return Engine.On_Key_Down(EKT_None, Button_D, hWnd);
 			break;
 		}
+		break;
+	case WM_CREATE:
+		/*HBITMAP hImage = (HBITMAP)LoadImage(NULL, L"guibg.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+		HWND hImageView = CreateWindowEx(NULL, L"STATIC", NULL, SS_BITMAP | WS_VISIBLE | WS_CHILD, 0, 00, 500, 600, hWnd, (HMENU)IMAGE_VIEW, GetModuleHandle(NULL), NULL);
+		SendMessage(hImageView, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);*/
 		break;
 
 	case WM_TIMER:

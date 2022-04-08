@@ -4,42 +4,42 @@
 
 //          CSPLATFORM
 
-CsPlatform::CsPlatform() : X_Position(0), Y_Position(CsConfig::Platform_Y_Position), Width(28), Inner_Platform_Width(21),
+Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Inner_Platform_Width(21),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_StartGame), Step_Up(0), Platform_Step(3),
 Platform_Rect{}
 {//Constructor
-    X_Position = (CsConfig::Max_X) / 2 + 2 * CsConfig::Extent;
+    X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
 }
 
-void CsPlatform::Init(){
-    CsConfig::Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
-    CsConfig::Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
+void Platform::Init(){
+    Config::Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
+    Config::Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
 }
 
-void CsPlatform::Redraw() {
+void Platform::Redraw() {
     Prev_Platform_Rect = Platform_Rect;
     int temp;
-    if (Platform_State == EPS_StartGame) temp = CsConfig::Circle_Size;
+    if (Platform_State == EPS_StartGame) temp = Config::Circle_Size;
     else temp = Width;
 
-    Platform_Rect.left = (CsConfig::Level_X_Offset + X_Position) * CsConfig::Extent;
-    Platform_Rect.top = CsConfig::Platform_Y_Position * CsConfig::Extent;
-    Platform_Rect.right = Platform_Rect.left + temp * CsConfig::Extent;
-    Platform_Rect.bottom = Platform_Rect.top + CsConfig::Platform_Height * CsConfig::Extent;
+    Platform_Rect.left = (Config::Level_X_Offset + X_Position) * Config::Extent;
+    Platform_Rect.top = Config::Platform_Y_Position * Config::Extent;
+    Platform_Rect.right = Platform_Rect.left + temp * Config::Extent;
+    Platform_Rect.bottom = Platform_Rect.top + Config::Platform_Height * Config::Extent;
 
     if(Platform_State == EPS_EndGame || Platform_State == EPS_StartGame){
-        Prev_Platform_Rect.bottom = 200 * CsConfig::Extent;//EndGame_Position;
+        Prev_Platform_Rect.bottom = 200 * Config::Extent;//EndGame_Position;
         //Prev_Platform_Rect.top -= 100;
     }
     if (Platform_State == EPS_StartGame) {
-        X_Position = (CsConfig::Max_X) / 2 + 2 * CsConfig::Extent;
+        X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
     }
 
-    InvalidateRect(CsConfig::Hwnd, &Prev_Platform_Rect, FALSE);
-    InvalidateRect(CsConfig::Hwnd, &Platform_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Prev_Platform_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Platform_Rect, FALSE);
 }
 
-void CsPlatform::Draw(HDC hdc, RECT &paint_area) {
+void Platform::Draw(HDC hdc, RECT &paint_area) {
 
     RECT destination_rect;
     if (!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
@@ -63,10 +63,10 @@ void CsPlatform::Draw(HDC hdc, RECT &paint_area) {
     }
 }
 
-void CsPlatform::Draw_Normal(HDC hdc, RECT &paint_area){
+void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     //if there`s collision with paint area -> draw the platform
-    int x = CsConfig::Level_X_Offset + X_Position;
-    int y = CsConfig::Platform_Y_Position;
+    int x = Config::Level_X_Offset + X_Position;
+    int y = Config::Platform_Y_Position;
     int inner_pl_width = Inner_Platform_Width;
 
     Clear_BG(hdc);
@@ -74,28 +74,28 @@ void CsPlatform::Draw_Normal(HDC hdc, RECT &paint_area){
     SelectObject(hdc, Ellipse_Platform_Pen);
     SelectObject(hdc, Ellipse_Platform_Brush);
 
-    Ellipse(hdc, (x+1) * CsConfig::Extent, (y+1) * CsConfig::Extent,
-        (x + 1 + CsConfig::Circle_Size) * CsConfig::Extent, (y + 1 + CsConfig::Circle_Size) * CsConfig::Extent);
-    Ellipse(hdc, (x + 1 + inner_pl_width) * CsConfig::Extent, (y+1) * CsConfig::Extent,
-        (x + 1 + CsConfig::Circle_Size + inner_pl_width) * CsConfig::Extent, (y + 1 + CsConfig::Circle_Size) * CsConfig::Extent);
+    Ellipse(hdc, (x+1) * Config::Extent, (y+1) * Config::Extent,
+        (x + 1 + Config::Circle_Size) * Config::Extent, (y + 1 + Config::Circle_Size) * Config::Extent);
+    Ellipse(hdc, (x + 1 + inner_pl_width) * Config::Extent, (y+1) * Config::Extent,
+        (x + 1 + Config::Circle_Size + inner_pl_width) * Config::Extent, (y + 1 + Config::Circle_Size) * Config::Extent);
 
     SelectObject(hdc, Rectangle_Platform_Pen);
     SelectObject(hdc, Rectangle_Platform_Brush);
 
-    RoundRect(hdc, (x + 4) * CsConfig::Extent, (y + 1) * CsConfig::Extent,
-        (x + inner_pl_width + 3) * CsConfig::Extent,
-        (y + 6) * CsConfig::Extent, 3, 3);
+    RoundRect(hdc, (x + 4) * Config::Extent, (y + 1) * Config::Extent,
+        (x + inner_pl_width + 3) * Config::Extent,
+        (y + 6) * Config::Extent, 3, 3);
 }
 
-void CsPlatform::Draw_EndGame(HDC hdc, RECT &paint_area){
+void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
 
      int x, y, y_offset;
      int column_counter = 0;
-     int area_width = Width * CsConfig::Extent;
-     int area_height = CsConfig::Platform_Height * CsConfig::Extent;
-     const int max_position = CsConfig::Max_Y_Pos * CsConfig::Extent + area_height;
+     int area_width = Width * Config::Extent;
+     int area_height = Config::Platform_Height * Config::Extent;
+     const int max_position = Config::Max_Y_Pos * Config::Extent + area_height;
      COLORREF pixel;
-     COLORREF bg_pixel = RGB(CsConfig::BG_Color.R, CsConfig::BG_Color.G, CsConfig::BG_Color.B);
+     COLORREF bg_pixel = RGB(Config::BG_Color.R, Config::BG_Color.G, Config::BG_Color.B);
 
      for (int i = 0; i < area_width; i++) {
          if (EndGame_Elem_Position[i] > max_position) continue;
@@ -126,10 +126,10 @@ void CsPlatform::Draw_EndGame(HDC hdc, RECT &paint_area){
 
 }
 
-void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
-    int x = (CsConfig::Level_X_Offset + X_Position) * CsConfig::Extent;
-    int y = (CsConfig::Level_Y_Offset * CsConfig::Extent + Y_Position) * CsConfig::Extent;
-    int normal_coords = CsConfig::Circle_Size * CsConfig::Extent;
+void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
+    int x = (Config::Level_X_Offset + X_Position) * Config::Extent;
+    int y = (Config::Level_Y_Offset * Config::Extent + Y_Position) * Config::Extent;
+    int normal_coords = Config::Circle_Size * Config::Extent;
     XFORM xForm, old_xForm;
     double alpha;
 
@@ -155,12 +155,12 @@ void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
     GetWorldTransform(hdc, &old_xForm);
     SetWorldTransform(hdc, &xForm);
 
-    SelectObject(hdc, CsConfig::BG_Pen);
-    SelectObject(hdc, CsConfig::BG_Brush);
+    SelectObject(hdc, Config::BG_Pen);
+    SelectObject(hdc, Config::BG_Brush);
 
-    Rectangle(hdc,-CsConfig::Extent / 2, -normal_coords / 2, CsConfig::Extent / 2, normal_coords / 2);
+    Rectangle(hdc,-Config::Extent / 2, -normal_coords / 2, Config::Extent / 2, normal_coords / 2);
 
-    if (y > CsConfig::Platform_Y_Position * CsConfig::Extent) --Y_Position;
+    if (y > Config::Platform_Y_Position * Config::Extent) --Y_Position;
     else {
         Platform_State = EPS_Extension;
         Inner_Platform_Width = 1;
@@ -171,7 +171,7 @@ void CsPlatform::Draw_StartGame(HDC hdc, RECT& paint_area) {
     SetWorldTransform(hdc, &old_xForm);
 }
 
-void CsPlatform::Draw_Extension(HDC hdc, RECT& paint_area) {
+void Platform::Draw_Extension(HDC hdc, RECT& paint_area) {
     Draw_Normal(hdc, paint_area);
 
     if (Inner_Platform_Width <= 21) {
@@ -185,11 +185,11 @@ void CsPlatform::Draw_Extension(HDC hdc, RECT& paint_area) {
     }
 }
 
-EPlatform_State CsPlatform::Get_State() {
+EPlatform_State Platform::Get_State() {
     return Platform_State;
 }
 
-void CsPlatform::Set_State(EPlatform_State platform_state) {
+void Platform::Set_State(EPlatform_State platform_state) {
     if (Platform_State == platform_state) return;
     else Platform_State = platform_state;
     if (platform_state == EPS_EndGame) {
@@ -200,14 +200,14 @@ void CsPlatform::Set_State(EPlatform_State platform_state) {
     }
 }
 
-void CsPlatform::Clear_BG(HDC hdc) {
-    SelectObject(hdc, CsConfig::BG_Pen);
-    SelectObject(hdc, CsConfig::BG_Brush);
+void Platform::Clear_BG(HDC hdc) {
+    SelectObject(hdc, Config::BG_Pen);
+    SelectObject(hdc, Config::BG_Brush);
 
     Rectangle(hdc, Prev_Platform_Rect.left, Prev_Platform_Rect.top, Prev_Platform_Rect.right, Prev_Platform_Rect.bottom);
 }
 
-void CsPlatform::Act(){
+void Platform::Act(){
     
     switch (Platform_State) {
     case EPS_EndGame:
@@ -218,23 +218,46 @@ void CsPlatform::Act(){
     }
 }
 
-void CsPlatform::Condition() {
-    if (X_Position < CsConfig::Min_X-2)
-        X_Position = CsConfig::Min_X-2;
-    if (X_Position > CsConfig::Max_X+1)
-        X_Position = CsConfig::Max_X+1;
+void Platform::Condition() {
+    if (X_Position < Config::Min_X-2)
+        X_Position = Config::Min_X-2;
+    if (X_Position > Config::Max_X+1)
+        X_Position = Config::Max_X+1;
 }
 
-bool CsPlatform::Check_Colision(double next_x_pos, double next_y_pos, CBall* ball) {
-    if (next_y_pos + ball->Radius > CsConfig::Platform_Y_Position - 5) {
-        /*ball->Ball_Direction = -ball->Ball_Direction;
-        return true;*/
-        if (next_x_pos + ball->Radius > (double)X_Position && next_x_pos - ball->Radius < (double)(X_Position + Width)) {
-            //next_y_pos = CsConfig::Platform_Y_Position - (CsConfig::Platform_Y_Position - next_y_pos);
-            ball->Set_Direction(M_PI + (M_PI - ball->Get_Direction()));
+bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
+    double reflection_pos;
+    double inner_top_y = Config::Platform_Y_Position - 5;
+    double inner_bottom_y = Config::Platform_Height + Config::Platform_Y_Position - 6;
+    double inner_platform_left = X_Position + 3 * Config::Circle_Size - 1;
+    double inner_platform_right = X_Position + Width + Config::Circle_Size;
+
+    ball->Ball_Speed = 3.0;
+
+    if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false; //Config::Platform_Y_Position - 5
+
+    ball->Ball_Speed = 0.3;
+
+    if (ball->Is_Going_Up()) {
+        //We look if our ball is going going up -> reflect it from bottom inner side of the platform
+        if (Dot_Circle_Hit(next_y_pos - inner_bottom_y, next_x_pos, inner_platform_left, inner_platform_right, ball->Radius, reflection_pos)) {
+            ball->Set_Direction(-ball->Get_Direction());//M_PI + (M_PI - ball->Get_Direction())
             return true;
         }
     }
+    else {
+        //We look if our ball is going going down -> reflect it from upper inner side of the platform
+        if (Dot_Circle_Hit(next_y_pos - inner_top_y, next_x_pos, inner_platform_left, inner_platform_right, ball->Radius, reflection_pos)) {
+            ball->Set_Direction(-ball->Get_Direction());//M_PI + (M_PI - ball->Get_Direction())
+            return true;
+        }
+    }
+
+    //if (next_x_pos + ball->Radius > (double)X_Position && next_x_pos - ball->Radius < (double)(X_Position + Width)) {
+    //    //next_y_pos = Config::Platform_Y_Position - (Config::Platform_Y_Position - next_y_pos);
+    //    ball->Set_Direction(M_PI + (M_PI - ball->Get_Direction()));
+    //    return true;
+    //}
     return false;
 }
 

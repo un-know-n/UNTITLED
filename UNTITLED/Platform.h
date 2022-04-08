@@ -12,9 +12,9 @@ enum EPlatform_State{
     EPS_Ready
 };
 
-class CsPlatform: public Hit_Checker{
+class Platform: public Main_Hit_Checker{
 public:
-    CsPlatform();
+    Platform();
 
     RECT Platform_Rect, Prev_Platform_Rect;
     HPEN Ellipse_Platform_Pen, Rectangle_Platform_Pen;
@@ -31,9 +31,9 @@ public:
     int Step_Up;
     int Inner_Platform_Width;
     int Width;
-    int EndGame_Elem_Position[Default_Width * CsConfig::Extent];
+    int EndGame_Elem_Position[Default_Width * Config::Extent];
 
-    virtual bool Check_Colision(double next_x_pos, double next_y_pos, CBall* ball);
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
     void Init();
     void Redraw();
     void Draw(HDC hdc, RECT &paint_area);
