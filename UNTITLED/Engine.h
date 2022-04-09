@@ -28,9 +28,9 @@ const int Timer_ID = WM_USER + 1;
 //class Engine;
 //class Platform;
 
-class Engine {
+class HeadEngine {
 public:
-    Engine();
+    HeadEngine();
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);

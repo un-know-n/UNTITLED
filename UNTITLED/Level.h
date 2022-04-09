@@ -16,7 +16,10 @@ public:
     HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen;
     RECT Level_Area;
 
-    Fade_Brick Fade;
+    //Fade_Brick Fade;
+
+    int Fading_Count;
+    Fade_Brick *Fading[Config::Max_Fading_Count];
 
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
     void Init();
@@ -25,6 +28,8 @@ public:
     //bool Is_Horizontal_Check(double next_x_pos, double next_y_pos);
     bool Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double & reflection_pos); //double &reflection_pos
     bool Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double& reflection_pos); //double &
+    void Add_Fading(int x_coord, int y_coord);
+    void Act();
 
 private:
     double Current_Brick_Left_Side, Current_Brick_Right_Side;

@@ -11,7 +11,7 @@ enum EBrick_Type {
 
 class Fade_Brick {
 public:
-    Fade_Brick(EBrick_Type brick_type);
+    Fade_Brick(EBrick_Type brick_type, int x_pos, int y_pos);
 
     RECT Fade_Rect;
 
@@ -30,7 +30,8 @@ public:
     static HBRUSH Fade_Yellow_Brush[Max_Fade_Step];
 
     void Draw(HDC hdc);
-    void Act(HWND hwnd);
+    void Act();
+    bool Is_Finished();
     static void Set_Color();
     static unsigned char Get_Fade_Channel(unsigned char color, unsigned char bg_color, int step);
     static void Get_Fade_Color(const Color &color, const Color &bg_color,int step, HPEN &pen, HBRUSH &brush);

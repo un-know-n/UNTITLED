@@ -28,8 +28,7 @@ void Platform::Redraw() {
     Platform_Rect.bottom = Platform_Rect.top + Config::Platform_Height * Config::Extent;
 
     if(Platform_State == EPS_EndGame || Platform_State == EPS_StartGame){
-        Prev_Platform_Rect.bottom = 200 * Config::Extent;//EndGame_Position;
-        //Prev_Platform_Rect.top -= 100;
+        Prev_Platform_Rect.bottom = 200 * Config::Extent;
     }
     if (Platform_State == EPS_StartGame) {
         X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
@@ -232,11 +231,11 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
     double inner_platform_left = X_Position + 3 * Config::Circle_Size - 1;
     double inner_platform_right = X_Position + Width + Config::Circle_Size;
 
-    ball->Ball_Speed = 3.0;
+    //ball->Ball_Speed = 3.0;
 
     if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false; //Config::Platform_Y_Position - 5
 
-    ball->Ball_Speed = 0.3;
+    //ball->Ball_Speed = 0.3;
 
     if (ball->Is_Going_Up()) {
         //We look if our ball is going going up -> reflect it from bottom inner side of the platform

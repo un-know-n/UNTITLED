@@ -5,11 +5,11 @@
 
 //          CSENGINE
 
-Engine::Engine() : Game_State(EGS_Play)
+HeadEngine::HeadEngine() : Game_State(EGS_Play)
 {//Constructor6
 }
 
-void Engine::Init_Engine(HWND hwnd) {//It initializes game engine
+void HeadEngine::Init_Engine(HWND hwnd) {//It initializes game engine
 
     Config::Hwnd = hwnd;
     //Arc_Pen = CreatePen(PS_SOLID, 0, RGB(81, 82, 81));
@@ -38,13 +38,7 @@ void Engine::Init_Engine(HWND hwnd) {//It initializes game engine
     SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
 }
 
-void Engine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
-
-    ///////////////// ENTRY-MENU REALIZATION ///////////////////////////
-
-
-
-    //////////////////////////////////////////////////////////////////
+void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc - handle to device context)
 
     RECT destination_rect;
 
@@ -61,7 +55,7 @@ void Engine::Draw_Frame(HDC hdc, RECT &paint_area) {//It draws game screen(hdc -
     //Sleep(125);
 }
 
-int Engine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
+int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     switch (key_type) {
     case EKT_Left:
         Platform.X_Position -= Platform.Platform_Step;
@@ -98,7 +92,7 @@ int Engine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     return 0;
 }
 
-int Engine::On_Timer() {
+int HeadEngine::On_Timer() {
 
     ++Config::Tick;
 
@@ -139,8 +133,8 @@ int Engine::On_Timer() {
 
     }
     Platform.Act();
-    
-    //Level.Fade.Act();
+    Level.Act();
+
     //if(Config::Tick % 2 == 0) 
     //Platform.Act();
     return 0;

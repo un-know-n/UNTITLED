@@ -13,7 +13,7 @@
 
 // Global Variables:
 bool Drawing_Active = false;
-Engine Engine;
+HeadEngine Engine;
 HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
@@ -121,27 +121,27 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	///////////////////////////////////// ENTRY BUTTONS /////////////////////////////////////////////
 
-	HWND Start_Btn = CreateWindow( 
-		L"BUTTON",  // Predefined class; Unicode assumed 
-		L"START",      // Button text 
-		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
-		265,         // x position 
-		250,         // y position 
-		90,        // Button width
-		40,        // Button height
-		hWnd,     // Parent window
-		(HMENU)IDB_Start_Btn,       // No menu.
-		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-		NULL);      // Pointer not needed.
+	//HWND Start_Btn = CreateWindow( 
+	//	L"BUTTON",  // Predefined class; Unicode assumed 
+	//	L"START",      // Button text 
+	//	WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+	//	265,         // x position 
+	//	250,         // y position 
+	//	90,        // Button width
+	//	40,        // Button height
+	//	hWnd,     // Parent window
+	//	(HMENU)IDB_Start_Btn,       // No menu.
+	//	(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+	//	NULL);      // Pointer not needed.
 
-	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-		265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	//HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+	//	265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-		265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	//HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+	//	265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
-		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	//HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
+	//	265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -196,7 +196,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				L"About", MB_ICONINFORMATION | MB_OK);
 			InvalidateRect(hWnd, NULL, FALSE);
 			EndPaint(hWnd, nullptr);
-			UpdateWindow(hWnd);
+			//UpdateWindow(hWnd);
 			break;
 		default:
 			UpdateWindow(hWnd);
@@ -208,14 +208,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		if(Drawing_Active){
+		//if(Drawing_Active){
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
 			// TODO: Add any drawing code that uses hdc here...
 
 			Engine.Draw_Frame(hdc, ps.rcPaint);
 			EndPaint(hWnd, &ps);
-		}
+		//}
 	}
 	break;
 

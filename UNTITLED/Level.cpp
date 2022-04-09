@@ -54,8 +54,8 @@ char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
 
 //          CLEVEL
 
-Level::Level() : Fade(EBT_Blue), Green_Brush(0), Blue_Brush(0), Red_Brush(0), Yellow_Brush(0),
-Green_Pen(0), Blue_Pen(0), Red_Pen(0), Yellow_Pen(0), Level_Area{}
+Level::Level() : Green_Brush(0), Blue_Brush(0), Red_Brush(0), Yellow_Brush(0),
+Green_Pen(0), Blue_Pen(0), Red_Pen(0), Yellow_Pen(0), Level_Area{}, Fading_Count(0)
 {//Constructor
 }
 
@@ -231,6 +231,10 @@ void Level::Draw(HDC hdc, RECT &paint_area) {
     }
 
     //Fade.Draw(hdc);
+
+    for (int i = 0; i < Config::Max_Fading_Count; i++) {
+        if (Fading[i] != 0) Fading[i]->Draw(hdc);
+    }
 }
 
 bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
@@ -275,14 +279,22 @@ bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
             if(got_horizontal_hit && got_vertical_hit){
                 if(horizontal_reflect_pos <= vertical_reflect_pos){
                     ball->Is_Vertical_Reflect(false);
+                    Add_Fading(j, i);
+                    //Level_01[i][j] = (EBrick_Type)0;
                 } else {
                     ball->Is_Vertical_Reflect(true);
+                    Add_Fading(j, i);
+                    //Level_01[i][j] = (EBrick_Type)0;
                 }
             } else if(got_horizontal_hit){
                 ball->Is_Vertical_Reflect(false);
+                Add_Fading(j, i);
+                //Level_01[i][j] = (EBrick_Type)0;
                 return true;
             } else if(got_vertical_hit){
                 ball->Is_Vertical_Reflect(true);
+                Add_Fading(j, i);
+                //Level_01[i][j] = (EBrick_Type)0;
                 return true;
             }
 
@@ -382,6 +394,41 @@ bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, doub
     }
 
     return false;
+}
+
+void Level::Add_Fading(int x_coord, int y_coord) {
+    EBrick_Type brick_type;
+    Fade_Brick* fading;
+
+    if (Fading_Count >= Config::Max_Fading_Count) return;
+
+    brick_type = (EBrick_Type)Level_01[y_coord][x_coord];
+
+    if(brick_type == EBT_None) return;
+
+    fading = new Fade_Brick(brick_type, x_coord, y_coord);
+
+    for (int i = 0; i < Config::Max_Fading_Count; i++) {
+        if (Fading[i] == 0) {
+            Fading[i] = fading;
+            ++Fading_Count;
+            break;
+        }
+    }
+
+    //Fading[Fading_Count++] = fading; 
+}
+
+void Level::Act() {
+    for (int i = 0; i < Config::Max_Fading_Count; i++) {
+        if (Fading[i] != 0) {
+            Fading[i]->Act();
+            if (Fading[i]->Is_Finished()) {
+                delete Fading[i];
+                Fading[i] = 0;
+            }
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////

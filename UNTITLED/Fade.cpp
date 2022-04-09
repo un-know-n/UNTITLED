@@ -11,9 +11,13 @@ HBRUSH Fade_Brick::Fade_Red_Brush[Max_Fade_Step];
 HPEN Fade_Brick::Fade_Yellow_Pen[Max_Fade_Step];
 HBRUSH Fade_Brick::Fade_Yellow_Brush[Max_Fade_Step];
 
-Fade_Brick::Fade_Brick(EBrick_Type brick_type)
+Fade_Brick::Fade_Brick(EBrick_Type brick_type, int x_pos, int y_pos)
     :   Fade_Step(0), Brick_Type(brick_type)
 {//Constructor
+    Fade_Rect.left = (Config::Level_X_Offset + x_pos * Config::Cell_Width) * Config::Extent;
+    Fade_Rect.top = (Config::Level_Y_Offset + y_pos * Config::Cell_Height) * Config::Extent;
+    Fade_Rect.right = Fade_Rect.left + Config::Brick_Width * Config::Extent;
+    Fade_Rect.bottom = Fade_Rect.top + Config::Brick_Height * Config::Extent;
 }
 
 void Fade_Brick::Draw(HDC hdc){
@@ -43,22 +47,22 @@ void Fade_Brick::Draw(HDC hdc){
         break;
     }
 
-    Fade_Rect.left = (Config::Level_X_Offset + Config::Cell_Width) * Config::Extent;
-    Fade_Rect.top = (Config::Level_Y_Offset + Config::Cell_Height) * Config::Extent;
-    Fade_Rect.right = Fade_Rect.left + Config::Brick_Width * Config::Extent;
-    Fade_Rect.bottom = Fade_Rect.top + Config::Brick_Height * Config::Extent;
-
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
 
     RoundRect(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right, Fade_Rect.bottom, 3, 3);
 }
 
-void Fade_Brick::Act(HWND hwnd){
+void Fade_Brick::Act(){
     if(Fade_Step < Max_Fade_Step - 1){
         ++Fade_Step;
-        InvalidateRect(hwnd, &Fade_Rect, FALSE);
+        InvalidateRect(Config::Hwnd, &Fade_Rect, FALSE);
     }
+}
+
+bool Fade_Brick::Is_Finished() {
+    if (Fade_Step >= Max_Fade_Step - 1) return true;
+    else return false;
 }
 
 void Fade_Brick::Set_Color(){
