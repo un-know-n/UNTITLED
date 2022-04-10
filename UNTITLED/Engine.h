@@ -7,26 +7,23 @@
 
 
 enum EKey_Type {
-    EKT_None,
-    EKT_Left,
-    EKT_Right,
-    EKT_Space,
-    EKT_Escape
+    KT_None,
+    KT_Left,
+    KT_Right,
+    KT_Space,
+    KT_Escape
 };
 
 enum EGame_State {
-    EGS_Test,
-    EGS_Play,
-    EGS_GameOver,
-    EGS_Restart
+    GS_Test,
+    GS_Play,
+    GS_GameOver,
+    GS_Restart
 };
 
 const int Button_A = 0x41;
 const int Button_D = 0x44;
 const int Timer_ID = WM_USER + 1;
-
-//class Engine;
-//class Platform;
 
 class HeadEngine {
 public:

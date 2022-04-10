@@ -196,7 +196,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				L"About", MB_ICONINFORMATION | MB_OK);
 			InvalidateRect(hWnd, NULL, FALSE);
 			EndPaint(hWnd, nullptr);
-			//UpdateWindow(hWnd);
+			UpdateWindow(hWnd);
 			break;
 		default:
 			UpdateWindow(hWnd);
@@ -222,22 +222,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_LEFT:
-			return Engine.On_Key_Down(EKT_Left, NULL, hWnd);
+			return Engine.On_Key_Down(KT_Left, NULL, hWnd);
 			break;
 		case VK_RIGHT:
-			return Engine.On_Key_Down(EKT_Right, NULL, hWnd);
+			return Engine.On_Key_Down(KT_Right, NULL, hWnd);
 			break;
 		case VK_SPACE:
-			return Engine.On_Key_Down(EKT_Space, NULL, hWnd);
+			return Engine.On_Key_Down(KT_Space, NULL, hWnd);
 			break;
 		case VK_ESCAPE:
-			return Engine.On_Key_Down(EKT_Escape, NULL, hWnd);
+			return Engine.On_Key_Down(KT_Escape, NULL, hWnd);
 			break;
 		case 0x41:
-			return Engine.On_Key_Down(EKT_None, Button_A, hWnd);
+			return Engine.On_Key_Down(KT_None, Button_A, hWnd);
 			break;
 		case 0x44:
-			return Engine.On_Key_Down(EKT_None, Button_D, hWnd);
+			return Engine.On_Key_Down(KT_None, Button_D, hWnd);
 			break;
 		}
 		break;

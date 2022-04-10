@@ -52,10 +52,17 @@ char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
 //    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 //};
 
-//          CLEVEL
+//          BONUS
+
+Bonus::Bonus(EBonus_Type bonus_type) : Bonus_Type(bonus_type)
+{//Constructor
+}
+
+//          LEVEL
 
 Level::Level() : Green_Brush(0), Blue_Brush(0), Red_Brush(0), Yellow_Brush(0),
-Green_Pen(0), Blue_Pen(0), Red_Pen(0), Yellow_Pen(0), Level_Area{}, Fading_Count(0)
+Green_Pen(0), Blue_Pen(0), Red_Pen(0), Yellow_Pen(0), Level_Area{}, Fading_Count(0),
+Falling_Count(0)
 {//Constructor
 }
 
@@ -65,74 +72,72 @@ void Level::Init(){
     Config::Create_PenNBrush(Config::Red_Brick, Red_Pen, Red_Brush);
     Config::Create_PenNBrush(Config::Yellow_Brick, Yellow_Pen, Yellow_Brush);
 
+    //Creation of the rectangle in which level is put
     Level_Area.left = Config::Level_X_Offset * Config::Extent;
     Level_Area.top = Config::Level_Y_Offset * Config::Extent;
     Level_Area.right = Level_Area.left + Config::Cell_Width * Config::Level_X_Elems * Config::Extent;
     Level_Area.bottom = Level_Area.top + Config::Cell_Height * Config::Level_Y_Elems * Config::Extent;
 }
 
-void Level::Draw_Brick(HDC hdc, int x, int y, EBrick_Type type) {//It draws game brick
+void Level::Draw_Block(HDC hdc, int x, int y, EBlock_Type type) {
+    //It draws different types of game blocks 
 
     HPEN pen;
     HBRUSH brush;
 
     switch (type) {
-    case EBT_Green:
+    case BT_Green:
         pen = Green_Pen;
         brush = Green_Brush;
         break;
-    case EBT_Blue:
+    case BT_Blue:
         pen = Blue_Pen;
         brush = Blue_Brush;
         break;
-    case EBT_Red:
+    case BT_Red:
         pen = Red_Pen;
         brush = Red_Brush;
         break;
-    case EBT_Yellow:
+    case BT_Yellow:
         pen = Yellow_Pen;
         brush = Yellow_Brush;
         break;
-    case EBT_None: return;
+    case BT_None: return;
     default: return;
     }
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
     RoundRect(hdc, x * Config::Extent, y * Config::Extent,
-        (x + Config::Brick_Width) * Config::Extent,
-        (y + Config::Brick_Height) * Config::Extent, 3, 3);
-
-    /*Rectangle(hdc, x * Config::Extent, y * Config::Extent,
-        (x + Config::Brick_Width) * Config::Extent,
-        (y + Config::Brick_Height) * Config::Extent);*/
+        (x + Config::Block_Width) * Config::Extent,
+        (y + Config::Block_Height) * Config::Extent, 3, 3);
 }
 
-void Level::Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush) {
+void Level::Change_BG_Color(EBlock_Type type, HPEN &front_pen, HBRUSH &front_brush, HPEN &back_pen, HBRUSH &back_brush) {
     //We can change only existing bricks
-    if (!(type == EBT_Blue || type == EBT_Green || type == EBT_Red || type == EBT_Yellow)) return;
+    if (!(type == BT_Blue || type == BT_Green || type == BT_Red || type == BT_Yellow)) return;
     else {
-        if (type == EBT_Blue) {
+        if (type == BT_Blue) {
             front_pen = Blue_Pen;
             front_brush = Blue_Brush;
 
             back_pen = Yellow_Pen;
             back_brush = Yellow_Brush;
         }
-        else if (type == EBT_Yellow) {
+        else if (type == BT_Yellow) {
             front_pen = Yellow_Pen;
             front_brush = Yellow_Brush;
 
             back_pen = Blue_Pen;
             back_brush = Blue_Brush;
         }
-        else if (type == EBT_Green) {
+        else if (type == BT_Green) {
             front_pen = Green_Pen;
             front_brush = Green_Brush;
 
             back_pen = Red_Pen;
             back_brush = Red_Brush;
         }
-        else if (type == EBT_Red) {
+        else if (type == BT_Red) {
             front_pen = Red_Pen;
             front_brush = Red_Brush;
 
@@ -142,13 +147,13 @@ void Level::Change_BG_Color(EBrick_Type type, HPEN &front_pen, HBRUSH &front_bru
     }
 }
 
-void Level::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_type, int x, int y, int step) {//It draws falling of the bonuses
+void Level::Draw_Brick_Animation(HDC hdc, EBlock_Type type, EBonus_Type letter_type, int x, int y, int step) {//It draws falling of the bonuses
 
     //Translation of old drawing area to new, which can be rotated in every angle we want to
     XFORM xForm, old_xForm;
     double offset;
     double rotation_angle;
-    int half_height = Config::Brick_Height * Config::Extent / 2;
+    int half_height = Config::Block_Height * Config::Extent / 2;
 
     HPEN front_pen, back_pen;
     HBRUSH front_brush, back_brush;
@@ -170,13 +175,13 @@ void Level::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_
         SelectObject(hdc, front_pen);
         SelectObject(hdc, front_brush);
 
-        Rectangle(hdc, x, y + half_height/2 + Config::Extent, x + Config::Brick_Width * Config::Extent, y + half_height + Config::Extent);
+        Rectangle(hdc, x, y + half_height/2 + Config::Extent, x + Config::Block_Width * Config::Extent, y + half_height + Config::Extent);
 
         //Draw back color
         SelectObject(hdc, back_pen);
         SelectObject(hdc, back_brush);
 
-        Rectangle(hdc, x, y + half_height/2 + Config::Extent, x + Config::Brick_Width * Config::Extent, y + half_height);
+        Rectangle(hdc, x, y + half_height/2 + Config::Extent, x + Config::Block_Width * Config::Extent, y + half_height);
 
     }
     else {
@@ -196,15 +201,15 @@ void Level::Draw_Brick_Animation(HDC hdc, EBrick_Type type, ELetter_Type letter_
 
         offset = 3.0 * (1.0 - fabs(xForm.eM22)) * (double)Config::Extent;
 
-        Rectangle(hdc, 0, -half_height - (int)round(offset),  Config::Brick_Width * Config::Extent, half_height - (int)round(offset));
+        Rectangle(hdc, 0, -half_height - (int)round(offset),  Config::Block_Width * Config::Extent, half_height - (int)round(offset));
 
         SelectObject(hdc, front_pen);
         SelectObject(hdc, front_brush);
 
-        Rectangle(hdc, 0, -half_height,  Config::Brick_Width * Config::Extent, half_height);
+        Rectangle(hdc, 0, -half_height,  Config::Block_Width * Config::Extent, half_height);
 
         if (step > 4 && step < 12) {
-            if (letter_type == ELT_Circle) {
+            if (letter_type == BNT_Circle) {
                 SelectObject(hdc, back_pen);
                 SelectObject(hdc, back_brush);
                 Ellipse(hdc, 0 + 5 * Config::Extent, -half_height + 2, 0 + 10 * Config::Extent, half_height - 2);
@@ -225,141 +230,86 @@ void Level::Draw(HDC hdc, RECT &paint_area) {
 
     for (int i = 0; i < 14; i++) {
         for (int j = 0; j < 12; j++) {
-            Draw_Brick(hdc, Config::Level_X_Offset + j * Config::Cell_Width,
-                Config::Level_Y_Offset + i * Config::Cell_Height, (EBrick_Type)Level_01[i][j]);
+            Draw_Block(hdc, Config::Level_X_Offset + j * Config::Cell_Width,
+                Config::Level_Y_Offset + i * Config::Cell_Height, (EBlock_Type)Level_01[i][j]);
         }
     }
 
-    //Fade.Draw(hdc);
-
+    //Draw fading blocks if we need to
     for (int i = 0; i < Config::Max_Fading_Count; i++) {
         if (Fading[i] != 0) Fading[i]->Draw(hdc);
     }
 }
 
 bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
-    //If struck with bricks
+    //If struck with blocks
 
     double x, y;
     double direction = ball->Get_Direction();
     bool got_horizontal_hit, got_vertical_hit;
     double horizontal_reflect_pos, vertical_reflect_pos;
-    //int brick_x_pos = Config::Level_Y_Elems * Config::Cell_Width;
 
-    if(next_y_pos > (Config::Level_Y_Elems - 1) * Config::Cell_Height + Config::Brick_Height) return false;
+    //Check our y position relatively to max y element
+    if(next_y_pos > (Config::Level_Y_Elems - 1) * Config::Cell_Height + Config::Block_Height) return false;
 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    // THIS IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    /*double min_ball_x = next_x_pos - ball->Radius;
-    double max_ball_x = next_x_pos + ball->Radius;
-    double min_ball_y = next_y_pos - ball->Radius;
-    double max_ball_y = next_y_pos + ball->Radius;
-
-    int min_level_x = (int)(min_ball_x / Config::Cell_Width);
-    int max_level_x = (int)(max_ball_x / Config::Cell_Width);
-    int min_level_y = (int)(min_ball_y / Config::Cell_Height);
-    int max_level_y = (int)(max_ball_y / Config::Cell_Height);*/
-
-    ////////////////////////////////////////////////////////////////////////////////////////
-
-    for (int i = Config::Level_Y_Elems; i >= 0; i--) { // max_y - min_y
-        Current_Brick_Top_Y_Pos = i * Config::Cell_Height;
-        Current_Brick_Bottom_Y_Pos = Current_Brick_Top_Y_Pos + Config::Brick_Height; //Config::Level_X_Elems * Config::Cell_Height
+    for (int i = Config::Level_Y_Elems; i >= 0; i--) { 
+        //Calculating top and bottom sides of the current block
+        Current_Block_Top_Y_Pos = i * Config::Cell_Height;
+        Current_Block_Bottom_Y_Pos = Current_Block_Top_Y_Pos + Config::Block_Height;
         
-        for (int j = 0; j <= Config::Level_X_Elems; j++) { // min_y - max_y
+        for (int j = 0; j <= Config::Level_X_Elems; j++) { 
             if (Level_01[i][j] == 0) continue;
 
-            Current_Brick_Left_Side = Config::Level_X_Offset + j * Config::Cell_Width;
-            Current_Brick_Right_Side = Current_Brick_Left_Side + Config::Brick_Width;
+            //Calculating left and right sides of the current block
+            Current_Block_Left_Side = Config::Level_X_Offset + j * Config::Cell_Width;
+            Current_Block_Right_Side = Current_Block_Left_Side + Config::Block_Width;
 
+            //Making variables which helps us to see which side was collided
             got_horizontal_hit = Check_Horizontal_Hit(i, j,next_x_pos, next_y_pos, ball, horizontal_reflect_pos);
             got_vertical_hit = Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball, vertical_reflect_pos);
 
+            //Check the collision scenario
             if(got_horizontal_hit && got_vertical_hit){
                 if(horizontal_reflect_pos <= vertical_reflect_pos){
                     ball->Is_Vertical_Reflect(false);
-                    Add_Fading(j, i);
-                    //Level_01[i][j] = (EBrick_Type)0;
+                    What_After_Struck(i, j);
                 } else {
                     ball->Is_Vertical_Reflect(true);
-                    Add_Fading(j, i);
-                    //Level_01[i][j] = (EBrick_Type)0;
+                    What_After_Struck(i, j);
                 }
             } else if(got_horizontal_hit){
                 ball->Is_Vertical_Reflect(false);
-                Add_Fading(j, i);
-                //Level_01[i][j] = (EBrick_Type)0;
+                What_After_Struck(i, j);
                 return true;
             } else if(got_vertical_hit){
                 ball->Is_Vertical_Reflect(true);
-                Add_Fading(j, i);
-                //Level_01[i][j] = (EBrick_Type)0;
+                What_After_Struck(i, j);
                 return true;
             }
-
-            //if (Is_Horizontal_Check(next_x_pos, next_y_pos)) {
-            //    if (Check_Horizontal_Hit(i, j,next_x_pos, next_y_pos, ball)) return true; //horizontal_reflect_pos
-            //    if (Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball)) return true; //vertical_reflect_pos
-            // }
-            //else {
-            //    if (Check_Vertical_Hit(i, j, next_x_pos, next_y_pos, ball)) return true;
-            //    if (Check_Horizontal_Hit(i, j, next_x_pos, next_y_pos, ball)) return true;
-            //}
-
-            //if (next_y_pos - ball->Radius / 2 < Current_Brick_Bottom_Y_Pos) {
-                ////next_y_pos = Current_Brick_Bottom_Y_Pos - (next_y_pos - Current_Brick_Bottom_Y_Pos);
-                //ball->Ball_Direction = -ball->Ball_Direction;
-                //return true;
-            //}
         }
-        Current_Brick_Bottom_Y_Pos -= Config::Cell_Height;
+        //Going down to the next row of blocks
+        Current_Block_Bottom_Y_Pos -= Config::Cell_Height;
     }
 
     return false;
 }
 
-//bool Level::Is_Horizontal_Check(double next_x_pos, double next_y_pos) {
-//    double horizontal_min_line, vertical_min_line, another_min_line;
-//
-//    //We`re making lines which can influence on future type of examination
-//
-//    horizontal_min_line = fabs(next_x_pos - Current_Brick_Left_Side);
-//    another_min_line = fabs(next_x_pos - Current_Brick_Right_Side);
-//
-//    if (another_min_line < horizontal_min_line) horizontal_min_line = another_min_line;
-//
-//    vertical_min_line = fabs(next_y_pos - Current_Brick_Top_Y_Pos);
-//    another_min_line = fabs(next_y_pos - Current_Brick_Bottom_Y_Pos);
-//
-//    if (another_min_line < vertical_min_line) vertical_min_line = another_min_line;
-//
-//    if (horizontal_min_line <= vertical_min_line) return true;
-//    else return false;
-//}
-
-bool Level::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double & reflection_pos) { //double &reflection_pos
+bool Level::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double & reflection_pos) {
     double direction = ball->Get_Direction();
     
     if (ball->Is_Going_Up()) {
-        //Check bottom line of the brick
-        if (Dot_Circle_Hit(next_y_pos - Current_Brick_Bottom_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius, reflection_pos)) { //reflection_pos
+        //Check bottom line of the block
+        if (Dot_Circle_Hit(next_y_pos - Current_Block_Bottom_Y_Pos, next_x_pos, Current_Block_Left_Side, Current_Block_Right_Side, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball down
-            if (level_y < Config::Level_Y_Elems - 1 && Level_01[level_y + 1][level_x] == 0) {
-                //ball->Is_Vertical_Reflect(false);
-                return true;
-            }
+            if (level_y < Config::Level_Y_Elems - 1 && Level_01[level_y + 1][level_x] == 0) return true;
             else return false;
         }
     }
     else {
-        //Check upper line of the brick
-        if (Dot_Circle_Hit(next_y_pos - Current_Brick_Top_Y_Pos, next_x_pos, Current_Brick_Left_Side, Current_Brick_Right_Side, ball->Radius, reflection_pos)) { //reflection_pos
+        //Check upper line of the block
+        if (Dot_Circle_Hit(next_y_pos - Current_Block_Top_Y_Pos, next_x_pos, Current_Block_Left_Side, Current_Block_Right_Side, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball up
-            if (level_y > 0 && Level_01[level_y - 1][level_x] == 0) {
-                //ball->Is_Vertical_Reflect(false);
-                return true;
-            }
+            if (level_y > 0 && Level_01[level_y - 1][level_x] == 0) return true;
             else return false;
         }
     }
@@ -367,28 +317,22 @@ bool Level::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, do
     return false;
 }
 
-bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double &reflection_pos) { //double &reflection_pos
+bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double &reflection_pos) {
     double direction = ball->Get_Direction();
 
     if (ball->Is_Going_Left()) {
-        //Check right side of the brick
-        if (Dot_Circle_Hit(Current_Brick_Right_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius, reflection_pos)) { //reflection_pos
+        //Check right side of the block
+        if (Dot_Circle_Hit(Current_Block_Right_Side - next_x_pos, next_y_pos, Current_Block_Top_Y_Pos, Current_Block_Bottom_Y_Pos, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball to the right side
-            if (level_x < Config::Level_X_Elems && Level_01[level_y][level_x + 1] == 0) {
-                //ball->Is_Vertical_Reflect(true);
-                return true;
-            }
+            if (level_x < Config::Level_X_Elems && Level_01[level_y][level_x + 1] == 0) return true;
             else return false;
         }
     }
     else {
-        //Check left side of the brick
-        if (Dot_Circle_Hit(Current_Brick_Left_Side - next_x_pos, next_y_pos, Current_Brick_Top_Y_Pos, Current_Brick_Bottom_Y_Pos, ball->Radius, reflection_pos)) { //reflection_pos
+        //Check left side of the block
+        if (Dot_Circle_Hit(Current_Block_Left_Side - next_x_pos, next_y_pos, Current_Block_Top_Y_Pos, Current_Block_Bottom_Y_Pos, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball to the left side
-            if (level_x > 0 && Level_01[level_y][level_x - 1] == 0) {
-                //ball->Is_Vertical_Reflect(true);
-                return true;
-            }
+            if (level_x > 0 && Level_01[level_y][level_x - 1] == 0) return true;
             else return false;
         }
     }
@@ -396,18 +340,22 @@ bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, doub
     return false;
 }
 
-void Level::Add_Fading(int x_coord, int y_coord) {
-    EBrick_Type brick_type;
-    Fade_Brick* fading;
+void Level::Add_Fading(int y_coord, int x_coord) {
+    EBlock_Type block_type;
+    Fade_Block* fading;
 
+    //Check if our number of fading blocks is within the array
     if (Fading_Count >= Config::Max_Fading_Count) return;
 
-    brick_type = (EBrick_Type)Level_01[y_coord][x_coord];
+    //Creation of variable which contains the color of the block
+    block_type = (EBlock_Type)Level_01[y_coord][x_coord];
 
-    if(brick_type == EBT_None) return;
+    if(block_type == BT_None) return;
 
-    fading = new Fade_Brick(brick_type, x_coord, y_coord);
+    //Creation of new poiner to the current block
+    fading = new Fade_Block(block_type, x_coord, y_coord);
 
+    //Check if we have place in our array and if not -> move to the next cell
     for (int i = 0; i < Config::Max_Fading_Count; i++) {
         if (Fading[i] == 0) {
             Fading[i] = fading;
@@ -415,20 +363,29 @@ void Level::Add_Fading(int x_coord, int y_coord) {
             break;
         }
     }
-
-    //Fading[Fading_Count++] = fading; 
 }
 
 void Level::Act() {
+    //We`re making every element in our array to continue their fading till the end
     for (int i = 0; i < Config::Max_Fading_Count; i++) {
         if (Fading[i] != 0) {
             Fading[i]->Act();
             if (Fading[i]->Is_Finished()) {
                 delete Fading[i];
                 Fading[i] = 0;
+                --Fading_Count;
             }
         }
     }
+}
+
+void Level::What_After_Struck(int y_coord, int x_coord) {
+    
+
+}
+
+void Level::Add_Bonus(int y_coord, int x_coord) {
+	
 }
 
 /////////////////////////////////////////////////////////////////////

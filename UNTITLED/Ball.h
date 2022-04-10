@@ -3,10 +3,10 @@
 #include "Config.h"
 
 enum EBall_State {
-    EBS_Test,
-    EBS_None,
-    EBS_Start,
-    EBS_Free
+    BS_Test,
+    BS_None,
+    BS_Start,
+    BS_Free
 };
 
 class Ball;

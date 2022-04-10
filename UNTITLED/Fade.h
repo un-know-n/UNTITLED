@@ -1,21 +1,21 @@
 #pragma once
 #include "Config.h"
 
-enum EBrick_Type {
-    EBT_None,
-    EBT_Green,
-    EBT_Blue, 
-    EBT_Red,
-    EBT_Yellow
+enum EBlock_Type {
+    BT_None,
+    BT_Green,
+    BT_Blue, 
+    BT_Red,
+    BT_Yellow
 };
 
-class Fade_Brick {
+class Fade_Block {
 public:
-    Fade_Brick(EBrick_Type brick_type, int x_pos, int y_pos);
+    Fade_Block(EBlock_Type block_type, int x_pos, int y_pos);
 
     RECT Fade_Rect;
 
-    EBrick_Type Brick_Type;
+    EBlock_Type Bonus_Type;
 
     int Fade_Step;
     static const int Max_Fade_Step = 20;

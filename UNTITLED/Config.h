@@ -24,20 +24,21 @@ public:
     static const int FPS = 20;
     static int Tick;
     static const int Max_Fading_Count = 10;
+    static const int Max_Falling_Count = 10;
     //static const int Level_X_Offset = 6;
     //static const int Level_Y_Offset = 4;
 
 //Level
-    static const int Brick_Width = 15;
-    static const int Brick_Height = 7;
+    static const int Block_Width = 15;
+    static const int Block_Height = 7;
     static const int Level_X_Elems = 14;
     static const int Level_Y_Elems = 12;
     static const int Level_X_Offset = 8;
     static const int Level_Y_Offset = 6;
     static const int Min_X = 0;
     static const int Max_X = 188 - 3 * Level_X_Offset;//Max_X_Pos -...
-    static const int Cell_Width = (Brick_Width + 1);
-    static const int Cell_Height = (Brick_Height + 1);
+    static const int Cell_Width = (Block_Width + 1);
+    static const int Cell_Height = (Block_Height + 1);
 
 //Ball
     static const int Ball_Size = 4;

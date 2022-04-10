@@ -24,6 +24,8 @@ void Config::Setup_Colors(){
     Config::Create_PenNBrush(Config::BG_Color, Config::BG_Pen, Config::BG_Brush);
 }
 
+//Using 3-rd principle - Polymorphism
+
 void Config::Create_PenNBrush(const Color &color, HPEN &pen, HBRUSH &brush) {
     pen = CreatePen(PS_SOLID, 0, RGB(color.R, color.G, color.B));
     brush = CreateSolidBrush(RGB(color.R, color.G, color.B));
