@@ -5,7 +5,7 @@
 //          CSPLATFORM
 
 Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(EPS_StartGame), Step_Up(0), Platform_Step(3),
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_StartGame), Step_Up(0), Platform_Step(3),
 Platform_Rect{}
 {//Constructor
     X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
@@ -19,7 +19,7 @@ void Platform::Init(){
 void Platform::Redraw() {
     Prev_Platform_Rect = Platform_Rect;
     int temp;
-    if (Platform_State == EPS_StartGame) temp = Config::Circle_Size;
+    if (Platform_State == PS_StartGame) temp = Config::Circle_Size;
     else temp = Width;
 
     Platform_Rect.left = (Config::Level_X_Offset + X_Position) * Config::Extent;
@@ -27,10 +27,10 @@ void Platform::Redraw() {
     Platform_Rect.right = Platform_Rect.left + temp * Config::Extent;
     Platform_Rect.bottom = Platform_Rect.top + Config::Platform_Height * Config::Extent;
 
-    if(Platform_State == EPS_EndGame || Platform_State == EPS_StartGame){
+    if(Platform_State == PS_EndGame || Platform_State == PS_StartGame){
         Prev_Platform_Rect.bottom = 200 * Config::Extent;
     }
-    if (Platform_State == EPS_StartGame) {
+    if (Platform_State == PS_StartGame) {
         X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
     }
 
@@ -44,19 +44,19 @@ void Platform::Draw(HDC hdc, RECT &paint_area) {
     if (!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
 
     switch (Platform_State) {
-    case EPS_Normal:
+    case PS_Normal:
         Draw_Normal(hdc, paint_area);
         break;
 
-    case EPS_EndGame:
+    case PS_EndGame:
         Draw_EndGame(hdc, paint_area);
         break;
 
-    case EPS_StartGame:
+    case PS_StartGame:
         Draw_StartGame(hdc, paint_area);
         break;
 
-    case EPS_Extension:
+    case PS_Extension:
         Draw_Extension(hdc, paint_area);
         break;
     }
@@ -74,16 +74,16 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     SelectObject(hdc, Ellipse_Platform_Brush);
 
     Ellipse(hdc, (x+1) * Config::Extent, (y+1) * Config::Extent,
-        (x + 1 + Config::Circle_Size) * Config::Extent, (y + 1 + Config::Circle_Size) * Config::Extent);
+        (x + 1 + Config::Circle_Size) * Config::Extent - 1, (y + 1 + Config::Circle_Size) * Config::Extent - 1);
     Ellipse(hdc, (x + 1 + inner_pl_width) * Config::Extent, (y+1) * Config::Extent,
-        (x + 1 + Config::Circle_Size + inner_pl_width) * Config::Extent, (y + 1 + Config::Circle_Size) * Config::Extent);
+        (x + 1 + Config::Circle_Size + inner_pl_width) * Config::Extent - 1, (y + 1 + Config::Circle_Size) * Config::Extent - 1);
 
     SelectObject(hdc, Rectangle_Platform_Pen);
     SelectObject(hdc, Rectangle_Platform_Brush);
 
     RoundRect(hdc, (x + 4) * Config::Extent, (y + 1) * Config::Extent,
-        (x + inner_pl_width + 3) * Config::Extent,
-        (y + 6) * Config::Extent, 3, 3);
+        (x + inner_pl_width + 3) * Config::Extent - 1,
+        (y + 6) * Config::Extent - 1, 3, 3);
 }
 
 void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
@@ -119,7 +119,7 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
      }
      
      if (column_counter == 0) {
-         Platform_State = EPS_None;
+         Platform_State = PS_None;
          Sleep(200);
      }
 
@@ -144,7 +144,7 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
     alpha = 2.0 * M_PI / (double)(Max_Rotation) * (double)(Step_Up);
     ++Step_Up;
 
-    SetGraphicsMode(hdc, GM_ADVANCED);
+    //SetGraphicsMode(hdc, GM_ADVANCED);
     xForm.eM11 = (float)cos(alpha);
     xForm.eM12 = (float)sin(alpha);
     xForm.eM21 = (float)-sin(alpha);
@@ -161,7 +161,7 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
 
     if (y > Config::Platform_Y_Position * Config::Extent) --Y_Position;
     else {
-        Platform_State = EPS_Extension;
+        Platform_State = PS_Extension;
         Inner_Platform_Width = 1;
     }
 
@@ -178,7 +178,7 @@ void Platform::Draw_Extension(HDC hdc, RECT& paint_area) {
         Inner_Platform_Width += 3;
     }
     else {
-        Platform_State = EPS_Ready;
+        Platform_State = PS_Ready;
         Redraw();
         //Inner_Platform_Width = 21;
     }
@@ -191,7 +191,7 @@ EPlatform_State Platform::Get_State() {
 void Platform::Set_State(EPlatform_State platform_state) {
     if (Platform_State == platform_state) return;
     else Platform_State = platform_state;
-    if (platform_state == EPS_EndGame) {
+    if (platform_state == PS_EndGame) {
         int length = sizeof(EndGame_Elem_Position) / sizeof(EndGame_Elem_Position[0]);
         for (int i = 0; i < length; i++) {
             EndGame_Elem_Position[i] = Platform_Rect.bottom;
@@ -209,9 +209,9 @@ void Platform::Clear_BG(HDC hdc) {
 void Platform::Act(){
     
     switch (Platform_State) {
-    case EPS_EndGame:
-    case EPS_StartGame:
-    case EPS_Extension:
+    case PS_EndGame:
+    case PS_StartGame:
+    case PS_Extension:
         Redraw();
         break;
     }

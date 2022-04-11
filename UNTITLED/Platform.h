@@ -4,12 +4,12 @@
 #include "Ball.h"
 
 enum EPlatform_State{
-    EPS_None,
-    EPS_Normal,
-    EPS_EndGame,
-    EPS_StartGame,
-    EPS_Extension,
-    EPS_Ready
+    PS_None,
+    PS_Normal,
+    PS_EndGame,
+    PS_StartGame,
+    PS_Extension,
+    PS_Ready
 };
 
 class Platform: public Main_Hit_Checker{

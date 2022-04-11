@@ -14,19 +14,21 @@ public:
 
 class Config{
 public:
-    static const Color BG_Color, Blue_Brick, Green_Brick, Yellow_Brick, Red_Brick;
+    static const Color BG_Color, Blue_Block, Green_Block, Yellow_Block, Red_Block;
+
+    static HBRUSH Green_Brush, Blue_Brush, Red_Brush, Yellow_Brush;
+    static HPEN Green_Pen, Blue_Pen, Red_Pen, Yellow_Pen;
 
     static HPEN BG_Pen;
     static HBRUSH BG_Brush;
     static HWND Hwnd;
 
+//Main variables
     static const int Extent = 3;
     static const int FPS = 20;
     static int Tick;
     static const int Max_Fading_Count = 10;
     static const int Max_Falling_Count = 10;
-    //static const int Level_X_Offset = 6;
-    //static const int Level_Y_Offset = 4;
 
 //Level
     static const int Block_Width = 15;

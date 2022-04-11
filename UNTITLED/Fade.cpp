@@ -12,7 +12,7 @@ HPEN Fade_Block::Fade_Yellow_Pen[Max_Fade_Step];
 HBRUSH Fade_Block::Fade_Yellow_Brush[Max_Fade_Step];
 
 Fade_Block::Fade_Block(EBlock_Type block_type, int x_pos, int y_pos)
-    :   Fade_Step(0), Bonus_Type(block_type)
+    :   Fade_Step(0), Block_Type(block_type)
 {//Constructor
     //Creation of the rectangle in which block is fading
     Fade_Rect.left = (Config::Level_X_Offset + x_pos * Config::Cell_Width) * Config::Extent;
@@ -26,7 +26,7 @@ void Fade_Block::Draw(HDC hdc){
     HPEN pen = 0;
     HBRUSH brush = 0;
 
-    switch (Bonus_Type)
+    switch (Block_Type)
     {
     case BT_Green:
         pen = Fade_Green_Pen[Fade_Step];
@@ -51,7 +51,7 @@ void Fade_Block::Draw(HDC hdc){
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
 
-    RoundRect(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right, Fade_Rect.bottom, 3, 3);
+    Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right, Fade_Rect.bottom);
 }
 
 void Fade_Block::Act(){
@@ -71,10 +71,10 @@ void Fade_Block::Set_Color(){
     //unsigned char r, g, b;
 
     for(int i = 0; i < Max_Fade_Step; i++){
-        Get_Fade_Color(Config::Blue_Brick, Config::BG_Color, i, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
-        Get_Fade_Color(Config::Red_Brick, Config::BG_Color, i, Fade_Red_Pen[i], Fade_Red_Brush[i]);
-        Get_Fade_Color(Config::Green_Brick, Config::BG_Color, i, Fade_Green_Pen[i], Fade_Green_Brush[i]);
-        Get_Fade_Color(Config::Yellow_Brick, Config::BG_Color, i, Fade_Yellow_Pen[i], Fade_Yellow_Brush[i]);
+        Get_Fade_Color(Config::Blue_Block, Config::BG_Color, i, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
+        Get_Fade_Color(Config::Red_Block, Config::BG_Color, i, Fade_Red_Pen[i], Fade_Red_Brush[i]);
+        Get_Fade_Color(Config::Green_Block, Config::BG_Color, i, Fade_Green_Pen[i], Fade_Green_Brush[i]);
+        Get_Fade_Color(Config::Yellow_Block, Config::BG_Color, i, Fade_Yellow_Pen[i], Fade_Yellow_Brush[i]);
     }
 
 }

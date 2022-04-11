@@ -5,7 +5,7 @@
 
 bool Border::Have_Floor = true;
 
-Border::Border() : Arc_Pen(0), Border_Main_Pen(0), Border_White_Pen(0),
+Border::Border() : Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)
 {//Constructor
 }
@@ -21,18 +21,18 @@ void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     SelectObject(hdc, Border_Main_Brush);
 
     if (is_vertical) 
-        Rectangle(hdc, (x + 1) * Config::Extent, y * Config::Extent, (x + 4) * Config::Extent, (y + 4) * Config::Extent);
+        Rectangle(hdc, (x + 1) * Config::Extent, y * Config::Extent, (x + 4) * Config::Extent - 1, (y + 4) * Config::Extent - 1);
     else 
-        Rectangle(hdc, x * Config::Extent, (y + 1) * Config::Extent, (x + 4) * Config::Extent, (y + 4) * Config::Extent);
+        Rectangle(hdc, x * Config::Extent, (y + 1) * Config::Extent, (x + 4) * Config::Extent - 1, (y + 4) * Config::Extent - 1);
 
     //White line
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if(is_vertical)
-        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 1) * Config::Extent - 1, (y + 4) * Config::Extent);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 1) * Config::Extent - 2, (y + 4) * Config::Extent - 1);
     else
-        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent, (y + 1) * Config::Extent - 1);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent - 1, (y + 1) * Config::Extent - 2);
 
 }
 

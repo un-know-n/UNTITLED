@@ -29,7 +29,7 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
         SelectObject(hdc, Config::BG_Pen);
         SelectObject(hdc, Config::BG_Brush);
 
-        Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 1, Prev_Ball_Rect.bottom - 1);
+        Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 2, Prev_Ball_Rect.bottom - 2);
     }
     
     if (IntersectRect(&destination_rect, &paint_area, &Ball_Rect)) {
@@ -37,7 +37,7 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
         SelectObject(hdc, Ball_Pen);
         SelectObject(hdc, Ball_Brush);
 
-        Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 1, Ball_Rect.bottom - 1);
+        Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 2, Ball_Rect.bottom - 2);
     }
     
 }

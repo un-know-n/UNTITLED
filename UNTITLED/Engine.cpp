@@ -28,7 +28,7 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Ball::Add_Hit_Checker(&Platform);
 
     Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width / 2);
-    Platform.Set_State(EPS_StartGame);
+    Platform.Set_State(PS_StartGame);
     Platform.Redraw();
     
     SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
@@ -36,17 +36,15 @@ void HeadEngine::Init_Engine(HWND hwnd) {
 
 void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
-
-    RECT destination_rect;
-
-    Level.Draw(hdc, paint_area);
-    /*for (int i = 0; i < 16; i++) {
-    Draw_Brick_Animation(hdc, BT_Blue, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 100, i);
-    Draw_Brick_Animation(hdc, BT_Yellow, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 140, i);
-    Draw_Brick_Animation(hdc, BT_Green, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 180, i);
-    Draw_Brick_Animation(hdc, BT_Red, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 220, i);
-    }*/
+    SetGraphicsMode(hdc, GM_ADVANCED);
     
+    /*for (int i = 0; i < 16; i++) {
+    Draw_Block_Animation(hdc, BT_Blue, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 100, i);
+    Draw_Block_Animation(hdc, BT_Yellow, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 140, i);
+    Draw_Block_Animation(hdc, BT_Green, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 180, i);
+    Draw_Block_Animation(hdc, BT_Red, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 220, i);
+    }*/
+    Level.Draw(hdc, paint_area);
     Ball.Draw(hdc, paint_area);
     Border.Draw(hdc, paint_area);
     Platform.Draw(hdc, paint_area);
@@ -66,9 +64,9 @@ int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
         Platform.Redraw();
         break;
     case KT_Space:
-        if (Platform.Get_State() == EPS_Ready) {
+        if (Platform.Get_State() == PS_Ready) {
             Ball.Set_State(BS_Free, Platform.X_Position + Platform.Width / 2 + Platform.Width / 4);
-            Platform.Set_State(EPS_Normal);
+            Platform.Set_State(PS_Normal);
         }
         break;
     case KT_Escape:
@@ -97,7 +95,7 @@ int HeadEngine::On_Timer() {
     switch (Game_State) {
     case GS_Test:
         Ball.Set_Test();
-        Platform.Set_State(EPS_None);
+        Platform.Set_State(PS_None);
         Game_State = GS_Play;
         break;
 
@@ -105,7 +103,7 @@ int HeadEngine::On_Timer() {
         Ball.Move();
         if (Ball.Get_State() == BS_None) {
             Game_State = GS_GameOver;
-            Platform.Set_State(EPS_EndGame);
+            Platform.Set_State(PS_EndGame);
         } 
         if(Ball.Is_Test_Finished()){
             Game_State = GS_Test;
@@ -113,14 +111,14 @@ int HeadEngine::On_Timer() {
         break;
 
     case GS_GameOver:
-        if (Platform.Get_State() == EPS_None) {
+        if (Platform.Get_State() == PS_None) {
             Game_State = GS_Restart;
-            Platform.Set_State(EPS_StartGame);
+            Platform.Set_State(PS_StartGame);
         }
         break;
 
     case GS_Restart:
-        if (Platform.Get_State() == EPS_Ready) {
+        if (Platform.Get_State() == PS_Ready) {
             Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4);
             Ball.Ball_Speed = 0.0;
             Game_State = GS_Play;

@@ -15,7 +15,7 @@ public:
 
     RECT Fade_Rect;
 
-    EBlock_Type Bonus_Type;
+    EBlock_Type Block_Type;
 
     int Fade_Step;
     static const int Max_Fade_Step = 20;
@@ -32,6 +32,7 @@ public:
     void Draw(HDC hdc);
     void Act();
     bool Is_Finished();
+
     static void Set_Color();
     static unsigned char Get_Fade_Channel(unsigned char color, unsigned char bg_color, int step);
     static void Get_Fade_Color(const Color &color, const Color &bg_color,int step, HPEN &pen, HBRUSH &brush);

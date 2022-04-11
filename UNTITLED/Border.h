@@ -8,7 +8,7 @@ public:
     Border();
     
 
-    HPEN Arc_Pen, Border_Main_Pen, Border_White_Pen;
+    HPEN Border_Main_Pen, Border_White_Pen;
     HBRUSH Border_Main_Brush, Border_White_Brush;
 
     static bool Have_Floor;
