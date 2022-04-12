@@ -8,6 +8,7 @@
 class Color{
 public:
     Color(unsigned char r, unsigned char g, unsigned char b);
+    int Get_RGB() const;
     unsigned char R, G, B;
 };
 
@@ -51,7 +52,7 @@ public:
     static const int Platform_Height = 7;
 
     static const int Max_X_Pos = Level_X_Offset + Cell_Width * Level_Y_Elems - Ball_Size * Extent;
-    static const int Max_Y_Pos = 199;
+    static const int Max_Y_Pos = 200;//199
 
     static void Setup_Colors();
     static void Create_PenNBrush(const Color &color, HPEN &pen, HBRUSH &brush);

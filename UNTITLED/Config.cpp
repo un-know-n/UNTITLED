@@ -7,11 +7,17 @@ Color::Color(unsigned char r, unsigned char g, unsigned char b)
 {//Constructor
 }
 
+int Color::Get_RGB() const {
+    return RGB(R, G, B);
+}
+
 const Color Config::BG_Color(29, 31, 29);
 const Color Config::Blue_Block(43, 63, 97);
 const Color Config::Green_Block(43, 97, 49);
 const Color Config::Yellow_Block(112, 101, 46);
 const Color Config::Red_Block(97, 43, 43);
+
+//          CSCONFIG
 
 HPEN Config::Green_Pen, Config::Blue_Pen, Config::Red_Pen, Config::Yellow_Pen;
 HBRUSH Config::Green_Brush, Config::Blue_Brush, Config::Red_Brush, Config::Yellow_Brush;
@@ -20,8 +26,6 @@ HPEN Config::BG_Pen;
 HBRUSH Config::BG_Brush;
 HWND Config::Hwnd;
 int Config::Tick = 0;
-
-//          CSCONFIG
 
 void Config::Setup_Colors(){
     Config::Create_PenNBrush(Config::Green_Block, Config::Green_Pen, Config::Green_Brush);

@@ -14,7 +14,10 @@ enum EPlatform_State{
 
 class Platform: public Main_Hit_Checker{
 public:
+    ~Platform();
     Platform();
+
+    Color Ellipse_Platform_Pen_Color, Rectangle_Platform_Pen_Color;
 
     RECT Platform_Rect, Prev_Platform_Rect;
     HPEN Ellipse_Platform_Pen, Rectangle_Platform_Pen;
@@ -31,7 +34,11 @@ public:
     int Step_Up;
     int Inner_Platform_Width;
     int Width;
+    int Height;
     int EndGame_Elem_Position[Default_Width * Config::Extent];
+
+    const int Platform_Normal_Width, Platform_Normal_Height;
+    int* Platform_Scan;
 
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
     void Init();
@@ -46,4 +53,5 @@ public:
     void Clear_BG(HDC hdc);
     void Act();
     void Condition();
+    bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
 };

@@ -3,7 +3,7 @@
 
 //          CSBORDER
 
-bool Border::Have_Floor = true;
+bool Border::Have_Floor = false;
 
 Border::Border() : Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)
@@ -81,7 +81,8 @@ bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
         if (Have_Floor) {
             collided = true;
             ball->Is_Vertical_Reflect(false);
-        } else ball->Ball_State = BS_None;
+        } else if (next_y_pos > Config::Max_Y_Pos + Config::Ball_Size)
+            ball->Ball_State = BS_None;
         /* next_y_pos = Config::Level_X_Offset - (Config::Level_X_Offset - next_y_pos);
          Ball_Direction = -Ball_Direction;*/
     }

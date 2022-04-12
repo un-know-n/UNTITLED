@@ -4,9 +4,14 @@
 
 //          CSPLATFORM
 
-Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Inner_Platform_Width(21),
+Platform::~Platform() {
+    delete[] Platform_Scan;
+}
+
+Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_StartGame), Step_Up(0), Platform_Step(3),
-Platform_Rect{}
+Platform_Rect{}, Platform_Normal_Width(Width * Config::Extent), Platform_Normal_Height(Height * Config::Extent),
+Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
 {//Constructor
     X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
 }
@@ -67,6 +72,7 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     int x = Config::Level_X_Offset + X_Position;
     int y = Config::Platform_Y_Position;
     int inner_pl_width = Inner_Platform_Width;
+    int offset = 0;
 
     Clear_BG(hdc);
 
@@ -84,6 +90,19 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     RoundRect(hdc, (x + 4) * Config::Extent, (y + 1) * Config::Extent,
         (x + inner_pl_width + 3) * Config::Extent - 1,
         (y + 6) * Config::Extent - 1, 3, 3);
+
+    x *= Config::Extent;
+    y *= Config::Extent;
+
+    if (Platform_Scan == 0) {
+        Platform_Scan = new int[Platform_Normal_Width * Platform_Normal_Height];
+
+        for (int i = 0; i < Platform_Normal_Height; i++) {
+            for (int j = 0; j < Platform_Normal_Width; j++) {
+                Platform_Scan[offset++] = GetPixel(hdc, x + j, y + i);
+            }
+        }
+    }
 }
 
 void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
@@ -95,6 +114,8 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
      const int max_position = Config::Max_Y_Pos * Config::Extent + area_height;
      COLORREF pixel;
      COLORREF bg_pixel = RGB(Config::BG_Color.R, Config::BG_Color.G, Config::BG_Color.B);
+     HPEN color_pen;
+     int column_length = 0;
 
      for (int i = 0; i < area_width; i++) {
          if (EndGame_Elem_Position[i] > max_position) continue;
@@ -103,7 +124,8 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
 
          y_offset = rand() % 4 + 1;
          x = Platform_Rect.left + i;
-         for (int j = 0; j < area_height; j++) {
+
+         /*for (int j = 0; j < area_height; j++) {
 
              y = EndGame_Elem_Position[i] - j;
 
@@ -113,7 +135,26 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
          for (int j = 0; j < y_offset; j++) {
              y = EndGame_Elem_Position[i] - area_height + j;
              SetPixel(hdc, x, y, bg_pixel);
+         }*/
+
+         ////////// PLACE TO DO CODE
+
+         
+         int j = 0;
+         y = EndGame_Elem_Position[i] - area_height;
+
+         MoveToEx(hdc, x, y, 0);
+
+         while (Get_Platform_Column_Color(i, j, color_pen, column_length)) {
+
+             SelectObject(hdc, color_pen);
+             LineTo(hdc, x, y + column_length);
+
+             y += column_length;
+             j += column_length;
          }
+
+         ////////////////////////////
 
          EndGame_Elem_Position[i] += y_offset;
      }
@@ -123,6 +164,42 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
          Sleep(200);
      }
 
+}
+
+bool Platform::Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length) {
+
+    int offset = y * Platform_Normal_Width + x;
+    int color = 0;
+
+    if (y > Platform_Normal_Height) return false;
+
+    for (int i = y; i < Platform_Normal_Height; i++) {
+        if (i == y) {
+            color = Platform_Scan[offset];
+            column_length = 1;
+        }
+        else {
+            if (color == Platform_Scan[offset]) {
+                column_length++;
+            }
+            else break;
+        }
+        
+        offset += Platform_Normal_Width;
+    }
+
+    if (color == Ellipse_Platform_Pen_Color.Get_RGB()) {
+        color_pen = Ellipse_Platform_Pen;
+    }
+    else if (color == Rectangle_Platform_Pen_Color.Get_RGB()) {
+        color_pen = Rectangle_Platform_Pen;
+    }
+    else if (color == Config::BG_Color.Get_RGB()) {
+        color_pen = Config::BG_Pen;
+    }
+    else color_pen = 0;
+
+    return true;
 }
 
 void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
