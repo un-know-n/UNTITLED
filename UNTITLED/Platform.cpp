@@ -33,7 +33,7 @@ void Platform::Redraw() {
     Platform_Rect.bottom = Platform_Rect.top + Config::Platform_Height * Config::Extent;
 
     if(Platform_State == PS_EndGame || Platform_State == PS_StartGame){
-        Prev_Platform_Rect.bottom = 200 * Config::Extent;
+        Prev_Platform_Rect.bottom = 205 * Config::Extent;
     }
     if (Platform_State == PS_StartGame) {
         X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
@@ -106,12 +106,13 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
 }
 
 void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
-
+    
+     Inner_Platform_Width = 21;
      int x, y, y_offset;
      int column_counter = 0;
      int area_width = Width * Config::Extent;
-     int area_height = Config::Platform_Height * Config::Extent;
-     const int max_position = Config::Max_Y_Pos * Config::Extent + area_height;
+     //int area_height = Config::Platform_Height * Config::Extent;
+     const int max_position = Config::Max_Y_Pos * Config::Extent;
      COLORREF pixel;
      COLORREF bg_pixel = RGB(Config::BG_Color.R, Config::BG_Color.G, Config::BG_Color.B);
      HPEN color_pen;
@@ -125,23 +126,23 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
          y_offset = rand() % 4 + 1;
          x = Platform_Rect.left + i;
 
-         /*for (int j = 0; j < area_height; j++) {
+         /*for (int j = 0; j < Platform_Normal_Height; j++) {
 
-             y = EndGame_Elem_Position[i] - j;
+             y = EndGame_Elem_Position[i] + j;
 
              pixel = GetPixel(hdc, x, y);
              SetPixel(hdc, x, y + y_offset, pixel);
          }
          for (int j = 0; j < y_offset; j++) {
-             y = EndGame_Elem_Position[i] - area_height + j;
+             y = EndGame_Elem_Position[i];
              SetPixel(hdc, x, y, bg_pixel);
          }*/
 
-         ////////// PLACE TO DO CODE
+         ////////// PLACE TO DO CODE ------------- MUST BE FIXED!
 
          
          int j = 0;
-         y = EndGame_Elem_Position[i] - area_height;
+         y = EndGame_Elem_Position[i];
 
          MoveToEx(hdc, x, y, 0);
 
@@ -153,6 +154,11 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
              y += column_length;
              j += column_length;
          }
+
+         y = EndGame_Elem_Position[i];
+         MoveToEx(hdc, x, y, 0);
+         SelectObject(hdc, Config::BG_Pen);
+         LineTo(hdc, x, y + y_offset);
 
          ////////////////////////////
 
@@ -238,8 +244,10 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
 
     if (y > Config::Platform_Y_Position * Config::Extent) --Y_Position;
     else {
+
         Platform_State = PS_Extension;
-        Inner_Platform_Width = 1;
+        Inner_Platform_Width = 1; // PROBLEM!!!
+        
     }
 
     if (Step_Up >= Max_Rotation) Step_Up -= Max_Rotation;
@@ -249,7 +257,7 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
 
 void Platform::Draw_Extension(HDC hdc, RECT& paint_area) {
     Draw_Normal(hdc, paint_area);
-
+            
     if (Inner_Platform_Width <= 21) {
         --X_Position;
         Inner_Platform_Width += 3;
@@ -257,8 +265,9 @@ void Platform::Draw_Extension(HDC hdc, RECT& paint_area) {
     else {
         Platform_State = PS_Ready;
         Redraw();
-        //Inner_Platform_Width = 21;
-    }
+        Inner_Platform_Width = 21;
+
+    }    
 }
 
 EPlatform_State Platform::Get_State() {
@@ -266,14 +275,15 @@ EPlatform_State Platform::Get_State() {
 }
 
 void Platform::Set_State(EPlatform_State platform_state) {
-    if (Platform_State == platform_state) return;
-    else Platform_State = platform_state;
+    //if (Platform_State == platform_state) return;
     if (platform_state == PS_EndGame) {
         int length = sizeof(EndGame_Elem_Position) / sizeof(EndGame_Elem_Position[0]);
         for (int i = 0; i < length; i++) {
-            EndGame_Elem_Position[i] = Platform_Rect.bottom;
+            EndGame_Elem_Position[i] = Platform_Rect.top;
         }
     }
+
+    Platform_State = platform_state;
 }
 
 void Platform::Clear_BG(HDC hdc) {
@@ -285,12 +295,32 @@ void Platform::Clear_BG(HDC hdc) {
 
 void Platform::Act(){
     
-    switch (Platform_State) {
-    case PS_EndGame:
-    case PS_StartGame:
-    case PS_Extension:
-        Redraw();
-        break;
+    //if (Config::Tick % 10 == 0) {
+        switch (Platform_State) {
+        case PS_EndGame:
+        case PS_StartGame:
+        case PS_Extension:
+            Redraw();
+            break;
+        }
+    //}    
+}
+
+void Platform::Move_To_Left(bool left_side) {
+    if (Get_State() == PS_Normal) {
+        if (left_side) {
+
+            X_Position -= Platform_Step;
+            Condition();
+            Redraw();
+        }
+        else {
+            if (Get_State() == PS_Normal) {
+                X_Position += Platform_Step;
+                Condition();
+                Redraw();
+            }
+        }
     }
 }
 
@@ -310,30 +340,24 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
 
     //ball->Ball_Speed = 3.0;
 
-    if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false; //Config::Platform_Y_Position - 5
+    if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false;
 
     //ball->Ball_Speed = 0.3;
 
     if (ball->Is_Going_Up()) {
         //We look if our ball is going going up -> reflect it from bottom inner side of the platform
         if (Dot_Circle_Hit(next_y_pos - inner_bottom_y, next_x_pos, inner_platform_left, inner_platform_right, ball->Radius, reflection_pos)) {
-            ball->Set_Direction(-ball->Get_Direction());//M_PI + (M_PI - ball->Get_Direction())
+            ball->Set_Direction(-ball->Get_Direction());
             return true;
         }
     }
     else {
         //We look if our ball is going going down -> reflect it from upper inner side of the platform
         if (Dot_Circle_Hit(next_y_pos - inner_top_y, next_x_pos, inner_platform_left, inner_platform_right, ball->Radius, reflection_pos)) {
-            ball->Set_Direction(-ball->Get_Direction());//M_PI + (M_PI - ball->Get_Direction())
+            ball->Set_Direction(-ball->Get_Direction());
             return true;
         }
     }
-
-    //if (next_x_pos + ball->Radius > (double)X_Position && next_x_pos - ball->Radius < (double)(X_Position + Width)) {
-    //    //next_y_pos = Config::Platform_Y_Position - (Config::Platform_Y_Position - next_y_pos);
-    //    ball->Set_Direction(M_PI + (M_PI - ball->Get_Direction()));
-    //    return true;
-    //}
     return false;
 }
 

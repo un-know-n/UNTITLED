@@ -1,3 +1,17 @@
-﻿  Platform.cpp
-F:\Курсовая\UNTITLED\Platform.cpp(115,15): warning C4101: 'pixel': unreferenced local variable
-  UNTITLED.vcxproj -> F:\Курсовая\x64\Debug\UNTITLED.exe
+﻿  Ball.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball.cpp(15,25): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Bonus.cpp
+  Border.cpp
+  Config.cpp
+  Engine.cpp
+  Fade.cpp
+  Level.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(148,15): warning C4101: 'y': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(148,12): warning C4101: 'x': unreferenced local variable
+  Main.cpp
+  Platform.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(116,15): warning C4101: 'pixel': unreferenced local variable
+  Generating Code...
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball.cpp(191): warning C4715: 'Ball::Is_Test_Finished': not all control paths return a value
+  LINK : C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe not found or not built by the last incremental link; performing full link
+  UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

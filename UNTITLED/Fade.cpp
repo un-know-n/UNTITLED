@@ -21,7 +21,7 @@ Fade_Block::Fade_Block(EBlock_Type block_type, int x_pos, int y_pos)
     Fade_Rect.bottom = Fade_Rect.top + Config::Block_Height * Config::Extent;
 }
 
-void Fade_Block::Draw(HDC hdc){
+void Fade_Block::Draw(HDC hdc, RECT& paint_area){
     //Pick up the brush and pen which are currently needed to put on the block
     HPEN pen = 0;
     HBRUSH brush = 0;
@@ -51,7 +51,7 @@ void Fade_Block::Draw(HDC hdc){
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
 
-    Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right, Fade_Rect.bottom);
+    Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right - 1, Fade_Rect.bottom - 1);
 }
 
 void Fade_Block::Act(){

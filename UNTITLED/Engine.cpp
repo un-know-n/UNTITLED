@@ -11,6 +11,15 @@ HeadEngine::HeadEngine() : Game_State(GS_Play)
 
 void HeadEngine::Init_Engine(HWND hwnd) {
     //It initializes game engine
+    // Initialization of specific random subsequence to our program
+
+    SYSTEMTIME system_time;
+    FILETIME file_time;
+
+    GetSystemTime(&system_time);
+    SystemTimeToFileTime(&system_time, &file_time);
+
+    srand(file_time.dwLowDateTime);
 
     Config::Hwnd = hwnd;
 
@@ -27,7 +36,7 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Ball::Add_Hit_Checker(&Level);
     Ball::Add_Hit_Checker(&Platform);
 
-    Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width / 2);
+    Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
     Platform.Set_State(PS_StartGame);
     Platform.Redraw();
     
@@ -54,18 +63,14 @@ int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     //Check what type of key is currently pressed
     switch (key_type) {
     case KT_Left:
-        Platform.X_Position -= Platform.Platform_Step;
-        Platform.Condition();
-        Platform.Redraw();
+        Platform.Move_To_Left(true);
         break;
     case KT_Right:
-        Platform.X_Position += Platform.Platform_Step;
-        Platform.Condition();
-        Platform.Redraw();
+        Platform.Move_To_Left(false);
         break;
     case KT_Space:
         if (Platform.Get_State() == PS_Ready) {
-            Ball.Set_State(BS_Free, Platform.X_Position + Platform.Width / 2 + Platform.Width / 4);
+            Ball.Set_State(BS_Free, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
             Platform.Set_State(PS_Normal);
         }
         break;
@@ -75,14 +80,10 @@ int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     }
     switch (button) {
     case Button_A:
-        Platform.X_Position -= Platform.Platform_Step;
-        Platform.Condition();
-        Platform.Redraw();
+        Platform.Move_To_Left(true);
         break;
     case Button_D:
-        Platform.X_Position += Platform.Platform_Step;
-        Platform.Condition();
-        Platform.Redraw();
+        Platform.Move_To_Left(false);
         break;
     }
     return 0;
@@ -104,6 +105,7 @@ int HeadEngine::On_Timer() {
         if (Ball.Get_State() == BS_None) {
             Game_State = GS_GameOver;
             Platform.Set_State(PS_EndGame);
+            Platform.Inner_Platform_Width = 21;
         } 
         if(Ball.Is_Test_Finished()){
             Game_State = GS_Test;
@@ -119,7 +121,7 @@ int HeadEngine::On_Timer() {
 
     case GS_Restart:
         if (Platform.Get_State() == PS_Ready) {
-            Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4);
+            Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);// -Platform.Width / 4
             Ball.Ball_Speed = 0.0;
             Game_State = GS_Play;
         }

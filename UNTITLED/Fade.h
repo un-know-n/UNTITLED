@@ -9,7 +9,14 @@ enum EBlock_Type {
     BT_Yellow
 };
 
-class Fade_Block {
+class Object_Designer {
+public:
+    virtual void Draw(HDC hdc, RECT &paint_area) = 0;
+    virtual void Act() = 0;
+    virtual bool Is_Finished() = 0;
+};
+
+class Fade_Block : public Object_Designer{
 public:
     Fade_Block(EBlock_Type block_type, int x_pos, int y_pos);
 
@@ -29,9 +36,9 @@ public:
     static HPEN Fade_Yellow_Pen[Max_Fade_Step];
     static HBRUSH Fade_Yellow_Brush[Max_Fade_Step];
 
-    void Draw(HDC hdc);
-    void Act();
-    bool Is_Finished();
+    virtual void Draw(HDC hdc, RECT &paint_area);
+    virtual void Act();
+    virtual bool Is_Finished();
 
     static void Set_Color();
     static unsigned char Get_Fade_Channel(unsigned char color, unsigned char bg_color, int step);

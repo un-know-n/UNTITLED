@@ -37,6 +37,9 @@
     <Filter Include="Fade">
       <UniqueIdentifier>{801fc88f-f883-4997-9d5d-01b8eac16f4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Bonus">
+      <UniqueIdentifier>{95f8ac09-be9f-4183-bc15-2d3c771028d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -71,6 +74,9 @@
     </ClInclude>
     <ClInclude Include="Fade.h">
       <Filter>Fade</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.h">
+      <Filter>Bonus</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +116,9 @@
     </ClCompile>
     <ClCompile Include="Fade.cpp">
       <Filter>Fade</Filter>
+    </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Bonus</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

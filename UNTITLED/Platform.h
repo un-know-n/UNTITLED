@@ -52,6 +52,7 @@ public:
     void Set_State(EPlatform_State platform_state);
     void Clear_BG(HDC hdc);
     void Act();
+    void Move_To_Left(bool left_side);
     void Condition();
     bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
 };
