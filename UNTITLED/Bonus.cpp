@@ -3,7 +3,7 @@
 //      BONUS
 
 Bonus::Bonus(EBlock_Type block_type, EBonus_Type bonus_type, int x, int y)
-    : Block_Type(block_type), Bonus_Type(bonus_type), X(x), Y(y), Step(0), Action_Step(0)
+    : Block_Type(block_type), Bonus_Type(bonus_type), X(x), Y(y), Step(0), Action_Step(0), Got_Hit(false), Finished(false)
 {//Constructor
     Bonus_Rect.left = X;//x * Config::Block_Width * Config::Extent + Config::Level_X_Offset    I var
     Bonus_Rect.top = Y;//(Config::Level_Y_Offset + Y * Config::Cell_Height) * Config::Extent    II var
@@ -24,6 +24,11 @@ void Bonus::Draw(HDC hdc, RECT& paint_area) {
         Rectangle(hdc, Prev_Bonus_Rect.left, Prev_Bonus_Rect.top, Prev_Bonus_Rect.right - 1, Prev_Bonus_Rect.bottom - 1);
     }
 
+    if (Got_Hit == true) {
+        Finished = true;
+        return;
+    }
+
     if (IntersectRect(&destination_rect, &paint_area, &Bonus_Rect)) {
         Draw_Block_Animation(hdc);
     }
@@ -32,6 +37,13 @@ void Bonus::Draw(HDC hdc, RECT& paint_area) {
 
 void Bonus::Act() {
     //Check our falling process -> redrawing the block
+    if (Got_Hit || Finished) return;
+
+    if (Bonus_Rect.top > Config::Max_Y_Pos * Config::Extent + Config::Level_Y_Offset * 2) {
+        Finalize();
+        return;
+    }
+
     Prev_Bonus_Rect = Bonus_Rect;
 
     ++Action_Step;
@@ -49,10 +61,19 @@ void Bonus::Act() {
 }
 
 bool Bonus::Is_Finished() {
-    if (Bonus_Rect.top > Config::Max_Y_Pos * Config::Extent + Config::Level_Y_Offset * 2) return true;
-    else return false;
+    return Finished;
 }
 
+void Bonus::Get_Bonus_Rect(RECT& bonus_rect) {
+    bonus_rect = Bonus_Rect;
+}
+
+void Bonus::Finalize() {
+    Got_Hit = true;
+
+    InvalidateRect(Config::Hwnd, &Prev_Bonus_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Bonus_Rect, FALSE);
+}
 
 void Bonus::Change_BG_Color(EBlock_Type block_type, HPEN& front_pen, HBRUSH& front_brush, HPEN& back_pen, HBRUSH& back_brush) {
     //We can change only existing bricks
@@ -110,17 +131,21 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
     //TEST_back_brush = CreateSolidBrush(RGB(43, 63, 97));
 
     //Check if rotation step is more than 16 -> change it
-    Step = Step % 16;
-    if (Step < 8) {
-        rotation_angle = 2.0 * M_PI / 16.0 * Step;
-    }
-    else {
+    //Step = Step % 16;
+    /*if (Step < 8) {
+        
+    }*/
+
+    rotation_angle = 2.0 * M_PI / 16.0 * Step;
+    /*else {
         rotation_angle = 2.0 * M_PI / 16.0 * (Step - 8);
-    }
+    }*/
+
+    if (Step >= 8)Step = 8;
 
     Change_BG_Color(Block_Type, front_pen, front_brush, back_pen, back_brush);
 
-    if (Step == 4 || Step == 12) {
+    if (Step == 4) {// || Step == 12
 
         //Draw front color
         SelectObject(hdc, front_pen);
@@ -158,7 +183,7 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
 
         Rectangle(hdc, 0, -half_height, Config::Block_Width * Config::Extent, half_height);//0, -half_height, Config::Block_Width * Config::Extent, half_height
 
-        if (Step > 4 && Step < 12) {
+        if (Step > 4 && Step <= 8) {//Step > 4 && Step < 12
             if (Bonus_Type == BNT_Circle) {
                 SelectObject(hdc, back_pen);
                 SelectObject(hdc, back_brush);
@@ -170,3 +195,18 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         SetWorldTransform(hdc, &old_xForm);
     }
 }
+
+void Bonus::Test_Falling_Bonus(HDC hdc)
+{
+    int X_pos = Config::Cell_Width * Config::Extent;
+
+    for (int i = 0; i < Step; i++) {
+        Draw_Block_Animation(hdc);
+
+        X += X_pos;
+        Bonus_Rect.left += X_pos;
+        Bonus_Rect.right += X_pos;
+    }
+
+}
+///////////////////////////////////////////////////////////////////////

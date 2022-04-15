@@ -9,7 +9,7 @@ Platform::~Platform() {
 }
 
 Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_StartGame), Step_Up(0), Platform_Step(3),
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Step_Up(0), Platform_Step(3),
 Platform_Rect{}, Platform_Normal_Width(Width * Config::Extent), Platform_Normal_Height(Height * Config::Extent),
 Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
 {//Constructor
@@ -50,6 +50,7 @@ void Platform::Draw(HDC hdc, RECT &paint_area) {
 
     switch (Platform_State) {
     case PS_Normal:
+    case PS_Ready:
         Draw_Normal(hdc, paint_area);
         break;
 
@@ -94,7 +95,8 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     x *= Config::Extent;
     y *= Config::Extent;
 
-    if (Platform_Scan == 0) {
+
+    if (Platform_Scan == 0 && Platform_State == PS_Ready) {
         Platform_Scan = new int[Platform_Normal_Width * Platform_Normal_Height];
 
         for (int i = 0; i < Platform_Normal_Height; i++) {
@@ -359,6 +361,16 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
         }
     }
     return false;
+}
+
+bool Platform::Got_Hit_By(Bonus* falling_bonus) {
+
+    RECT destination_rect, bonus_rect;
+
+    falling_bonus->Get_Bonus_Rect(bonus_rect);
+
+    if ((IntersectRect(&destination_rect, &bonus_rect, &Platform_Rect))) return true;
+    else return false;
 }
 
 /////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 
 //#include "Config.h"
 #include "Ball.h"
+#include "Bonus.h"
 
 enum EPlatform_State{
     PS_None,
@@ -55,4 +56,5 @@ public:
     void Move_To_Left(bool left_side);
     void Condition();
     bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
+    bool Got_Hit_By(Bonus *falling_bonus);
 };

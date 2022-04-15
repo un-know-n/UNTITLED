@@ -26,6 +26,7 @@ public:
     bool Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type);
     void Act();
     void Act_Objects(Object_Designer** object_array, int max_count, int& counter);
+    bool Have_Next_Bonus(int& index, Bonus** falling_bonus);
 
 private:
     double Current_Block_Left_Side, Current_Block_Right_Side;

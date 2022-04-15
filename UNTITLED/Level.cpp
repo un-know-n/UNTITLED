@@ -102,6 +102,9 @@ void Level::Draw_Block(HDC hdc, RECT &block_area, EBlock_Type block_type) {
 void Level::Draw(HDC hdc, RECT &paint_area) {
     //It draws level map
 
+    Bonus falling_bonus(BT_Blue, BNT_Circle, 20 * Config::Extent, 150 * Config::Extent);
+    falling_bonus.Test_Falling_Bonus(hdc);
+
     RECT destination_rect, block_area;
 
     if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
@@ -340,6 +343,23 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
             }
             return true;
         }
+    }
+    return false;
+}
+
+bool Level::Have_Next_Bonus(int& index, Bonus** falling_bonus) {
+    Bonus* current_falling;
+
+    if (Falling_Count == 0) return false;
+
+    if (index < 0 || index > Config::Max_Falling_Count) return false;
+
+    while (index < Config::Max_Falling_Count) {
+        current_falling = Falling[index++];
+        if (current_falling != 0) {
+            *falling_bonus = current_falling;
+            return true;
+        } 
     }
     return false;
 }

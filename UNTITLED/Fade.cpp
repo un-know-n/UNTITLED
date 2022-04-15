@@ -63,7 +63,7 @@ void Fade_Block::Act(){
 }
 
 bool Fade_Block::Is_Finished() {
-    if (Fade_Step >= Max_Fade_Step - 1) return true;
+    if (Fade_Step >= Max_Fade_Step) return true;
     else return false;
 }
 

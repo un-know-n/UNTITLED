@@ -5,7 +5,7 @@
 
 //          CSENGINE
 
-HeadEngine::HeadEngine() : Game_State(GS_Play)
+HeadEngine::HeadEngine() : Game_State(GS_GameOver)
 {//Constructor
 }
 
@@ -37,7 +37,7 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Ball::Add_Hit_Checker(&Platform);
 
     Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
-    Platform.Set_State(PS_StartGame);
+    //Platform.Set_State(PS_StartGame);
     Platform.Redraw();
     
     SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
@@ -47,12 +47,6 @@ void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
     
-    /*for (int i = 0; i < 16; i++) {
-    Draw_Block_Animation(hdc, BT_Blue, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 100, i);
-    Draw_Block_Animation(hdc, BT_Yellow, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 140, i);
-    Draw_Block_Animation(hdc, BT_Green, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 180, i);
-    Draw_Block_Animation(hdc, BT_Red, BNT_Circle, 20 + i * (Block_Width + 1) * Extent, 220, i);
-    }*/
     Level.Draw(hdc, paint_area);
     Ball.Draw(hdc, paint_area);
     Border.Draw(hdc, paint_area);
@@ -129,10 +123,27 @@ int HeadEngine::On_Timer() {
         break;
 
     }
-    Platform.Act();
-    Level.Act();
+
+    Act();   
 
     return 0;
 }
 
+void HeadEngine::Act() {
+    Platform.Act();
+    Level.Act();
+
+    int index = 0;
+    Bonus* falling_bonus;
+
+    while (Level.Have_Next_Bonus(index, &falling_bonus)) {
+        if (Platform.Got_Hit_By(falling_bonus)) {
+            On_Falling_Bonus(falling_bonus);
+        }
+    }
+}
+
+void HeadEngine::On_Falling_Bonus(Bonus* falling_bonus) {
+    falling_bonus->Finalize();
+}
 /////////////////////////////////////////////////////////////////////

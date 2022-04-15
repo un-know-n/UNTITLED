@@ -13,32 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Main">
-      <UniqueIdentifier>{37422b5a-a46f-448b-b865-91ade12f31c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine">
       <UniqueIdentifier>{6aa18c12-6d65-4004-b56f-44a48027f124}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Border">
-      <UniqueIdentifier>{137113e2-a4a1-4c7b-a9d8-bfb8bf1673e9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Config">
       <UniqueIdentifier>{00f6f8d7-877b-4c78-b0cd-37a5f2001005}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Level">
-      <UniqueIdentifier>{66aff524-2d90-4f8b-b7e9-86f17bd3f8e5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Ball">
-      <UniqueIdentifier>{03d44cba-f830-45b2-889e-7b05a46d5d25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Platform">
-      <UniqueIdentifier>{f6845da6-dda5-44b8-aded-a657803033fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fade">
-      <UniqueIdentifier>{801fc88f-f883-4997-9d5d-01b8eac16f4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Bonus">
-      <UniqueIdentifier>{95f8ac09-be9f-4183-bc15-2d3c771028d4}</UniqueIdentifier>
+    <Filter Include="Main">
+      <UniqueIdentifier>{45bbf225-5461-48fb-92ed-208af739d0bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,32 +33,32 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Main.h">
-      <Filter>Main</Filter>
+    <ClInclude Include="Ball.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>Engine</Filter>
+    <ClInclude Include="Fade.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Border.h">
-      <Filter>Border</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Config</Filter>
     </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Level</Filter>
+    <ClInclude Include="Engine.h">
+      <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Ball.h">
-      <Filter>Ball</Filter>
-    </ClInclude>
-    <ClInclude Include="Platform.h">
-      <Filter>Platform</Filter>
-    </ClInclude>
-    <ClInclude Include="Fade.h">
-      <Filter>Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="Bonus.h">
-      <Filter>Bonus</Filter>
+    <ClInclude Include="Main.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -93,32 +75,32 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Main</Filter>
+    <ClCompile Include="Platform.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>Engine</Filter>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Fade.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Border.cpp">
-      <Filter>Border</Filter>
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Bonus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Config.cpp">
       <Filter>Config</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Level</Filter>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Ball.cpp">
-      <Filter>Ball</Filter>
-    </ClCompile>
-    <ClCompile Include="Platform.cpp">
-      <Filter>Platform</Filter>
-    </ClCompile>
-    <ClCompile Include="Fade.cpp">
-      <Filter>Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="Bonus.cpp">
-      <Filter>Bonus</Filter>
+    <ClCompile Include="Main.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
