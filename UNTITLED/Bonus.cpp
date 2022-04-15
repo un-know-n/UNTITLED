@@ -53,11 +53,8 @@ void Bonus::Act() {
     Bonus_Rect.top += Config::Extent;
     Bonus_Rect.bottom += Config::Extent;
 
-    //if (Fade_Step < Max_Fade_Step - 1) {
-        //++Fade_Step;
     InvalidateRect(Config::Hwnd, &Prev_Bonus_Rect, FALSE);
     InvalidateRect(Config::Hwnd, &Bonus_Rect, FALSE);
-    //}
 }
 
 bool Bonus::Is_Finished() {
@@ -117,29 +114,11 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
     XFORM xForm, old_xForm;
     double offset;
     double rotation_angle;
-    int half_height = Config::Block_Height * Config::Extent / 2;
-
+    
     HPEN front_pen, back_pen;
     HBRUSH front_brush, back_brush;
 
-    //HPEN TEST_front_pen, TEST_back_pen;
-    //HBRUSH TEST_front_brush, TEST_back_brush;
-
-    //TEST_front_pen = CreatePen(PS_SOLID, 0, RGB(97, 43, 43));
-    //TEST_front_brush = CreateSolidBrush(RGB(97, 43, 43));
-    //TEST_back_pen = CreatePen(PS_SOLID, 0, RGB(43, 63, 97));
-    //TEST_back_brush = CreateSolidBrush(RGB(43, 63, 97));
-
-    //Check if rotation step is more than 16 -> change it
-    //Step = Step % 16;
-    /*if (Step < 8) {
-        
-    }*/
-
     rotation_angle = 2.0 * M_PI / 16.0 * Step;
-    /*else {
-        rotation_angle = 2.0 * M_PI / 16.0 * (Step - 8);
-    }*/
 
     if (Step >= 8)Step = 8;
 
@@ -151,13 +130,13 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         SelectObject(hdc, front_pen);
         SelectObject(hdc, front_brush);
 
-        Rectangle(hdc, X, Y + half_height / 2 + Config::Extent, X + Config::Block_Width * Config::Extent, Y + half_height + Config::Extent);
+        Rectangle(hdc, X, Y + Half_Height / 2 + Config::Extent, X + Config::Block_Width * Config::Extent, Y + Half_Height + Config::Extent);
 
         //Draw back color
         SelectObject(hdc, back_pen);
         SelectObject(hdc, back_brush);
 
-        Rectangle(hdc, X, Y + half_height / 2 + Config::Extent, X + Config::Block_Width * Config::Extent, Y + half_height);
+        Rectangle(hdc, X, Y + Half_Height / 2 + Config::Extent, X + Config::Block_Width * Config::Extent, Y + Half_Height);
 
     }
     else {
@@ -167,28 +146,29 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         xForm.eM21 = 0.0f;
         xForm.eM22 = (float)cos(rotation_angle);
         xForm.eDx = (float)X;
-        xForm.eDy = (float)Y + (float)half_height;
+        xForm.eDy = (float)Y + (float)Half_Height;
         GetWorldTransform(hdc, &old_xForm);
         SetWorldTransform(hdc, &xForm);
 
-        SelectObject(hdc, back_pen);
-        SelectObject(hdc, back_brush);
-
         offset = 3.0 * (1.0 - fabs(xForm.eM22)) * (double)Config::Extent;
 
-        Rectangle(hdc, 0, -half_height - (int)round(offset), Config::Block_Width * Config::Extent, half_height - (int)round(offset));//0, -half_height - (int)round(offset), Config::Block_Width * Config::Extent, half_height - (int)round(offset)                   
-
-        SelectObject(hdc, front_pen);
-        SelectObject(hdc, front_brush);
-
-        Rectangle(hdc, 0, -half_height, Config::Block_Width * Config::Extent, half_height);//0, -half_height, Config::Block_Width * Config::Extent, half_height
-
+        if (Step > 4) Draw_Front_Block_Animation(hdc, front_pen, front_brush, back_pen, back_brush, offset);
+        else Draw_Front_Block_Animation(hdc, back_pen, back_brush, front_pen, front_brush, offset);
+        
         if (Step > 4 && Step <= 8) {//Step > 4 && Step < 12
-            if (Bonus_Type == BNT_Circle) {
-                SelectObject(hdc, back_pen);
-                SelectObject(hdc, back_brush);
-                Ellipse(hdc, 0 + 5 * Config::Extent, -half_height + 2, 0 + 10 * Config::Extent, half_height - 2);
+            SelectObject(hdc, front_pen);
+            SelectObject(hdc, front_brush);
+            if (Bonus_Type == BNT_Tripple_Ball) {
+                Ellipse(hdc, 5 * Config::Extent, -Half_Height + 2, 10 * Config::Extent, Half_Height - 2);
             }
+            else if (Bonus_Type == BNT_Additional_Life) {
+                Rectangle(hdc, 5 * Config::Extent, -Half_Height / 4 + 1, 10 * Config::Extent, Half_Height / 4 - 1);
+                Rectangle(hdc, (Config::Block_Width / 2) * Config::Extent, -2 * Config::Extent, (Config::Block_Width / 2) * Config::Extent + Config::Extent, 2 * Config::Extent);
+            }
+            else if(Bonus_Type == BNT_Floor) {
+                Rectangle(hdc, 5 * Config::Extent, -Half_Height / 4 + 1, 10 * Config::Extent, Half_Height / 4 - 1);
+            } else return;
+        
         }
 
         //Return it to the normal values
@@ -196,16 +176,31 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
     }
 }
 
+void Bonus::Draw_Front_Block_Animation(HDC hdc, HPEN& first_pen, HBRUSH& first_brush, HPEN& second_pen, HBRUSH& second_brush, double& offset) {
+    
+    SelectObject(hdc, first_pen);//back
+    SelectObject(hdc, first_brush);
+
+    Rectangle(hdc, 0, -Half_Height - (int)round(offset), Config::Block_Width * Config::Extent, Half_Height - (int)round(offset));                   
+
+    SelectObject(hdc, second_pen);//front
+    SelectObject(hdc, second_brush);
+
+    Rectangle(hdc, 0, -Half_Height, Config::Block_Width * Config::Extent, Half_Height);
+}
+
 void Bonus::Test_Falling_Bonus(HDC hdc)
 {
     int X_pos = Config::Cell_Width * Config::Extent;
 
-    for (int i = 0; i < Step; i++) {
+    for (int i = 0; i < 9; i++) {
         Draw_Block_Animation(hdc);
 
         X += X_pos;
         Bonus_Rect.left += X_pos;
         Bonus_Rect.right += X_pos;
+
+        ++Step;
     }
 
 }

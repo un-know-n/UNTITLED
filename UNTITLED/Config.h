@@ -56,5 +56,5 @@ public:
 
     static void Setup_Colors();
     static void Create_PenNBrush(const Color &color, HPEN &pen, HBRUSH &brush);
-    static void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN &pen, HBRUSH &brush);   
+    static void Create_PenNBrush(unsigned char r, unsigned char g, unsigned char b, HPEN& pen, HBRUSH& brush);
 };

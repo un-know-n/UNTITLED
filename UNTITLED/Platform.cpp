@@ -128,21 +128,7 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
          y_offset = rand() % 4 + 1;
          x = Platform_Rect.left + i;
 
-         /*for (int j = 0; j < Platform_Normal_Height; j++) {
-
-             y = EndGame_Elem_Position[i] + j;
-
-             pixel = GetPixel(hdc, x, y);
-             SetPixel(hdc, x, y + y_offset, pixel);
-         }
-         for (int j = 0; j < y_offset; j++) {
-             y = EndGame_Elem_Position[i];
-             SetPixel(hdc, x, y, bg_pixel);
-         }*/
-
-         ////////// PLACE TO DO CODE ------------- MUST BE FIXED!
-
-         
+                  
          int j = 0;
          y = EndGame_Elem_Position[i];
 
@@ -162,7 +148,6 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
          SelectObject(hdc, Config::BG_Pen);
          LineTo(hdc, x, y + y_offset);
 
-         ////////////////////////////
 
          EndGame_Elem_Position[i] += y_offset;
      }

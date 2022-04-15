@@ -36,7 +36,7 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Ball::Add_Hit_Checker(&Level);
     Ball::Add_Hit_Checker(&Platform);
 
-    Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
+    //Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
     //Platform.Set_State(PS_StartGame);
     Platform.Redraw();
     

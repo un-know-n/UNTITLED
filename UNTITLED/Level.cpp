@@ -96,14 +96,13 @@ void Level::Draw_Block(HDC hdc, RECT &block_area, EBlock_Type block_type) {
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
     Rectangle(hdc, block_area.left, block_area.top, block_area.right - 1, block_area.bottom - 1);
-    //RoundRect(hdc, x * Config::Extent, y * Config::Extent, (x + Config::Block_Width) * Config::Extent, (y + Config::Block_Height) * Config::Extent, 3, 3);
 }
 
 void Level::Draw(HDC hdc, RECT &paint_area) {
     //It draws level map
 
-    Bonus falling_bonus(BT_Blue, BNT_Circle, 20 * Config::Extent, 150 * Config::Extent);
-    falling_bonus.Test_Falling_Bonus(hdc);
+    //Bonus falling_bonus(BT_Blue, BNT_Floor, 20 * Config::Extent, 150 * Config::Extent);
+    //falling_bonus.Test_Falling_Bonus(hdc);
 
     RECT destination_rect, block_area;
 
@@ -322,16 +321,22 @@ void Level::Act_Objects(Object_Designer** object_array ,int max_count, int &coun
 }
 
 bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
-    //EBlock_Type block_type;
+    EBonus_Type bonus_type;
     Bonus* falling_bonus;
     int bonus_x, bonus_y;
-    //block_type = (EBlock_Type)Level_01[y_coord][x_coord];
+    int bonus_random;
+
+    bonus_random = rand() % 20;
+    if (bonus_random % 2 == 0) bonus_type = BNT_Floor;
+    else if(bonus_random % 3 == 0) bonus_type = BNT_Tripple_Ball;
+    else bonus_type = BNT_Additional_Life;
+
     bonus_x = (x_coord * Config::Cell_Width + Config::Level_X_Offset) * Config::Extent;
     bonus_y = (y_coord * Config::Cell_Height + Config::Level_Y_Offset) * Config::Extent;
     
     if (Falling_Count < Config::Max_Falling_Count) {
-        falling_bonus = new Bonus(block_type, BNT_Circle, bonus_x, bonus_y);
-        if (rand() % 2 == 0) {
+        falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
+        if (rand() % 4 == 0) {
 
             for (int i = 0; i < Config::Max_Falling_Count; i++) {
                 if (Falling[i] == 0) {

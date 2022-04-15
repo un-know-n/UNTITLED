@@ -29,11 +29,13 @@ void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
-    if(is_vertical)
+    if (is_vertical) {
         Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 1) * Config::Extent - 2, (y + 4) * Config::Extent - 1);
-    else
+    }
+    else {
         Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent - 1, (y + 1) * Config::Extent - 2);
-
+    }
+    
 }
 
 void Border::Draw(HDC hdc, RECT &paint_area) {
