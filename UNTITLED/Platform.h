@@ -56,5 +56,6 @@ public:
     void Move_To_Left(bool left_side);
     void Condition();
     bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
+    bool Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width);
     bool Got_Hit_By(Bonus *falling_bonus);
 };

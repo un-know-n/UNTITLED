@@ -45,6 +45,7 @@ public:
 
 //Ball
     static const int Ball_Size = 4;
+    static const double Step_Size;
 
 //Platform
     static const int Platform_Y_Position = 185;

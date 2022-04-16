@@ -282,15 +282,13 @@ void Platform::Clear_BG(HDC hdc) {
 
 void Platform::Act(){
     
-    //if (Config::Tick % 10 == 0) {
-        switch (Platform_State) {
+    switch (Platform_State) {
         case PS_EndGame:
         case PS_StartGame:
         case PS_Extension:
             Redraw();
             break;
         }
-    //}    
 }
 
 void Platform::Move_To_Left(bool left_side) {
@@ -325,11 +323,19 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
     double inner_platform_left = X_Position + 3 * Config::Circle_Size - 1;
     double inner_platform_right = X_Position + Width + Config::Circle_Size;
 
-    //ball->Ball_Speed = 3.0;
+    ball->Ball_Speed = 3.0;
 
     if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false;
 
     //ball->Ball_Speed = 0.3;
+
+    //We look if our ball is going to the left side 
+
+    if (Circular_Reflection(next_x_pos, next_y_pos, ball, 0))return true;
+
+    //We look if our ball is going to the right side
+
+    if (Circular_Reflection(next_x_pos, next_y_pos, ball, Inner_Platform_Width))return true;
 
     if (ball->Is_Going_Up()) {
         //We look if our ball is going going up -> reflect it from bottom inner side of the platform
@@ -344,6 +350,38 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
             ball->Set_Direction(-ball->Get_Direction());
             return true;
         }
+    }
+    return false;
+}
+
+bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width) {
+    double dx_range, dy_range;
+    double temporary_distance, radius_summ, platform_ball_radius;
+    double platform_ball_x, platform_ball_y;
+    double beta_angle, alpha_angle, gamma_angle;
+
+    platform_ball_radius = (double)Config::Circle_Size / 2.0;
+
+    //platform_ball_x = (double)X_Position + platform_ball_radius;
+    //platform_ball_y = (double)Config::Platform_Y_Position + platform_ball_radius;
+
+    platform_ball_x = Platform_Rect.left / Config::Extent + platform_ball_radius + Config::Extent - 1 + inner_width;
+    platform_ball_y = Platform_Rect.top / Config::Extent - platform_ball_radius;
+
+    dx_range = next_x_pos - platform_ball_x;
+    dy_range = next_y_pos - platform_ball_y;
+
+    radius_summ = platform_ball_radius + ball->Radius;
+
+    temporary_distance = sqrt(dx_range * dx_range + dy_range * dy_range);
+
+    if (fabs(temporary_distance - radius_summ) < Config::Step_Size) {//temporary_distance <= radius_summ
+        beta_angle = atan2(-dy_range, dx_range);
+        alpha_angle = beta_angle + M_PI - ball->Get_Direction();
+        gamma_angle = alpha_angle + beta_angle;
+
+        ball->Set_Direction(gamma_angle);
+        return true;
     }
     return false;
 }

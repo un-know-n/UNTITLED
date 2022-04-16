@@ -41,17 +41,16 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
 
 void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, Main_Hit_Checker*platform_hit
     double next_x_pos, next_y_pos;
-    double step_size = 1.0 / Config::Extent;
     Rest_Size += Ball_Speed;
     bool collided;
     Prev_Ball_Rect = Ball_Rect;
 
     //If we`ve remaining space for the ball -> we use it and it won`t be lost
-    while (Rest_Size >= step_size) {
+    while (Rest_Size >= Config::Step_Size) {
         collided = false;
         //Calculating new coords
-        next_x_pos = Central_X + step_size * cos(Ball_Direction);
-        next_y_pos = Central_Y - step_size * sin(Ball_Direction);
+        next_x_pos = Central_X + Config::Step_Size * cos(Ball_Direction);
+        next_y_pos = Central_Y - Config::Step_Size * sin(Ball_Direction);
 
         for (int i = 0; i < Hit_Counter; i++) {
             //If we`ve collided with smth (Platform || Border || Block)
@@ -69,7 +68,7 @@ void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, 
 
         if (!collided) {
             //Ball translation if we haven't collided with anything
-            Rest_Size -= step_size;
+            Rest_Size -= Config::Step_Size;
 
             //Application of new coords
             Central_X = next_x_pos;
@@ -77,7 +76,7 @@ void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, 
         }
 
         //Only if we`re testing smth
-        if(Test_Active) Rest_Test_Size -= step_size;
+        if(Test_Active) Rest_Test_Size -= Config::Step_Size;
         
     }
 
@@ -107,10 +106,10 @@ void Ball::Set_State(EBall_State state, int x_pos) {
     switch (state) {
     case BS_Test:
         Central_X = x_pos;
-        Central_Y = Start_Y_Pos;//140
+        Central_Y = 175;//140
         Ball_Speed = 3.0;
         Rest_Size = 0.0;
-        Ball_Direction = M_PI - M_PI_4;//M_PI - M_PI_4
+        Ball_Direction = -(M_PI - M_PI_4);//M_PI - M_PI_4
         break;
 
     case BS_None:
@@ -171,7 +170,7 @@ void Ball::Add_Hit_Checker(Main_Hit_Checker* hit_check) {
 void Ball::Set_Test(){
     //Automatically sets ball to the test mode
     Rest_Test_Size = 30.0;
-    Set_State(BS_Free, 115 + Move_Pos);//85
+    Set_State(BS_Test, 125 + Move_Pos);//85
     ++Move_Pos;
     Test_Active = true;
 }

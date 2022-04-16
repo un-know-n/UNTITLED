@@ -90,7 +90,7 @@ int HeadEngine::On_Timer() {
     switch (Game_State) {
     case GS_Test:
         Ball.Set_Test();
-        Platform.Set_State(PS_None);
+        Platform.Set_State(PS_Normal);
         Game_State = GS_Play;
         break;
 
