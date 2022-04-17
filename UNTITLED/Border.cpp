@@ -3,7 +3,7 @@
 
 //          CSBORDER
 
-bool Border::Have_Floor = true;
+bool Border::Have_Floor = false ;
 
 Border::Border() : Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)

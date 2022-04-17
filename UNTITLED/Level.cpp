@@ -20,39 +20,22 @@ char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-//char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-//    0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-//    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-//    0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
-//    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
-//    0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 0,
-//    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
-//    0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-//};
-
-//char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-//};
+char Test[Config::Level_X_Elems][Config::Level_Y_Elems] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 
 Level::Level() : Level_Area{}, Fading_Count(0), Falling_Count(0)
 {//Constructor
@@ -326,17 +309,19 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     int bonus_x, bonus_y;
     int bonus_random;
 
-    bonus_random = rand() % 20;
+    /*bonus_random = rand() % 20;
     if (bonus_random % 2 == 0) bonus_type = BNT_Floor;
     else if(bonus_random % 3 == 0) bonus_type = BNT_Tripple_Ball;
-    else bonus_type = BNT_Additional_Life;
+    else bonus_type = BNT_Additional_Life;*/
+
+    bonus_type = BNT_Tripple_Ball;
 
     bonus_x = (x_coord * Config::Cell_Width + Config::Level_X_Offset) * Config::Extent;
     bonus_y = (y_coord * Config::Cell_Height + Config::Level_Y_Offset) * Config::Extent;
     
     if (Falling_Count < Config::Max_Falling_Count) {
         falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
-        if (rand() % 4 == 0) {
+        if (rand() % 1 == 0) {
 
             for (int i = 0; i < Config::Max_Falling_Count; i++) {
                 if (Falling[i] == 0) {

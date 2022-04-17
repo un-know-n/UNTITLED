@@ -21,6 +21,8 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
     //if there`s no collision with painting area -> there`s no ball
     RECT destination_rect;
 
+    if (Ball_State == BS_Disabled || Ball_State == BS_None) return;
+
     if (IntersectRect(&destination_rect, &paint_area, &Prev_Ball_Rect)) {
         //Clear BG
         SelectObject(hdc, Config::BG_Pen);
@@ -44,6 +46,8 @@ void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, 
     Rest_Size += Ball_Speed;
     bool collided;
     Prev_Ball_Rect = Ball_Rect;
+
+    if (Ball_State == BS_Disabled || Ball_State == BS_None) return;
 
     //If we`ve remaining space for the ball -> we use it and it won`t be lost
     while (Rest_Size >= Config::Step_Size) {
@@ -104,17 +108,22 @@ EBall_State Ball::Get_State() {
 void Ball::Set_State(EBall_State state, int x_pos) {
     //Applying new state with new options
     switch (state) {
+    case BS_Disabled:
+        Ball_Speed = 0.0;
+        Rest_Size = 0.0;
+        break;    
+
+    case BS_None:
+        Ball_Speed = 0.0;
+        Rest_Size = 0.0;
+        break;
+
     case BS_Test:
         Central_X = x_pos;
         Central_Y = 175;//140
         Ball_Speed = 3.0;
         Rest_Size = 0.0;
         Ball_Direction = -(M_PI - M_PI_4);//M_PI - M_PI_4
-        break;
-
-    case BS_None:
-        Ball_Speed = 0.0;
-        Rest_Size = 0.0;
         break;
 
     case BS_Start:

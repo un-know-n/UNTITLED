@@ -35,12 +35,16 @@ public:
     int On_Timer();
     void Act();
     void On_Falling_Bonus(Bonus *falling_bonus);
+    void Play_Level();
+
+    int active_balls, fallen_balls;
 
     EGame_State Game_State;
-
 private:
-    Ball Ball;
+    //Ball Ball;
     Level Level;
     Platform Platform;
     Border Border;
+
+    Ball Balls[Config::Max_Ball_Count];
 };

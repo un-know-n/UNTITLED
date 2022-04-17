@@ -3,8 +3,10 @@
 #include "Config.h"
 
 enum EBall_State {
-    BS_Test,
+    BS_Disabled,
     BS_None,
+
+    BS_Test,    
     BS_Start,
     BS_Free
 };
