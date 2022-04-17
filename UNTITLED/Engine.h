@@ -31,7 +31,7 @@ public:
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
-    int On_Key_Down(EKey_Type key_type, int button, HWND hwnd);
+    int On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down);
     int On_Timer();
     void Act();
     void On_Falling_Bonus(Bonus *falling_bonus);

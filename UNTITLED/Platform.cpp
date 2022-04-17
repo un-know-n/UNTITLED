@@ -8,8 +8,8 @@ Platform::~Platform() {
     delete[] Platform_Scan;
 }
 
-Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
-Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Step_Up(0), Platform_Step(3),
+Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21), Speed(0),
+Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Platform_Move_State(PMS_Stop), Step_Up(0),
 Platform_Rect{}, Platform_Normal_Width(Width * Config::Extent), Platform_Normal_Height(Height * Config::Extent),
 Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
 {//Constructor
@@ -80,9 +80,9 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     SelectObject(hdc, Ellipse_Platform_Pen);
     SelectObject(hdc, Ellipse_Platform_Brush);
 
-    Ellipse(hdc, (x+1) * Config::Extent, (y+1) * Config::Extent,
+    Ellipse(hdc, (x + 1) * Config::Extent, (y + 1) * Config::Extent,
         (x + 1 + Config::Circle_Size) * Config::Extent - 1, (y + 1 + Config::Circle_Size) * Config::Extent - 1);
-    Ellipse(hdc, (x + 1 + inner_pl_width) * Config::Extent, (y+1) * Config::Extent,
+    Ellipse(hdc, (x + 1 + inner_pl_width) * Config::Extent, (y + 1) * Config::Extent,
         (x + 1 + Config::Circle_Size + inner_pl_width) * Config::Extent - 1, (y + 1 + Config::Circle_Size) * Config::Extent - 1);
 
     SelectObject(hdc, Rectangle_Platform_Pen);
@@ -92,9 +92,13 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
         (x + inner_pl_width + 3) * Config::Extent - 1,
         (y + 6) * Config::Extent - 1, 3, 3);
 
-    x *= Config::Extent;
-    y *= Config::Extent;
+    Take_Platform_Scan(hdc);
+}
 
+void Platform::Take_Platform_Scan(HDC hdc) {
+    int x = (Config::Level_X_Offset + X_Position) * Config::Extent;
+    int y = Config::Platform_Y_Position * Config::Extent;
+    int offset = 0;
 
     if (Platform_Scan == 0 && Platform_State == PS_Ready) {
         Platform_Scan = new int[Platform_Normal_Width * Platform_Normal_Height];
@@ -291,29 +295,42 @@ void Platform::Act(){
         }
 }
 
-void Platform::Move_To_Left(bool left_side) {
-    if (Get_State() == PS_Normal) {
-        if (left_side) {
+void Platform::Move_To_Left(bool left_side, bool is_key_down) {
+    if (Get_State() != PS_Normal) return;
 
-            X_Position -= Platform_Step;
-            Condition();
-            Redraw();
-        }
-        else {
-            if (Get_State() == PS_Normal) {
-                X_Position += Platform_Step;
-                Condition();
-                Redraw();
+    if (left_side) {
+        if (Platform_Move_State == PMS_Move_Left) {
+            if (!is_key_down) { 
+                Speed = 0.0;
+                Platform_Move_State = PMS_Stop; 
+                return;
             }
         }
+        else Platform_Move_State = PMS_Move_Left;
+        Speed = -Platform_Step;
+
+    } else {
+        if (Platform_Move_State == PMS_Move_Right) {
+            if (!is_key_down) {
+                Speed = 0.0;
+                Platform_Move_State = PMS_Stop;
+                return;
+            }
+        }
+        else Platform_Move_State = PMS_Move_Right;
+        Speed = Platform_Step;
     }
 }
 
+void Platform::Next_Step(double max_speed) {
+    X_Position += Speed / max_speed * Config::Step_Size;
+    Condition();
+    //Redraw();
+}
+
 void Platform::Condition() {
-    if (X_Position < Config::Min_X-2)
-        X_Position = Config::Min_X-2;
-    if (X_Position > Config::Max_X+1)
-        X_Position = Config::Max_X+1;
+    if (X_Position < Config::Min_X-2) X_Position = Config::Min_X-2;
+    if (X_Position > Config::Max_X+1) X_Position = Config::Max_X+1;
 }
 
 bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
@@ -323,7 +340,7 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
     double inner_platform_left = X_Position + 3 * Config::Circle_Size - 1;
     double inner_platform_right = X_Position + Width + Config::Circle_Size;
 
-    ball->Ball_Speed = 3.0;
+    //ball->Ball_Speed = 3.0;
 
     if (next_y_pos + ball->Radius < Config::Platform_Y_Position - 10) return false;
 
@@ -361,9 +378,6 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
     double beta_angle, alpha_angle, gamma_angle;
 
     platform_ball_radius = (double)Config::Circle_Size / 2.0;
-
-    //platform_ball_x = (double)X_Position + platform_ball_radius;
-    //platform_ball_y = (double)Config::Platform_Y_Position + platform_ball_radius;
 
     platform_ball_x = Platform_Rect.left / Config::Extent + platform_ball_radius + Config::Extent - 1 + inner_width;
     platform_ball_y = Platform_Rect.top / Config::Extent - platform_ball_radius;

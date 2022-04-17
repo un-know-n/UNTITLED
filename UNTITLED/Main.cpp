@@ -222,22 +222,44 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 		switch (wParam) {
 		case VK_LEFT:
-			return Engine.On_Key_Down(KT_Left, NULL, hWnd);
+			return Engine.On_Key(KT_Left, NULL, hWnd, true);
 			break;
 		case VK_RIGHT:
-			return Engine.On_Key_Down(KT_Right, NULL, hWnd);
+			return Engine.On_Key(KT_Right, NULL, hWnd, true);
 			break;
 		case VK_SPACE:
-			return Engine.On_Key_Down(KT_Space, NULL, hWnd);
+			return Engine.On_Key(KT_Space, NULL, hWnd, true);
 			break;
 		case VK_ESCAPE:
-			return Engine.On_Key_Down(KT_Escape, NULL, hWnd);
+			return Engine.On_Key(KT_Escape, NULL, hWnd, true);
 			break;
 		case 0x41:
-			return Engine.On_Key_Down(KT_None, Button_A, hWnd);
+			return Engine.On_Key(KT_None, Button_A, hWnd, true);
 			break;
 		case 0x44:
-			return Engine.On_Key_Down(KT_None, Button_D, hWnd);
+			return Engine.On_Key(KT_None, Button_D, hWnd, true);
+			break;
+		}
+		break;
+	case WM_KEYUP:
+		switch (wParam) {
+		case VK_LEFT:
+			return Engine.On_Key(KT_Left, NULL, hWnd, false);
+			break;
+		case VK_RIGHT:
+			return Engine.On_Key(KT_Right, NULL, hWnd, false);
+			break;
+		case VK_SPACE:
+			return Engine.On_Key(KT_Space, NULL, hWnd, false);
+			break;
+		case VK_ESCAPE:
+			return Engine.On_Key(KT_Escape, NULL, hWnd, false);
+			break;
+		case 0x41:
+			return Engine.On_Key(KT_None, Button_A, hWnd, false);
+			break;
+		case 0x44:
+			return Engine.On_Key(KT_None, Button_D, hWnd, false);
 			break;
 		}
 		break;

@@ -59,28 +59,30 @@ void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
     Platform.Draw(hdc, paint_area);
 }
 
-int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
+int HeadEngine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {
     //Check what type of key is currently pressed
     switch (key_type) {
     case KT_Left:
-        Platform.Move_To_Left(true);
+        Platform.Move_To_Left(true, is_key_down);
         break;
     case KT_Right:
-        Platform.Move_To_Left(false);
+        Platform.Move_To_Left(false, is_key_down);
         break;
     case KT_Space:
-        if (Platform.Get_State() == PS_Ready) {
+        if (is_key_down) {
+            if (Platform.Get_State() == PS_Ready) {
 
-            for (int i = 0; i < 3; i++) {
-                Balls[i].Set_State(BS_Free, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
-            }
+                for (int i = 0; i < 3; i++) {
+                    Balls[i].Set_State(BS_Free, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
+                }
 
-            for (int i = 3; i < Config::Max_Ball_Count; i++) {
-                //if(Balls[i].Get_State() == BS_Start)
-                Balls[i].Set_State(BS_Disabled, 0);
+                for (int i = 3; i < Config::Max_Ball_Count; i++) {
+                    //if(Balls[i].Get_State() == BS_Start)
+                    Balls[i].Set_State(BS_Disabled, 0);
+                }
+                Platform.Set_State(PS_Normal);
             }
-            Platform.Set_State(PS_Normal);
-        }
+        }        
         break;
     case KT_Escape:
         DestroyWindow(hwnd);
@@ -88,10 +90,10 @@ int HeadEngine::On_Key_Down(EKey_Type key_type, int button, HWND hwnd) {
     }
     switch (button) {
     case Button_A:
-        Platform.Move_To_Left(true);
+        Platform.Move_To_Left(true, is_key_down);
         break;
     case Button_D:
-        Platform.Move_To_Left(false);
+        Platform.Move_To_Left(false, is_key_down);
         break;
     }
     return 0;
@@ -139,6 +141,21 @@ int HeadEngine::On_Timer() {
 
 void HeadEngine::Play_Level() {
     int active_balls = 0, fallen_balls = 0;
+    double rest_distance, max_speed;
+    //Platform moving
+
+    max_speed = fabs(Platform.Speed);
+
+    rest_distance = max_speed;
+
+    while (rest_distance > 0.0) {
+        Platform.Next_Step(max_speed);
+        rest_distance -= Config::Step_Size;
+    }
+
+    Platform.Redraw();
+
+    //Balls moving
     for (int i = 0; i < Config::Max_Ball_Count; i++) {
         if (Balls[i].Get_State() == BS_Disabled) continue;
         ++active_balls;
