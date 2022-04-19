@@ -19,9 +19,25 @@ public:
     bool Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double& x);//double &x
 };
 
-class Ball {
+class Driver {
+public:
+    ~Driver();
+
+    virtual void Initialization() = 0;
+    virtual void Finalization() = 0;
+    virtual void Next_Step(double max_speed) = 0;
+    virtual double Get_Speed() = 0;
+
+};
+
+class Ball: public Driver {
 public:
     Ball();
+
+    virtual void Initialization();
+    virtual void Finalization();
+    virtual void Next_Step(double max_speed);
+    virtual double Get_Speed();
 
     double Ball_Speed;
     static const double Radius;
@@ -42,7 +58,7 @@ public:
 
     void Init();
     void Draw(HDC hdc, RECT &paint_area);
-    void Move();
+    //void Next_Step(double max_speed);
     void Redraw();
     EBall_State Get_State();
     void Set_State(EBall_State state, int x_pos);

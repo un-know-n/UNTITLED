@@ -1,9 +1,66 @@
 
 #include "Engine.h"
 
-/////////////////////////////////////////////////////////////////////
+//          BALL_PILE
 
-//          CSENGINE
+
+void Ball_Pile::Initialization() {
+    for (int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Initialization();
+}
+
+void Ball_Pile::Finalization() {
+    for (int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Finalization();
+}
+
+void Ball_Pile::Next_Step(double max_speed) {
+    for (int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Next_Step(max_speed);
+}
+
+double Ball_Pile::Get_Speed() {
+    double max_speed = 0.0;
+
+    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+        if (Balls[i].Ball_Speed > max_speed) max_speed = Balls[i].Ball_Speed;
+    }
+
+    return max_speed;
+}
+
+void Ball_Pile::Draw(HDC hdc, RECT& paint_area) {
+    for (int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Draw(hdc, paint_area);
+}
+
+void Ball_Pile::Release_Balls(double platform_pos) {
+    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+        Balls[i].Set_State(BS_Free, platform_pos); 
+    }
+
+    //for (int i = 20; i < Config::Max_Ball_Count; i++) {
+    //    //if(Balls[i].Get_State() == BS_Start)
+    //    Balls[i].Set_State(BS_Disabled, 0);
+    //}
+}
+
+bool Ball_Pile::If_Balls_Lost() {
+    int active_balls = 0, fallen_balls = 0;
+
+    //Balls moving
+    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+        if (Balls[i].Get_State() == BS_Disabled) continue;
+
+        ++active_balls;
+
+        if (Balls[i].Get_State() == BS_None) ++fallen_balls;
+    }
+    if (active_balls == fallen_balls && fallen_balls != 0 && active_balls != 0) return true;
+    else return false;
+}
+
+
+
+////////////////////////////////////////////////////
+
+//          HEADENGINE
 
 HeadEngine::HeadEngine() : Game_State(GS_GameOver)
 {//Constructor
@@ -32,11 +89,11 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Platform.Init();
 
     for (int i = 0; i < Config::Max_Ball_Count; i++) {
-        Balls[i].Init();
+        Ball_Pile.Balls[i].Init();
 
-        Balls[i].Add_Hit_Checker(&Border);
-        Balls[i].Add_Hit_Checker(&Level);
-        Balls[i].Add_Hit_Checker(&Platform);
+        Ball_Pile.Balls[i].Add_Hit_Checker(&Border);
+        Ball_Pile.Balls[i].Add_Hit_Checker(&Level);
+        Ball_Pile.Balls[i].Add_Hit_Checker(&Platform);
     }  
 
     //Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
@@ -44,6 +101,10 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Platform.Redraw();
     
     SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
+
+    memset(Object_Driver, 0, sizeof(Object_Driver));
+    Object_Driver[0] = &Platform;
+    Object_Driver[1] = &Ball_Pile;
 }
 
 void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
@@ -51,12 +112,9 @@ void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
     SetGraphicsMode(hdc, GM_ADVANCED);
     
     Level.Draw(hdc, paint_area);
-
-    for(int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Draw(hdc, paint_area);
-
-
     Border.Draw(hdc, paint_area);
     Platform.Draw(hdc, paint_area);
+    Ball_Pile.Draw(hdc, paint_area);
 }
 
 int HeadEngine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {
@@ -71,15 +129,7 @@ int HeadEngine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_do
     case KT_Space:
         if (is_key_down) {
             if (Platform.Get_State() == PS_Ready) {
-
-                for (int i = 0; i < 3; i++) {
-                    Balls[i].Set_State(BS_Free, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
-                }
-
-                for (int i = 3; i < Config::Max_Ball_Count; i++) {
-                    //if(Balls[i].Get_State() == BS_Start)
-                    Balls[i].Set_State(BS_Disabled, 0);
-                }
+                Ball_Pile.Release_Balls(Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
                 Platform.Set_State(PS_Normal);
             }
         }        
@@ -105,7 +155,7 @@ int HeadEngine::On_Timer() {
 
     switch (Game_State) {
     case GS_Test:
-        Balls[0].Set_Test();
+        Ball_Pile.Balls[0].Set_Test();
         Platform.Set_State(PS_Normal);
         Game_State = GS_Play;
         break;
@@ -125,10 +175,9 @@ int HeadEngine::On_Timer() {
     case GS_Restart:
         if (Platform.Get_State() == PS_Ready) {
             for (int i = 0; i < Config::Max_Ball_Count; i++) {
-                Balls[i].Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);// -Platform.Width / 4
-                Balls[i].Ball_Speed = 0.0;
+                Ball_Pile.Balls[i].Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
+                Ball_Pile.Balls[i].Ball_Speed = 0.0;
             }
-            //for (int i = 1; i < Config::Max_Ball_Count; i++)
             Game_State = GS_Play;
         }        
         break;
@@ -140,34 +189,46 @@ int HeadEngine::On_Timer() {
 }
 
 void HeadEngine::Play_Level() {
-    int active_balls = 0, fallen_balls = 0;
-    double rest_distance, max_speed;
+    Next_Driver_Step();
+
+    if (Ball_Pile.If_Balls_Lost()) {
+        Game_State = GS_GameOver;
+        Platform.Set_State(PS_EndGame);
+    } 
+
+    /*if (Ball_Pile.Balls[0].Is_Test_Finished()) {
+        Game_State = GS_Test;
+    }*/
+    
+}
+
+void HeadEngine::Next_Driver_Step() {
+    double rest_distance, max_speed = 0.0;
+    double current_speed = 0.0;
+
     //Platform moving
 
-    max_speed = fabs(Platform.Speed);
+    for (int i = 0; i < Config::Max_Driver_Count; i++) {
+        if (Object_Driver[i] != 0) {
+            Object_Driver[i]->Initialization();
+            current_speed = Object_Driver[i]->Get_Speed();
+            if (current_speed > max_speed) max_speed = current_speed;
+        }
+    }
 
     rest_distance = max_speed;
 
     while (rest_distance > 0.0) {
-        Platform.Next_Step(max_speed);
+        for (int i = 0; i < Config::Max_Driver_Count; i++) {
+            if (Object_Driver[i] != 0) Object_Driver[i]->Next_Step(max_speed);
+        }
         rest_distance -= Config::Step_Size;
     }
 
-    Platform.Redraw();
-
-    //Balls moving
-    for (int i = 0; i < Config::Max_Ball_Count; i++) {
-        if (Balls[i].Get_State() == BS_Disabled) continue;
-        ++active_balls;
-        if (Balls[i].Get_State() == BS_None) ++fallen_balls;
-        Balls[i].Move();
-    }
-    if (Balls[0].Is_Test_Finished()) {
-        Game_State = GS_Test;
-    }
-    if (active_balls == fallen_balls && fallen_balls != 0 && active_balls != 0) {
-        Game_State = GS_GameOver;
-        Platform.Set_State(PS_EndGame);
+    for (int i = 0; i < Config::Max_Driver_Count; i++) {
+        if (Object_Driver[i] != 0) {
+            Object_Driver[i]->Finalization();
+        }
     }
 }
 

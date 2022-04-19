@@ -1,14 +1,13 @@
 
 #include "Platform.h"
 
-
-//          CSPLATFORM
+//          PLATFORM
 
 Platform::~Platform() {
     delete[] Platform_Scan;
 }
 
-Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21), Speed(0),
+Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Platform_Move_State(PMS_Stop), Step_Up(0),
 Platform_Rect{}, Platform_Normal_Width(Width * Config::Extent), Platform_Normal_Height(Height * Config::Extent),
 Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
@@ -323,14 +322,26 @@ void Platform::Move_To_Left(bool left_side, bool is_key_down) {
 }
 
 void Platform::Next_Step(double max_speed) {
-    X_Position += Speed / max_speed * Config::Step_Size;
+    double next_step = Speed / max_speed * Config::Step_Size;
+    X_Position += next_step;
     Condition();
     //Redraw();
+}
+
+double Platform::Get_Speed() {
+    return Speed;
 }
 
 void Platform::Condition() {
     if (X_Position < Config::Min_X-2) X_Position = Config::Min_X-2;
     if (X_Position > Config::Max_X+1) X_Position = Config::Max_X+1;
+}
+
+void Platform::Initialization() {
+
+}
+void Platform::Finalization() {
+    Redraw();
 }
 
 bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
@@ -389,7 +400,8 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
 
     temporary_distance = sqrt(dx_range * dx_range + dy_range * dy_range);
 
-    if (fabs(temporary_distance - radius_summ) < Config::Step_Size) {//temporary_distance <= radius_summ
+    //if (fabs(temporary_distance - radius_summ) < Config::Step_Size) {//temporary_distance <= radius_summ
+    if(temporary_distance + Config::Step_Size < radius_summ) {
         beta_angle = atan2(-dy_range, dx_range);
         alpha_angle = beta_angle + M_PI - ball->Get_Direction();
         gamma_angle = alpha_angle + beta_angle;

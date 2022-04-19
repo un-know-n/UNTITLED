@@ -19,7 +19,7 @@ enum EPlatform_Move_State {
     PMS_Move_Right
 };
 
-class Platform: public Main_Hit_Checker{
+class Platform: public Main_Hit_Checker, public Driver{
 public:
     ~Platform();
     Platform();
@@ -50,7 +50,12 @@ public:
     const int Platform_Normal_Width, Platform_Normal_Height;
     int* Platform_Scan;
 
+    virtual void Initialization();
+    virtual void Finalization();
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
+    virtual void Next_Step(double max_speed);
+    virtual double Get_Speed();
+
     void Init();
     void Redraw();
     void Draw(HDC hdc, RECT &paint_area);
@@ -67,6 +72,5 @@ public:
     bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
     bool Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width);
     bool Got_Hit_By(Bonus *falling_bonus);
-    void Next_Step(double max_speed);
     void Take_Platform_Scan(HDC hdc);
 };

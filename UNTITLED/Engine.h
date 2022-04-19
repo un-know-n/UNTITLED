@@ -25,6 +25,21 @@ const int Button_A = 0x41;
 const int Button_D = 0x44;
 const int Timer_ID = WM_USER + 1;
 
+class Ball_Pile: public Driver {
+public:
+
+    virtual void Initialization();
+    virtual void Finalization();
+    virtual void Next_Step(double max_speed);
+    virtual double Get_Speed();
+
+    Ball Balls[Config::Max_Ball_Count];
+    void Draw(HDC hdc, RECT& paint_area);
+    void Release_Balls(double platform_pos);
+    bool If_Balls_Lost();
+        
+};
+
 class HeadEngine {
 public:
     HeadEngine();
@@ -36,6 +51,7 @@ public:
     void Act();
     void On_Falling_Bonus(Bonus *falling_bonus);
     void Play_Level();
+    void Next_Driver_Step();
 
     int active_balls, fallen_balls;
 
@@ -45,6 +61,7 @@ private:
     Level Level;
     Platform Platform;
     Border Border;
-
-    Ball Balls[Config::Max_Ball_Count];
+    Ball_Pile Ball_Pile;
+    
+    Driver* Object_Driver[Config::Max_Driver_Count];
 };

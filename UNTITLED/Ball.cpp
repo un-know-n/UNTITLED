@@ -1,6 +1,12 @@
 
 #include "Ball.h"
 
+//          DRIVER
+
+Driver::~Driver() {
+
+}
+
 //      CBALL
 
 const double Ball::Start_Y_Pos = 173.0;
@@ -11,6 +17,67 @@ Main_Hit_Checker* Ball::Hit_Check[] = {};
 Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
 Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Test_Active(false), Move_Pos(0), Ball_State(BS_Start) 
 {//Constructor
+}
+
+void Ball::Initialization() {
+    Prev_Ball_Rect = Ball_Rect;
+}
+
+void Ball::Finalization() {
+    Redraw();
+}
+
+void Ball::Next_Step(double max_speed) {
+    double next_x_pos, next_y_pos;
+    double next_step;
+    bool collided = true;
+    
+
+    if (Ball_State == BS_Disabled || Ball_State == BS_None) return;
+
+    next_step = Ball_Speed / max_speed * Config::Step_Size;
+
+    //If we`ve remaining space for the ball -> we use it and it won`t be lost
+    while (collided) {
+        collided = false;
+        //Calculating new coords
+        next_x_pos = Central_X + next_step * cos(Ball_Direction);//Config::Step_Size
+        next_y_pos = Central_Y - next_step * sin(Ball_Direction);
+
+        for (int i = 0; i < Hit_Counter; i++) {
+            //If we`ve collided with smth (Platform || Border || Block)
+            collided |= Hit_Check[i]->Check_Colision(next_x_pos, next_y_pos, this);// smth = state1 | state2 (Always true if it is)
+        }
+
+        //If we`ve collided with border
+        //collided |= border_hit->Check_Colision(next_x_pos, next_y_pos, this);// smth = state1 | state2 (Always true if it is)
+
+        //If we`ve collided with blocks
+        //collided |= level_hit->Check_Colision(next_x_pos, next_y_pos, this); // smth = state1 | state2 (Always true if it is)
+
+        //If struck with platform
+        //collided |= platform_hit->Check_Colision(next_x_pos, next_y_pos, this); // smth = state1 | state2 (Always true if it is)
+
+        if (!collided) {
+            //Ball translation if we haven't collided with anything
+            //Rest_Size -= Config::Step_Size;
+
+            //Application of new coords
+            Central_X = next_x_pos;
+            Central_Y = next_y_pos;
+        }
+
+        //Only if we`re testing smth
+        if (Test_Active) Rest_Test_Size -= next_step;
+
+    }
+
+    //Redraw movement
+    
+}
+
+double Ball::Get_Speed() {
+    return Ball_Speed;
 }
 
 void Ball::Init(){
@@ -41,52 +108,7 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
     
 }
 
-void Ball::Move() { //Main_Hit_Checker*level_hit, Main_Hit_Checker *border_hit, Main_Hit_Checker*platform_hit
-    double next_x_pos, next_y_pos;
-    Rest_Size += Ball_Speed;
-    bool collided;
-    Prev_Ball_Rect = Ball_Rect;
 
-    if (Ball_State == BS_Disabled || Ball_State == BS_None) return;
-
-    //If we`ve remaining space for the ball -> we use it and it won`t be lost
-    while (Rest_Size >= Config::Step_Size) {
-        collided = false;
-        //Calculating new coords
-        next_x_pos = Central_X + Config::Step_Size * cos(Ball_Direction);
-        next_y_pos = Central_Y - Config::Step_Size * sin(Ball_Direction);
-
-        for (int i = 0; i < Hit_Counter; i++) {
-            //If we`ve collided with smth (Platform || Border || Block)
-            collided |= Hit_Check[i]->Check_Colision(next_x_pos, next_y_pos, this);// smth = state1 | state2 (Always true if it is)
-        }
-
-        //If we`ve collided with border
-        //collided |= border_hit->Check_Colision(next_x_pos, next_y_pos, this);// smth = state1 | state2 (Always true if it is)
-
-        //If we`ve collided with blocks
-        //collided |= level_hit->Check_Colision(next_x_pos, next_y_pos, this); // smth = state1 | state2 (Always true if it is)
-               
-        //If struck with platform
-        //collided |= platform_hit->Check_Colision(next_x_pos, next_y_pos, this); // smth = state1 | state2 (Always true if it is)
-
-        if (!collided) {
-            //Ball translation if we haven't collided with anything
-            Rest_Size -= Config::Step_Size;
-
-            //Application of new coords
-            Central_X = next_x_pos;
-            Central_Y = next_y_pos;
-        }
-
-        //Only if we`re testing smth
-        if(Test_Active) Rest_Test_Size -= Config::Step_Size;
-        
-    }
-
-    //Redraw movement
-    Redraw();
-}
 
 void Ball::Redraw() {
     //Creation of the rectangle area in which ball is placed

@@ -30,7 +30,8 @@ public:
     static int Tick;
     static const int Max_Fading_Count = 10;
     static const int Max_Falling_Count = 10;
-    static const int Max_Ball_Count = 9;
+    static const int Max_Ball_Count = 3;//9
+    static const int Max_Driver_Count = 10;
 
 //Level
     static const int Block_Width = 15;

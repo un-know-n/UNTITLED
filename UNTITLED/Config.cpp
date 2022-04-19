@@ -1,6 +1,6 @@
 #include "Config.h"
 
-//          CCOLOR
+//          COLOR
 
 Color::Color(unsigned char r, unsigned char g, unsigned char b)
     :   R(r), G(g), B(b)
@@ -17,7 +17,7 @@ const Color Config::Green_Block(43, 97, 49);
 const Color Config::Yellow_Block(112, 101, 46);
 const Color Config::Red_Block(97, 43, 43);
 
-//          CSCONFIG
+//          CONFIG
 
 HPEN Config::Green_Pen, Config::Blue_Pen, Config::Red_Pen, Config::Yellow_Pen;
 HBRUSH Config::Green_Brush, Config::Blue_Brush, Config::Red_Brush, Config::Yellow_Brush;
