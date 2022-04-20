@@ -38,6 +38,7 @@ public:
     static const int Max_Ball_Count = 5;//9
     static const int Max_Driver_Count = 10;
     static const int Max_Life_Counter = 5;
+    static bool Have_Floor;
 
     //Level
     static const int Block_Width = 15;

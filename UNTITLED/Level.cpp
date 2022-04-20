@@ -314,7 +314,7 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     else if(bonus_random % 3 == 0) bonus_type = BNT_Tripple_Ball;
     else bonus_type = BNT_Additional_Life;*/
 
-    bonus_type = BNT_Tripple_Ball;
+    bonus_type = BNT_Floor;
 
     bonus_x = (x_coord * Config::Cell_Width + Config::Level_X_Offset) * Config::Extent;
     bonus_y = (y_coord * Config::Cell_Height + Config::Level_Y_Offset) * Config::Extent;

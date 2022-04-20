@@ -4,6 +4,7 @@
 #include "Border.h"
 #include "Platform.h"
 #include "Level.h"
+#include "Ball_Pile.h"
 
 
 enum EKey_Type {
@@ -24,24 +25,6 @@ enum EGame_State {
 const int Button_A = 0x41;
 const int Button_D = 0x44;
 const int Timer_ID = WM_USER + 1;
-
-class Ball_Pile: public Driver {
-public:
-
-    virtual void Initialization();
-    virtual void Finalization();
-    virtual void Next_Step(double max_speed);
-    virtual double Get_Speed();
-
-    void Draw(HDC hdc, RECT& paint_area);
-    void Release_Balls(double platform_pos);
-    void Set_On_Platform(double platform_pos);
-    void Tripple_Balls();
-
-    bool If_Balls_Lost();
-    
-    Ball Balls[Config::Max_Ball_Count];
-};
 
 class Head_Engine {
 public:

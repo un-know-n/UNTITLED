@@ -60,6 +60,9 @@
     <ClInclude Include="Main.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="Ball_Pile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="UNTITLED.rc">
@@ -101,6 +104,9 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Ball_Pile.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -29,6 +29,8 @@ int Config::Tick = 0;
 
 const double Config::Step_Size = 1.0 / Config::Extent;
 
+bool Config::Have_Floor = false;
+
 void Config::Setup_Colors(){
     Config::Create_PenNBrush(Config::Green_Block, Config::Green_Pen, Config::Green_Brush);
     Config::Create_PenNBrush(Config::Blue_Block, Config::Blue_Pen, Config::Blue_Brush);

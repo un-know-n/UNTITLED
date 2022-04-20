@@ -1,24 +1,6 @@
 ﻿  Ball.cpp
-  Bonus.cpp
   Border.cpp
-  Config.cpp
   Engine.cpp
-F:\Курсовая\UNTITLED\Engine.cpp(34,33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-F:\Курсовая\UNTITLED\Engine.cpp(37,41): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-F:\Курсовая\UNTITLED\Engine.cpp(47,34): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-F:\Курсовая\UNTITLED\Engine.cpp(49,85): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Fade.cpp
-  Level.cpp
-F:\Курсовая\UNTITLED\Level.cpp(133,15): warning C4101: 'y': unreferenced local variable
-F:\Курсовая\UNTITLED\Level.cpp(133,12): warning C4101: 'x': unreferenced local variable
-F:\Курсовая\UNTITLED\Level.cpp(310,9): warning C4101: 'bonus_random': unreferenced local variable
-  Main.cpp
-  Platform.cpp
-F:\Курсовая\UNTITLED\Platform.cpp(29,64): warning C4244: '=': conversion from 'double' to 'LONG', possible loss of data
-F:\Курсовая\UNTITLED\Platform.cpp(77,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-F:\Курсовая\UNTITLED\Platform.cpp(103,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-F:\Курсовая\UNTITLED\Platform.cpp(126,15): warning C4101: 'pixel': unreferenced local variable
-F:\Курсовая\UNTITLED\Platform.cpp(207,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Generating Code...
 F:\Курсовая\UNTITLED\Ball.cpp(223): warning C4715: 'Ball::Is_Test_Finished': not all control paths return a value
   UNTITLED.vcxproj -> F:\Курсовая\x64\Debug\UNTITLED.exe

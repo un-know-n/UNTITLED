@@ -11,12 +11,14 @@ public:
 
     void Init();
     void Draw(HDC hdc, RECT& paint_area);
+    void Redraw_Floor();
 
     HPEN Border_Main_Pen, Border_White_Pen;
     HBRUSH Border_Main_Brush, Border_White_Brush;
 
-    static bool Have_Floor;
+    RECT Floor_Rect;
 
 private:
     void Draw_Element(HDC hdc, int x, int y, BOOL is_vertical);
+    void Draw_Floor(HDC hdc, int x, int y);
 };

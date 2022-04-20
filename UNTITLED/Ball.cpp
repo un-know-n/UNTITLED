@@ -7,7 +7,7 @@ Driver::~Driver() {
 
 }
 
-//      CBALL
+//          BALL
 
 const double Ball::Start_Y_Pos = 173.0;
 const double Ball::Radius = 2.0;

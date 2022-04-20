@@ -354,8 +354,8 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
     double reflection_pos;
     double inner_top_y = Config::Platform_Y_Position - 5;
     double inner_bottom_y = Config::Platform_Height + Config::Platform_Y_Position - 6;
-    double inner_platform_left = X_Position + 3 * Config::Circle_Size - 1;
-    double inner_platform_right = X_Position + Width + Config::Circle_Size;
+    double inner_platform_left = X_Position + 2 * Config::Circle_Size - 1;
+    double inner_platform_right = X_Position + Width + 2 * Config::Circle_Size - 1;
 
     //ball->Ball_Speed = 3.0;
 
@@ -393,6 +393,7 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
     double temporary_distance, radius_summ, platform_ball_radius;
     double platform_ball_x, platform_ball_y;
     double beta_angle, alpha_angle, gamma_angle;
+    double related_ball_direction = 0;
 
     platform_ball_radius = (double)Config::Circle_Size / 2.0;
 
@@ -406,14 +407,23 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
 
     temporary_distance = sqrt(dx_range * dx_range + dy_range * dy_range);
 
-    //if (fabs(temporary_distance - radius_summ) < Config::Step_Size) {//temporary_distance <= radius_summ
-    if(temporary_distance + Config::Step_Size < radius_summ) {
-        beta_angle = atan2(-dy_range, dx_range);
-        alpha_angle = beta_angle + M_PI - ball->Get_Direction();
-        gamma_angle = alpha_angle + beta_angle;
+    if (fabs(temporary_distance - radius_summ) < Config::Step_Size) {//temporary_distance <= radius_summ || // temporary_distance + Config::Step_Size <= radius_summ
 
-        ball->Set_Direction(gamma_angle);
-        return true;
+        beta_angle = atan2(-dy_range, dx_range);
+
+        related_ball_direction = ball->Get_Direction();
+        related_ball_direction -= beta_angle;
+
+        if (related_ball_direction > 2.0 * M_PI) related_ball_direction -= 2.0 * M_PI;
+
+        if (related_ball_direction > M_PI_2 || related_ball_direction < M_PI + M_PI_2) {
+            alpha_angle = beta_angle + M_PI - ball->Get_Direction();
+            gamma_angle = alpha_angle + beta_angle;
+
+            ball->Set_Direction(gamma_angle);
+            return true;
+        }        
+        
     }
     return false;
 }
