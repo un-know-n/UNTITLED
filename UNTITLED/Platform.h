@@ -7,6 +7,7 @@
 enum EPlatform_State{
     PS_None,
     PS_Normal,
+    PS_PreEndGame,
     PS_EndGame,
     PS_StartGame,
     PS_Extension,
@@ -23,6 +24,32 @@ class Platform: public Main_Hit_Checker, public Driver{
 public:
     ~Platform();
     Platform();
+
+    virtual void Initialization();
+    virtual void Finalization();
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
+    virtual void Next_Step(double max_speed);
+    virtual double Get_Speed();
+
+    void Init();
+    void Redraw();
+    void Draw(HDC hdc, RECT& paint_area);
+    void Draw_Normal(HDC hdc, RECT& paint_area);
+    void Draw_EndGame(HDC hdc, RECT& paint_area);
+    void Draw_StartGame(HDC hdc, RECT& paint_area);
+    void Draw_Extension(HDC hdc, RECT& paint_area);
+    void Set_State(EPlatform_State platform_state);
+    void Clear_BG(HDC hdc);
+    void Act();
+    void Move_To_Left(bool left_side, bool is_key_down);
+    void Condition();
+    void Take_Platform_Scan(HDC hdc);
+
+    bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
+    bool Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width);
+    bool Got_Hit_By(Bonus* falling_bonus);
+
+    EPlatform_State Get_State();
 
     Color Ellipse_Platform_Pen_Color, Rectangle_Platform_Pen_Color;
 
@@ -49,28 +76,4 @@ public:
 
     const int Platform_Normal_Width, Platform_Normal_Height;
     int* Platform_Scan;
-
-    virtual void Initialization();
-    virtual void Finalization();
-    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
-    virtual void Next_Step(double max_speed);
-    virtual double Get_Speed();
-
-    void Init();
-    void Redraw();
-    void Draw(HDC hdc, RECT &paint_area);
-    void Draw_Normal(HDC hdc, RECT &paint_area);
-    void Draw_EndGame(HDC hdc, RECT &paint_area);
-    void Draw_StartGame(HDC hdc, RECT& paint_area);
-    void Draw_Extension(HDC hdc, RECT& paint_area);
-    EPlatform_State Get_State();
-    void Set_State(EPlatform_State platform_state);
-    void Clear_BG(HDC hdc);
-    void Act();
-    void Move_To_Left(bool left_side, bool is_key_down);
-    void Condition();
-    bool Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& column_length);
-    bool Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width);
-    bool Got_Hit_By(Bonus *falling_bonus);
-    void Take_Platform_Scan(HDC hdc);
 };

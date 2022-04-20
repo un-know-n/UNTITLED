@@ -33,31 +33,35 @@ public:
     virtual void Next_Step(double max_speed);
     virtual double Get_Speed();
 
-    Ball Balls[Config::Max_Ball_Count];
     void Draw(HDC hdc, RECT& paint_area);
     void Release_Balls(double platform_pos);
+    void Set_On_Platform(double platform_pos);
+    void Tripple_Balls();
+
     bool If_Balls_Lost();
-        
+    
+    Ball Balls[Config::Max_Ball_Count];
 };
 
-class HeadEngine {
+class Head_Engine {
 public:
-    HeadEngine();
+    Head_Engine();
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
-    int On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down);
-    int On_Timer();
     void Act();
     void On_Falling_Bonus(Bonus *falling_bonus);
     void Play_Level();
     void Next_Driver_Step();
 
-    int active_balls, fallen_balls;
+    int On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down);
+    int On_Timer();
+
+    int Life_Counter;
 
     EGame_State Game_State;
 private:
-    //Ball Ball;
+    
     Level Level;
     Platform Platform;
     Border Border;

@@ -53,6 +53,12 @@ void Platform::Draw(HDC hdc, RECT &paint_area) {
         Draw_Normal(hdc, paint_area);
         break;
 
+    case PS_PreEndGame:
+        Draw_Normal(hdc, paint_area);
+        Speed = 0.0;
+        Set_State(PS_EndGame);
+        break;
+
     case PS_EndGame:
         Draw_EndGame(hdc, paint_area);
         break;

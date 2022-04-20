@@ -31,14 +31,22 @@ void Ball_Pile::Draw(HDC hdc, RECT& paint_area) {
 }
 
 void Ball_Pile::Release_Balls(double platform_pos) {
-    for (int i = 0; i < Config::Max_Ball_Count; i++) {
-        Balls[i].Set_State(BS_Free, platform_pos); 
+    Balls[0].Set_State(BS_Free, platform_pos);
+
+    for (int i = 1; i < Config::Max_Ball_Count; i++) {
+        Balls[i].Set_State(BS_Disabled, platform_pos); 
     }
 
     //for (int i = 20; i < Config::Max_Ball_Count; i++) {
     //    //if(Balls[i].Get_State() == BS_Start)
     //    Balls[i].Set_State(BS_Disabled, 0);
     //}
+}
+
+void Ball_Pile::Set_On_Platform(double platform_pos) {
+    Balls[0].Set_State(BS_Start, platform_pos);
+
+    for(int i = 1; i < Config::Max_Ball_Count; i++) Balls[i].Set_State(BS_Disabled, platform_pos);
 }
 
 bool Ball_Pile::If_Balls_Lost() {
@@ -56,17 +64,63 @@ bool Ball_Pile::If_Balls_Lost() {
     else return false;
 }
 
+void Ball_Pile::Tripple_Balls() {
 
+    Ball* current_ball;
+    Ball* further_ball = 0;
+    Ball* left_reason = 0, *right_reason = 0;
+    double ball_x, ball_y, further_ball_x, further_ball_y;
+
+    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+        current_ball = &Balls[i];
+
+        if (current_ball->Get_State() != BS_Free) continue;
+
+        if (further_ball == 0) {
+            further_ball = current_ball;
+        }
+        else {
+            current_ball->Get_Center(ball_x, ball_y);
+            further_ball->Get_Center(further_ball_x, further_ball_y);
+            if (further_ball_y > ball_y) further_ball = current_ball;
+        }
+    }
+
+    if (further_ball == 0) return;
+    
+    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+        current_ball = &Balls[i];
+
+        if (current_ball->Get_State() == BS_Disabled || current_ball->Get_State() == BS_None) {
+            if (left_reason == 0) left_reason = current_ball;
+            else if (right_reason == 0) {
+                right_reason = current_ball;
+                break;
+            }
+            //else return;
+        }
+    }
+
+    if (left_reason != 0) {
+        *left_reason = *further_ball;
+        left_reason->Set_Direction(left_reason->Get_Direction() + M_PI_4 / 2);
+    }
+    if (right_reason != 0){
+        *right_reason = *further_ball;
+        right_reason->Set_Direction(right_reason->Get_Direction() - M_PI_4 / 2);
+    }
+
+}
 
 ////////////////////////////////////////////////////
 
 //          HEADENGINE
 
-HeadEngine::HeadEngine() : Game_State(GS_GameOver)
+Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(0)
 {//Constructor
 }
 
-void HeadEngine::Init_Engine(HWND hwnd) {
+void Head_Engine::Init_Engine(HWND hwnd) {
     //It initializes game engine
     // Initialization of specific random subsequence to our program
 
@@ -107,7 +161,7 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Object_Driver[1] = &Ball_Pile;
 }
 
-void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
+void Head_Engine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
     
@@ -117,7 +171,7 @@ void HeadEngine::Draw_Frame(HDC hdc, RECT &paint_area) {
     Ball_Pile.Draw(hdc, paint_area);
 }
 
-int HeadEngine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {
+int Head_Engine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {
     //Check what type of key is currently pressed
     switch (key_type) {
     case KT_Left:
@@ -149,7 +203,7 @@ int HeadEngine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_do
     return 0;
 }
 
-int HeadEngine::On_Timer() {
+int Head_Engine::On_Timer() {
     //Timer that is used to do the actions in time we ask to
     ++Config::Tick;
 
@@ -174,10 +228,7 @@ int HeadEngine::On_Timer() {
 
     case GS_Restart:
         if (Platform.Get_State() == PS_Ready) {
-            for (int i = 0; i < Config::Max_Ball_Count; i++) {
-                Ball_Pile.Balls[i].Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
-                Ball_Pile.Balls[i].Ball_Speed = 0.0;
-            }
+            Ball_Pile.Set_On_Platform(Platform.X_Position + Platform.Width - Platform.Width / 4 + 2);
             Game_State = GS_Play;
         }        
         break;
@@ -188,12 +239,12 @@ int HeadEngine::On_Timer() {
     return 0;
 }
 
-void HeadEngine::Play_Level() {
+void Head_Engine::Play_Level() {
     Next_Driver_Step();
 
     if (Ball_Pile.If_Balls_Lost()) {
         Game_State = GS_GameOver;
-        Platform.Set_State(PS_EndGame);
+        Platform.Set_State(PS_PreEndGame);
     } 
 
     /*if (Ball_Pile.Balls[0].Is_Test_Finished()) {
@@ -202,7 +253,7 @@ void HeadEngine::Play_Level() {
     
 }
 
-void HeadEngine::Next_Driver_Step() {
+void Head_Engine::Next_Driver_Step() {
     double rest_distance, max_speed = 0.0;
     double current_speed = 0.0;
 
@@ -232,7 +283,7 @@ void HeadEngine::Next_Driver_Step() {
     }
 }
 
-void HeadEngine::Act() {
+void Head_Engine::Act() {
     Platform.Act();
     Level.Act();
 
@@ -246,10 +297,13 @@ void HeadEngine::Act() {
     }
 }
 
-void HeadEngine::On_Falling_Bonus(Bonus* falling_bonus) {
-    /*if (falling_bonus->Bonus_Type == BNT_Tripple_Ball) {
-
-    }*/
+void Head_Engine::On_Falling_Bonus(Bonus* falling_bonus) {
+    if (falling_bonus->Bonus_Type == BNT_Tripple_Ball) {
+        Ball_Pile.Tripple_Balls();
+    }
+    else if (falling_bonus->Bonus_Type == BNT_Additional_Life) {
+        if (Life_Counter < Config::Max_Life_Counter) Life_Counter++;
+    }
     falling_bonus->Finalize();
 }
 /////////////////////////////////////////////////////////////////////

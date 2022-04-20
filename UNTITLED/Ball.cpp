@@ -80,6 +80,11 @@ double Ball::Get_Speed() {
     return Ball_Speed;
 }
 
+void Ball::Get_Center(double& ball_x_pos, double& ball_y_pos) {
+    ball_x_pos = Central_X;
+    ball_y_pos = Central_Y;
+}
+
 void Ball::Init(){
     Config::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
 }
