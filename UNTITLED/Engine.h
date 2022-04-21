@@ -51,4 +51,5 @@ private:
     Ball_Pile Ball_Pile;
     
     Driver* Object_Driver[Config::Max_Driver_Count];
+    Object_Designer* Module[Config::Max_Module_Count];
 };

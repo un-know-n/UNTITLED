@@ -7,7 +7,6 @@ Driver::~Driver() {
 
 }
 
-//          BALL
 
 const double Ball::Start_Y_Pos = 173.0;
 const double Ball::Radius = 2.0;
@@ -80,16 +79,7 @@ double Ball::Get_Speed() {
     return Ball_Speed;
 }
 
-void Ball::Get_Center(double& ball_x_pos, double& ball_y_pos) {
-    ball_x_pos = Central_X;
-    ball_y_pos = Central_Y;
-}
-
-void Ball::Init(){
-    Config::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
-}
-
-void Ball::Draw(HDC hdc, RECT &paint_area) {
+void Ball::Draw(HDC hdc, RECT& paint_area) {
     //if there`s no collision with painting area -> there`s no ball
     RECT destination_rect;
 
@@ -102,7 +92,7 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
 
         Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 2, Prev_Ball_Rect.bottom - 2);
     }
-    
+
     if (IntersectRect(&destination_rect, &paint_area, &Ball_Rect)) {
         //Draw the Ball
         SelectObject(hdc, Ball_Pen);
@@ -110,10 +100,26 @@ void Ball::Draw(HDC hdc, RECT &paint_area) {
 
         Ellipse(hdc, Ball_Rect.left, Ball_Rect.top, Ball_Rect.right - 2, Ball_Rect.bottom - 2);
     }
-    
+
 }
 
+void Ball::Act(){
+    //There`s nothing
+}
 
+bool Ball::Is_Finished() {
+    //There`s nothing
+    return false;
+}
+
+void Ball::Get_Center(double& ball_x_pos, double& ball_y_pos) {
+    ball_x_pos = Central_X;
+    ball_y_pos = Central_Y;
+}
+
+void Ball::Init(){
+    Config::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+}
 
 void Ball::Redraw() {
     //Creation of the rectangle area in which ball is placed

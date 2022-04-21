@@ -30,7 +30,7 @@ public:
 
 };
 
-class Ball: public Driver {
+class Ball: public Driver, public Object_Designer {
 public:
     Ball();
 
@@ -38,11 +38,15 @@ public:
     virtual void Finalization();
     virtual void Next_Step(double max_speed);
     virtual double Get_Speed();
+
+    virtual void Draw(HDC hdc, RECT& paint_area);
+    virtual void Act();
+    virtual bool Is_Finished();
     
     static void Add_Hit_Checker(Main_Hit_Checker* hit_check);
 
     void Init();
-    void Draw(HDC hdc, RECT& paint_area);
+    //void Draw(HDC hdc, RECT& paint_area);
     void Redraw();
     void Set_State(EBall_State state, int x_pos);
     void Set_Direction(double new_direction);

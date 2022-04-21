@@ -12,6 +12,12 @@ public:
     unsigned char R, G, B;
 };
 
+class Object_Designer {
+public:
+    virtual void Draw(HDC hdc, RECT& paint_area) = 0;
+    virtual void Act() = 0;
+    virtual bool Is_Finished() = 0;
+};
 
 class Config{
 public:
@@ -38,6 +44,7 @@ public:
     static const int Max_Ball_Count = 5;//9
     static const int Max_Driver_Count = 10;
     static const int Max_Life_Counter = 5;
+    static const int Max_Module_Count = 5;
     static bool Have_Floor;
 
     //Level

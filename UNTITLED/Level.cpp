@@ -81,45 +81,7 @@ void Level::Draw_Block(HDC hdc, RECT &block_area, EBlock_Type block_type) {
     Rectangle(hdc, block_area.left, block_area.top, block_area.right - 1, block_area.bottom - 1);
 }
 
-void Level::Draw(HDC hdc, RECT &paint_area) {
-    //It draws level map
 
-    //Bonus falling_bonus(BT_Blue, BNT_Floor, 20 * Config::Extent, 150 * Config::Extent);
-    //falling_bonus.Test_Falling_Bonus(hdc);
-
-    RECT destination_rect, block_area;
-
-    if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
-        for (int i = 0; i < 14; i++) {
-            for (int j = 0; j < 12; j++) {
-                block_area.left = (Config::Level_X_Offset + j * Config::Cell_Width) * Config::Extent;
-                block_area.top = (Config::Level_Y_Offset + i * Config::Cell_Height) * Config::Extent;
-                block_area.right = block_area.left + Config::Block_Width * Config::Extent;
-                block_area.bottom = block_area.top + Config::Block_Height * Config::Extent;
-                if ((IntersectRect(&destination_rect, &paint_area, &block_area))) {
-                    Draw_Block(hdc, block_area, (EBlock_Type)Level_01[i][j]);
-                }
-            }
-        }
-
-        //Draw fading blocks if we need to
-        /*for (int i = 0; i < Config::Max_Fading_Count; i++) {
-            if (Fading[i] != 0) Fading[i]->Draw(hdc, paint_area);
-        }*/
-        
-        Design_Objects(hdc, paint_area, (Object_Designer**)&Fading, Config::Max_Fading_Count);
-    }
-
-    //COPYPASTE!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    //Draw bonuses if we need to
-    /*for (int i = 0; i < Config::Max_Falling_Count; i++) {
-        if (Falling[i] != 0) Falling[i]->Draw(hdc, paint_area);
-    }*/
-
-    Design_Objects(hdc, paint_area, (Object_Designer**)&Falling, Config::Max_Falling_Count);
-    
-}
 
 void Level::Design_Objects(HDC hdc, RECT& paint_area, Object_Designer** object_array, int max_counter) {
     for (int i = 0; i < max_counter; i++) {
@@ -177,6 +139,44 @@ bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
         Current_Block_Bottom_Y_Pos -= Config::Cell_Height;
     }
 
+    return false;
+}
+
+void Level::Draw(HDC hdc, RECT& paint_area) {
+    //It draws level map
+
+    //Bonus falling_bonus(BT_Blue, BNT_Floor, 20 * Config::Extent, 150 * Config::Extent);
+    //falling_bonus.Test_Falling_Bonus(hdc);
+
+    RECT destination_rect, block_area;
+
+    if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
+        for (int i = 0; i < 14; i++) {
+            for (int j = 0; j < 12; j++) {
+                block_area.left = (Config::Level_X_Offset + j * Config::Cell_Width) * Config::Extent;
+                block_area.top = (Config::Level_Y_Offset + i * Config::Cell_Height) * Config::Extent;
+                block_area.right = block_area.left + Config::Block_Width * Config::Extent;
+                block_area.bottom = block_area.top + Config::Block_Height * Config::Extent;
+                if ((IntersectRect(&destination_rect, &paint_area, &block_area))) {
+                    Draw_Block(hdc, block_area, (EBlock_Type)Level_01[i][j]);
+                }
+            }
+        }
+
+        Design_Objects(hdc, paint_area, (Object_Designer**)&Fading, Config::Max_Fading_Count);
+    }
+
+    Design_Objects(hdc, paint_area, (Object_Designer**)&Falling, Config::Max_Falling_Count);
+
+}
+
+void Level::Act() {
+    Act_Objects((Object_Designer**)&Fading, Config::Max_Fading_Count, Fading_Count);
+    Act_Objects((Object_Designer**)&Falling, Config::Max_Falling_Count, Falling_Count);
+}
+
+bool Level::Is_Finished() {
+    //There`s nothing
     return false;
 }
 
@@ -259,36 +259,7 @@ void Level::Add_Fading(int y_coord, int x_coord, EBlock_Type block_type) {
     }
 }
 
-void Level::Act() {
-    //We`re making every element in our array to continue their action till the end
-    /*for (int i = 0; i < Config::Max_Fading_Count; i++) {
-        if (Fading[i] != 0) {
-            Fading[i]->Act();
-            if (Fading[i]->Is_Finished()) {
-                delete Fading[i];
-                Fading[i] = 0;
-                --Fading_Count;
-            }
-        }
-    }*/
 
-    Act_Objects((Object_Designer**)&Fading, Config::Max_Fading_Count, Fading_Count);
-
-    //COPYPASTE!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    /*for (int i = 0; i < Config::Max_Falling_Count; i++) {
-        if (Falling[i] != 0) {
-            Falling[i]->Act();
-            if (Falling[i]->Is_Finished()) {
-                delete Falling[i];
-                Falling[i] = 0;
-                --Falling_Count;
-            }
-        }
-    }*/
-
-    Act_Objects((Object_Designer **)&Falling, Config::Max_Falling_Count, Falling_Count);
-}
 
 void Level::Act_Objects(Object_Designer** object_array ,int max_count, int &counter) {
     for (int i = 0; i < max_count; i++) {

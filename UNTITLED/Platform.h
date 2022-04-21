@@ -20,7 +20,7 @@ enum EPlatform_Move_State {
     PMS_Move_Right
 };
 
-class Platform: public Main_Hit_Checker, public Driver{
+class Platform: public Main_Hit_Checker, public Driver, public Object_Designer{
 public:
     ~Platform();
     Platform();
@@ -31,16 +31,20 @@ public:
     virtual void Next_Step(double max_speed);
     virtual double Get_Speed();
 
+    virtual void Draw(HDC hdc, RECT& paint_area);
+    virtual void Act();
+    virtual bool Is_Finished();
+
     void Init();
     void Redraw();
-    void Draw(HDC hdc, RECT& paint_area);
+    //void Draw(HDC hdc, RECT& paint_area);
     void Draw_Normal(HDC hdc, RECT& paint_area);
     void Draw_EndGame(HDC hdc, RECT& paint_area);
     void Draw_StartGame(HDC hdc, RECT& paint_area);
     void Draw_Extension(HDC hdc, RECT& paint_area);
     void Set_State(EPlatform_State platform_state);
     void Clear_BG(HDC hdc);
-    void Act();
+    //void Act();
     void Move_To_Left(bool left_side, bool is_key_down);
     void Condition();
     void Take_Platform_Scan(HDC hdc);
@@ -73,6 +77,8 @@ public:
 
     double X_Position;
     double Speed;
+
+    bool Left_Key_Down, Right_Key_Down;
 
     const int Platform_Normal_Width, Platform_Normal_Height;
     int* Platform_Scan;

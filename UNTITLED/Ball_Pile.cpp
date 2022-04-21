@@ -30,6 +30,15 @@ void Ball_Pile::Draw(HDC hdc, RECT& paint_area) {
     for (int i = 0; i < Config::Max_Ball_Count; i++) Balls[i].Draw(hdc, paint_area);
 }
 
+void Ball_Pile::Act() {
+    //There`s nothing
+}
+
+bool Ball_Pile::Is_Finished() {
+    //There`s nothing
+    return false;
+}
+
 void Ball_Pile::Release_Balls(double platform_pos) {
     Balls[0].Set_State(BS_Free, platform_pos);
 

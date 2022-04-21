@@ -1,6 +1,10 @@
-﻿  Ball.cpp
-  Border.cpp
-  Engine.cpp
+﻿  Engine.cpp
+  Main.cpp
+  Platform.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(29,64): warning C4244: '=': conversion from 'double' to 'LONG', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(47,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(73,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(96,15): warning C4101: 'pixel': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(177,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
   Generating Code...
-F:\Курсовая\UNTITLED\Ball.cpp(223): warning C4715: 'Ball::Is_Test_Finished': not all control paths return a value
-  UNTITLED.vcxproj -> F:\Курсовая\x64\Debug\UNTITLED.exe
+  UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

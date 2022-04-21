@@ -3,18 +3,22 @@
 #include "Bonus.h"
 #include "Ball.h"
 
-class Level: public Main_Hit_Checker{
+class Level: public Main_Hit_Checker, public Object_Designer{
 public:
     Level();
     
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
 
+    virtual void Draw(HDC hdc, RECT& paint_area);
+    virtual void Act();
+    virtual bool Is_Finished();
+
     void Init();
-    void Draw(HDC hdc, RECT &paint_area);
+    //void Draw(HDC hdc, RECT &paint_area);
     void Design_Objects(HDC hdc, RECT& paint_area, Object_Designer** object_array, int max_counter);
     void What_After_Struck(int y_coord, int x_coord);
     void Add_Fading(int x_coord, int y_coord, EBlock_Type block_type);
-    void Act();
+    //void Act();
     void Act_Objects(Object_Designer** object_array, int max_count, int& counter);
 
     bool Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double& reflection_pos);

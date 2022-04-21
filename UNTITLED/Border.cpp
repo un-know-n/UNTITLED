@@ -49,31 +49,6 @@ void Border::Draw_Floor(HDC hdc, int x, int y) {
     RoundRect(hdc, x * Config::Extent, y * Config::Extent, (x + 3) * Config::Extent - 1, (y + 1) * Config::Extent - 2, 2, 2);
 }
 
-void Border::Draw(HDC hdc, RECT &paint_area) {
-
-    RECT destination_rect;
-
-    //Drawing left border
-    for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 2, 3 + i * 4, TRUE);
-
-    //Drawing right border
-    for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 201, 3 + i * 4, TRUE);
-
-    //Drawing top border
-    for(int i = 0; i < 50; i++)
-        Draw_Element(hdc, 3 + i * 4, 2, FALSE);
-
-    if (Config::Have_Floor) {
-        if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
-            //Drawing floor
-            for (int i = 0; i < 49; i++)
-                Draw_Floor(hdc, 6 + i * 4, 197);
-        }
-    }
-}
-
 bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     bool collided = false;
 
@@ -105,6 +80,40 @@ bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     }
 
     return collided;
+}
+
+void Border::Draw(HDC hdc, RECT& paint_area) {
+
+    RECT destination_rect;
+
+    //Drawing left border
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 2, 3 + i * 4, TRUE);
+
+    //Drawing right border
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 201, 3 + i * 4, TRUE);
+
+    //Drawing top border
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 3 + i * 4, 2, FALSE);
+
+    if (Config::Have_Floor) {
+        if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
+            //Drawing floor
+            for (int i = 0; i < 49; i++)
+                Draw_Floor(hdc, 6 + i * 4, 197);
+        }
+    }
+}
+
+void Border::Act() {
+    //There`s nothing
+}
+
+bool Border::Is_Finished() {
+    //There`s nothing
+    return false;
 }
 
 void Border::Redraw_Floor() {

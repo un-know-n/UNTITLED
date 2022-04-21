@@ -46,16 +46,26 @@ void Head_Engine::Init_Engine(HWND hwnd) {
     memset(Object_Driver, 0, sizeof(Object_Driver));
     Object_Driver[0] = &Platform;
     Object_Driver[1] = &Ball_Pile;
+
+    memset(Module, 0, sizeof(Module));
+    Module[0] = &Level;
+    Module[1] = &Border;
+    Module[2] = &Platform;
+    Module[3] = &Ball_Pile;
 }
 
 void Head_Engine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
     
-    Level.Draw(hdc, paint_area);
+    for (int i = 0; i < Config::Max_Module_Count; i++) {
+        if (Module[i] != 0) Module[i]->Draw(hdc, paint_area);
+    }
+
+    /*Level.Draw(hdc, paint_area);
     Border.Draw(hdc, paint_area);
     Platform.Draw(hdc, paint_area);
-    Ball_Pile.Draw(hdc, paint_area);
+    Ball_Pile.Draw(hdc, paint_area);*/
 }
 
 int Head_Engine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {

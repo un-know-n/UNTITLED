@@ -10,7 +10,7 @@ Platform::~Platform() {
 Platform::Platform() : X_Position(0), Y_Position(Config::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Platform_Move_State(PMS_Stop), Step_Up(0),
 Platform_Rect{}, Platform_Normal_Width(Width * Config::Extent), Platform_Normal_Height(Height * Config::Extent),
-Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
+Left_Key_Down(false), Right_Key_Down(false), Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
 {//Constructor
     X_Position = (Config::Max_X) / 2 + 2 * Config::Extent;
 }
@@ -40,37 +40,6 @@ void Platform::Redraw() {
 
     InvalidateRect(Config::Hwnd, &Prev_Platform_Rect, FALSE);
     InvalidateRect(Config::Hwnd, &Platform_Rect, FALSE);
-}
-
-void Platform::Draw(HDC hdc, RECT &paint_area) {
-
-    RECT destination_rect;
-    if (!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
-
-    switch (Platform_State) {
-    case PS_Normal:
-    case PS_Ready:
-        Draw_Normal(hdc, paint_area);
-        break;
-
-    case PS_PreEndGame:
-        Draw_Normal(hdc, paint_area);
-        Speed = 0.0;
-        Set_State(PS_EndGame);
-        break;
-
-    case PS_EndGame:
-        Draw_EndGame(hdc, paint_area);
-        break;
-
-    case PS_StartGame:
-        Draw_StartGame(hdc, paint_area);
-        break;
-
-    case PS_Extension:
-        Draw_Extension(hdc, paint_area);
-        break;
-    }
 }
 
 void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
@@ -289,40 +258,26 @@ void Platform::Clear_BG(HDC hdc) {
     Rectangle(hdc, Prev_Platform_Rect.left, Prev_Platform_Rect.top, Prev_Platform_Rect.right, Prev_Platform_Rect.bottom);
 }
 
-void Platform::Act(){
-    
-    switch (Platform_State) {
-        case PS_EndGame:
-        case PS_StartGame:
-        case PS_Extension:
-            Redraw();
-            break;
-        }
-}
-
 void Platform::Move_To_Left(bool left_side, bool is_key_down) {
     if (Get_State() != PS_Normal) return;
 
-    if (left_side) {
-        if (Platform_Move_State == PMS_Move_Left) {
-            if (!is_key_down) { 
-                Speed = 0.0;
-                Platform_Move_State = PMS_Stop; 
-                return;
-            }
-        }
-        else Platform_Move_State = PMS_Move_Left;
+    if (left_side) Left_Key_Down = is_key_down;
+    else Right_Key_Down = is_key_down;
+
+    if (Left_Key_Down && Right_Key_Down) return;
+    if (!Left_Key_Down && !Right_Key_Down) {
+        Speed = 0.0;
+        Platform_Move_State = PMS_Stop;
+        return;
+    }
+
+    if (Left_Key_Down) {
+        Platform_Move_State = PMS_Move_Left;
         Speed = -Platform_Step;
 
-    } else {
-        if (Platform_Move_State == PMS_Move_Right) {
-            if (!is_key_down) {
-                Speed = 0.0;
-                Platform_Move_State = PMS_Stop;
-                return;
-            }
-        }
-        else Platform_Move_State = PMS_Move_Right;
+    } 
+    if(Right_Key_Down) {
+        Platform_Move_State = PMS_Move_Right;
         Speed = Platform_Step;
     }
 }
@@ -336,6 +291,53 @@ void Platform::Next_Step(double max_speed) {
 
 double Platform::Get_Speed() {
     return Speed;
+}
+
+void Platform::Draw(HDC hdc, RECT& paint_area) {
+
+    RECT destination_rect;
+    if (!(IntersectRect(&destination_rect, &paint_area, &Platform_Rect))) return;
+
+    switch (Platform_State) {
+    case PS_Normal:
+    case PS_Ready:
+        Draw_Normal(hdc, paint_area);
+        break;
+
+    case PS_PreEndGame:
+        Draw_Normal(hdc, paint_area);
+        Speed = 0.0;
+        Set_State(PS_EndGame);
+        break;
+
+    case PS_EndGame:
+        Draw_EndGame(hdc, paint_area);
+        break;
+
+    case PS_StartGame:
+        Draw_StartGame(hdc, paint_area);
+        break;
+
+    case PS_Extension:
+        Draw_Extension(hdc, paint_area);
+        break;
+    }
+}
+
+void Platform::Act() {
+
+    switch (Platform_State) {
+    case PS_EndGame:
+    case PS_StartGame:
+    case PS_Extension:
+        Redraw();
+        break;
+    }
+}
+
+bool Platform::Is_Finished() {
+    //There`s nothing
+    return false;
 }
 
 void Platform::Condition() {

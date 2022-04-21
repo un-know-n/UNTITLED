@@ -9,13 +9,6 @@ enum EBlock_Type {
     BT_Yellow
 };
 
-class Object_Designer {
-public:
-    virtual void Draw(HDC hdc, RECT &paint_area) = 0;
-    virtual void Act() = 0;
-    virtual bool Is_Finished() = 0;
-};
-
 class Fade_Block : public Object_Designer{
 public:
     Fade_Block(EBlock_Type block_type, int x_pos, int y_pos);
