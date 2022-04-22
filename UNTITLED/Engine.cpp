@@ -3,13 +3,13 @@
 
 //          HEAD_ENGINE
 
-Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(0)
+Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1)
 {//Constructor
 }
 
 void Head_Engine::Init_Engine(HWND hwnd) {
     //It initializes game engine
-    // Initialization of specific random subsequence to our program
+    //Initialization of specific random subsequence to our program
 
     SYSTEMTIME system_time;
     FILETIME file_time;
@@ -37,10 +37,12 @@ void Head_Engine::Init_Engine(HWND hwnd) {
         Ball_Pile.Balls[i].Add_Hit_Checker(&Platform);
     }  
 
+    Level.Set_Level(Level::Level_01);
+
     //Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
     //Platform.Set_State(PS_StartGame);
     Platform.Redraw();
-    
+
     SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
 
     memset(Object_Driver, 0, sizeof(Object_Driver));
@@ -140,8 +142,13 @@ void Head_Engine::Play_Level() {
     Next_Driver_Step();
 
     if (Ball_Pile.If_Balls_Lost()) {
-        Game_State = GS_GameOver;
-        Platform.Set_State(PS_PreEndGame);
+        --Life_Counter;
+        Game_State = GS_Restart;
+        Platform.Set_State(PS_StartGame);
+        if (Life_Counter == 0) {
+            Game_State = GS_GameOver;
+            Platform.Set_State(PS_PreEndGame);
+        }
     } 
 
     /*if (Ball_Pile.Balls[0].Is_Test_Finished()) {

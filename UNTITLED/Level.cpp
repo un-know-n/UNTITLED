@@ -3,7 +3,7 @@
 
 //          LEVEL
 
-char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
+char Level::Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -20,7 +20,41 @@ char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-char Test[Config::Level_X_Elems][Config::Level_Y_Elems] = {
+char Level::Level_02[Config::Level_X_Elems][Config::Level_Y_Elems] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 4, 4, 2, 2, 4, 4, 2, 2, 2,
+    2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2,
+    2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2,
+    2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2,
+    2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2,
+    2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2,
+    2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 2, 2,
+    2, 2, 2, 4, 4, 4, 4, 4, 4, 2, 2, 2,
+    2, 2, 2, 2, 4, 4, 4, 4, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 4, 4, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+char Level::Level_03[Config::Level_X_Elems][Config::Level_Y_Elems] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
+char Level::Test[Config::Level_X_Elems][Config::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -48,6 +82,13 @@ void Level::Init(){
     Level_Area.top = Config::Level_Y_Offset * Config::Extent;
     Level_Area.right = Level_Area.left + Config::Cell_Width * Config::Level_X_Elems * Config::Extent;
     Level_Area.bottom = Level_Area.top + Config::Cell_Height * Config::Level_Y_Elems * Config::Extent;
+
+    memset(Current_Level, 0, sizeof(Current_Level));
+    //Set_Level(Level_02);
+}
+
+void Level::Set_Level(char level[Config::Level_X_Elems][Config::Level_Y_Elems]) {
+    memcpy(Current_Level, level, sizeof(Current_Level));
 }
 
 void Level::Draw_Block(HDC hdc, RECT &block_area, EBlock_Type block_type) {
@@ -98,7 +139,7 @@ bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
     double horizontal_reflect_pos, vertical_reflect_pos;
 
     //Check our y position relatively to max y element
-    if(next_y_pos > (Config::Level_Y_Elems) * Config::Cell_Height + Config::Block_Height) return false;
+    if(next_y_pos > (Config::Level_X_Elems) * Config::Cell_Height + Config::Block_Height) return false;
 
     for (int i = Config::Level_Y_Elems; i >= 0; i--) { 
         //Calculating top and bottom sides of the current block
@@ -106,7 +147,7 @@ bool Level::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
         Current_Block_Bottom_Y_Pos = Current_Block_Top_Y_Pos + Config::Block_Height;
         
         for (int j = 0; j <= Config::Level_X_Elems; j++) { 
-            if (Level_01[i][j] == 0) continue;
+            if (Current_Level[i][j] == 0) continue;
 
             //Calculating left and right sides of the current block
             Current_Block_Left_Side = Config::Level_X_Offset + j * Config::Cell_Width;
@@ -151,14 +192,14 @@ void Level::Draw(HDC hdc, RECT& paint_area) {
     RECT destination_rect, block_area;
 
     if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
-        for (int i = 0; i < 14; i++) {
-            for (int j = 0; j < 12; j++) {
+        for (int i = 0; i < Config::Level_X_Elems; i++) {
+            for (int j = 0; j < Config::Level_Y_Elems; j++) {
                 block_area.left = (Config::Level_X_Offset + j * Config::Cell_Width) * Config::Extent;
                 block_area.top = (Config::Level_Y_Offset + i * Config::Cell_Height) * Config::Extent;
                 block_area.right = block_area.left + Config::Block_Width * Config::Extent;
                 block_area.bottom = block_area.top + Config::Block_Height * Config::Extent;
                 if ((IntersectRect(&destination_rect, &paint_area, &block_area))) {
-                    Draw_Block(hdc, block_area, (EBlock_Type)Level_01[i][j]);
+                    Draw_Block(hdc, block_area, (EBlock_Type)Current_Level[i][j]);
                 }
             }
         }
@@ -187,7 +228,7 @@ bool Level::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, do
         //Check bottom line of the block
         if (Dot_Circle_Hit(next_y_pos - Current_Block_Bottom_Y_Pos, next_x_pos, Current_Block_Left_Side, Current_Block_Right_Side, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball down
-            if (level_y < Config::Level_Y_Elems - 1 && Level_01[level_y + 1][level_x] == 0) return true;
+            if (level_y < Config::Level_X_Elems - 1 && Current_Level[level_y + 1][level_x] == 0) return true;
             else return false;
         }
     }
@@ -195,7 +236,7 @@ bool Level::Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, do
         //Check upper line of the block
         if (Dot_Circle_Hit(next_y_pos - Current_Block_Top_Y_Pos, next_x_pos, Current_Block_Left_Side, Current_Block_Right_Side, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball up
-            if (level_y > 0 && Level_01[level_y - 1][level_x] == 0) return true;
+            if (level_y > 0 && Current_Level[level_y - 1][level_x] == 0) return true;
             else return false;
         }
     }
@@ -210,7 +251,7 @@ bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, doub
         //Check right side of the block
         if (Dot_Circle_Hit(Current_Block_Right_Side - next_x_pos, next_y_pos, Current_Block_Top_Y_Pos, Current_Block_Bottom_Y_Pos, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball to the right side
-            if (level_x < Config::Level_X_Elems && Level_01[level_y][level_x + 1] == 0) return true;
+            if (level_x < Config::Level_X_Elems && Current_Level[level_y][level_x + 1] == 0) return true;
             else return false;
         }
     }
@@ -218,7 +259,7 @@ bool Level::Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, doub
         //Check left side of the block
         if (Dot_Circle_Hit(Current_Block_Left_Side - next_x_pos, next_y_pos, Current_Block_Top_Y_Pos, Current_Block_Bottom_Y_Pos, ball->Radius, reflection_pos)) { 
             //Check if we can reflect our ball to the left side
-            if (level_x > 0 && Level_01[level_y][level_x - 1] == 0) return true;
+            if (level_x > 0 && Current_Level[level_y][level_x - 1] == 0) return true;
             else return false;
         }
     }
@@ -230,7 +271,7 @@ void Level::What_After_Struck(int y_coord, int x_coord) {
     EBlock_Type block_type;
 
     //Creation of variable which contains the color of the block
-    block_type = (EBlock_Type)Level_01[y_coord][x_coord];
+    block_type = (EBlock_Type)Current_Level[y_coord][x_coord];
 
     //Check if we can add bonus
     if (!Add_Bonus(y_coord, x_coord, block_type)) Add_Fading(y_coord, x_coord, block_type);
@@ -253,7 +294,7 @@ void Level::Add_Fading(int y_coord, int x_coord, EBlock_Type block_type) {
         if (Fading[i] == 0) {
             Fading[i] = fading;
             ++Fading_Count;
-            Level_01[y_coord][x_coord] = BT_None;
+            Current_Level[y_coord][x_coord] = BT_None;
             break;
         }
     }
@@ -280,12 +321,12 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     int bonus_x, bonus_y;
     int bonus_random;
 
-    /*bonus_random = rand() % 20;
+    bonus_random = rand() % 20;
     if (bonus_random % 2 == 0) bonus_type = BNT_Floor;
     else if(bonus_random % 3 == 0) bonus_type = BNT_Tripple_Ball;
-    else bonus_type = BNT_Additional_Life;*/
+    else bonus_type = BNT_Additional_Life;
 
-    bonus_type = BNT_Floor;
+    //bonus_type = BNT_Floor;
 
     bonus_x = (x_coord * Config::Cell_Width + Config::Level_X_Offset) * Config::Extent;
     bonus_y = (y_coord * Config::Cell_Height + Config::Level_Y_Offset) * Config::Extent;
@@ -298,7 +339,7 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
                 if (Falling[i] == 0) {
                     Falling[i] = falling_bonus;
                     ++Falling_Count;
-                    Level_01[y_coord][x_coord] = BT_None;
+                    Current_Level[y_coord][x_coord] = BT_None;
                     break;
                 }
             }

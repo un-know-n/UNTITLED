@@ -20,6 +20,7 @@ public:
     void Add_Fading(int x_coord, int y_coord, EBlock_Type block_type);
     //void Act();
     void Act_Objects(Object_Designer** object_array, int max_count, int& counter);
+    void Set_Level(char level[Config::Level_X_Elems][Config::Level_Y_Elems]);
 
     bool Check_Vertical_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double& reflection_pos);
     bool Check_Horizontal_Hit(int level_y, int level_x, double next_x_pos, double next_y_pos, Ball* ball, double& reflection_pos);
@@ -34,10 +35,17 @@ public:
     int Falling_Count;
     Bonus* Falling[Config::Max_Falling_Count];
 
+    static char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems];
+    static char Level_02[Config::Level_X_Elems][Config::Level_Y_Elems];
+    static char Level_03[Config::Level_X_Elems][Config::Level_Y_Elems];
+    static char Test[Config::Level_X_Elems][Config::Level_Y_Elems];
+
 private:
 
     void Draw_Block(HDC hdc, RECT& block_area, EBlock_Type block_type);
 
     double Current_Block_Left_Side, Current_Block_Right_Side;
     double Current_Block_Bottom_Y_Pos, Current_Block_Top_Y_Pos;
+
+    char Current_Level[Config::Level_X_Elems][Config::Level_Y_Elems];
 };
