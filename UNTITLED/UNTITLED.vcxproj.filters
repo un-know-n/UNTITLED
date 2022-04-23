@@ -16,11 +16,11 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{6aa18c12-6d65-4004-b56f-44a48027f124}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{00f6f8d7-877b-4c78-b0cd-37a5f2001005}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{45bbf225-5461-48fb-92ed-208af739d0bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{00f6f8d7-877b-4c78-b0cd-37a5f2001005}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +51,8 @@
     <ClInclude Include="Platform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Config</Filter>
+    <ClInclude Include="Common.h">
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Engine</Filter>
@@ -96,8 +96,8 @@
     <ClCompile Include="Ball.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Config.cpp">
-      <Filter>Config</Filter>
+    <ClCompile Include="Common.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Engine</Filter>

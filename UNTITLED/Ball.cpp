@@ -34,13 +34,13 @@ void Ball::Next_Step(double max_speed) {
 
     if (Ball_State == BS_Disabled || Ball_State == BS_None) return;
 
-    next_step = Ball_Speed / max_speed * Config::Step_Size;
+    next_step = Ball_Speed / max_speed * Common::Step_Size;
 
     //If we`ve remaining space for the ball -> we use it and it won`t be lost
     while (collided) {
         collided = false;
         //Calculating new coords
-        next_x_pos = Central_X + next_step * cos(Ball_Direction);//Config::Step_Size
+        next_x_pos = Central_X + next_step * cos(Ball_Direction);//Common::Step_Size
         next_y_pos = Central_Y - next_step * sin(Ball_Direction);
 
         for (int i = 0; i < Hit_Counter; i++) {
@@ -59,7 +59,7 @@ void Ball::Next_Step(double max_speed) {
 
         if (!collided) {
             //Ball translation if we haven't collided with anything
-            //Rest_Size -= Config::Step_Size;
+            //Rest_Size -= Common::Step_Size;
 
             //Application of new coords
             Central_X = next_x_pos;
@@ -87,8 +87,8 @@ void Ball::Draw(HDC hdc, RECT& paint_area) {
 
     if (IntersectRect(&destination_rect, &paint_area, &Prev_Ball_Rect)) {
         //Clear BG
-        SelectObject(hdc, Config::BG_Pen);
-        SelectObject(hdc, Config::BG_Brush);
+        SelectObject(hdc, Common::BG_Pen);
+        SelectObject(hdc, Common::BG_Brush);
 
         Ellipse(hdc, Prev_Ball_Rect.left, Prev_Ball_Rect.top, Prev_Ball_Rect.right - 2, Prev_Ball_Rect.bottom - 2);
     }
@@ -103,7 +103,7 @@ void Ball::Draw(HDC hdc, RECT& paint_area) {
 
 }
 
-void Ball::Act(){
+void Ball::Animate(){
     //There`s nothing
 }
 
@@ -118,19 +118,19 @@ void Ball::Get_Center(double& ball_x_pos, double& ball_y_pos) {
 }
 
 void Ball::Init(){
-    Config::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+    Common::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
 }
 
 void Ball::Redraw() {
     //Creation of the rectangle area in which ball is placed
-    Ball_Rect.left = (int)((Central_X - Radius) * Config::Extent);
-    Ball_Rect.top = (int)(Config::Level_Y_Offset + Central_Y - Radius) * Config::Extent;
-    Ball_Rect.right = (int)((Central_X + Radius) * Config::Extent);
-    Ball_Rect.bottom = (int)(Config::Level_Y_Offset + Central_Y + Radius) * Config::Extent;
+    Ball_Rect.left = (int)((Central_X - Radius) * Common::Extent);
+    Ball_Rect.top = (int)(Common::Level_Y_Offset + Central_Y - Radius) * Common::Extent;
+    Ball_Rect.right = (int)((Central_X + Radius) * Common::Extent);
+    Ball_Rect.bottom = (int)(Common::Level_Y_Offset + Central_Y + Radius) * Common::Extent;
 
     //Redrawing old and new places of the ball
-    InvalidateRect(Config::Hwnd, &Prev_Ball_Rect, FALSE);
-    InvalidateRect(Config::Hwnd, &Ball_Rect, FALSE);
+    InvalidateRect(Common::Hwnd, &Prev_Ball_Rect, FALSE);
+    InvalidateRect(Common::Hwnd, &Ball_Rect, FALSE);
 }
 
 EBall_State Ball::Get_State() {

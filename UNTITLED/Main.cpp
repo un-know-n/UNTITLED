@@ -33,7 +33,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
-	Config::Setup_Colors();
+	Common::Setup_Colors();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -81,7 +81,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_UNTITLED));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = Config::BG_Brush;//17, 46, 37
+	wcex.hbrBackground = Common::BG_Brush;//17, 46, 37
 	wcex.lpszMenuName = NULL;//MAKEINTRESOURCEW(IDC_UNTITLED);//NULL
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -130,7 +130,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	//	90,        // Button width
 	//	40,        // Button height
 	//	hWnd,     // Parent window
-	//	(HMENU)IDB_Start_Btn,       // No menu.
+	//	(HMENU)IDB_Start_Btn,       // Menu.
 	//	(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
 	//	NULL);      // Pointer not needed.
 
@@ -190,11 +190,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case IDB_About_Btn:
 			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), nullptr, About);
+
 			BeginPaint(hWnd, nullptr);
+
 			// TODO: Add any drawing code that uses hdc here...
+
 			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
 				L"About", MB_ICONINFORMATION | MB_OK);
+
 			InvalidateRect(hWnd, NULL, FALSE);
+
 			EndPaint(hWnd, nullptr);
 			UpdateWindow(hWnd);
 			break;
@@ -213,8 +218,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			HDC hdc = BeginPaint(hWnd, &ps);
 			// TODO: Add any drawing code that uses hdc here...
 
+			//if (Engine.Is_Game_Done == true) {
+			//	//TextOut(hdc, 260, 300, TEXT("You`ve finished the game"), strlen("You`ve finished the game"));
+
+			//	RECT rec;
+			//	//       SetRect(rect, x ,y ,width, height)
+			//	SetRect(&rec, 260, 300, 100, 100);
+			//	//       DrawText(HDC, text, text length, drawing area, parameters "DT_XXX")
+			//	DrawText(hdc, TEXT("You`ve finished the game"), strlen("You`ve finished the game"), &rec, DT_TOP | DT_LEFT);
+			//}			
+
 			Engine.Draw_Frame(hdc, ps.rcPaint);
+			if (Engine.Game_Done == true) DestroyWindow(hWnd);
 			EndPaint(hWnd, &ps);
+			ReleaseDC(hWnd, hdc);
 		//}
 	}
 	break;

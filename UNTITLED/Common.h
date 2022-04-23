@@ -2,7 +2,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-
+#include <vector>
 #include <Windows.h>
 
 class Color{
@@ -15,11 +15,11 @@ public:
 class Object_Designer {
 public:
     virtual void Draw(HDC hdc, RECT& paint_area) = 0;
-    virtual void Act() = 0;
+    virtual void Animate() = 0;
     virtual bool Is_Finished() = 0;
 };
 
-class Config{
+class Common{
 public:
 
     static void Setup_Colors();

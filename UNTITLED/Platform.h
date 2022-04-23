@@ -1,6 +1,6 @@
 #pragma once
 
-//#include "Config.h"
+//#include "Common.h"
 #include "Ball.h"
 #include "Bonus.h"
 
@@ -32,7 +32,7 @@ public:
     virtual double Get_Speed();
 
     virtual void Draw(HDC hdc, RECT& paint_area);
-    virtual void Act();
+    virtual void Animate();
     virtual bool Is_Finished();
 
     void Init();
@@ -44,7 +44,7 @@ public:
     void Draw_Extension(HDC hdc, RECT& paint_area);
     void Set_State(EPlatform_State platform_state);
     void Clear_BG(HDC hdc);
-    //void Act();
+    //void Animate();
     void Move_To_Left(bool left_side, bool is_key_down);
     void Condition();
     void Take_Platform_Scan(HDC hdc);
@@ -66,14 +66,14 @@ public:
 
     static const int Default_Width = 28;
     static const int Max_Rotation = 36;
-    static const int Platform_Step = Config::Extent;
+    static const int Platform_Step = Common::Extent;
         
     int Y_Position;
     int Step_Up;
     int Inner_Platform_Width;
     int Width;
     int Height;
-    int EndGame_Elem_Position[Default_Width * Config::Extent];
+    int EndGame_Elem_Position[Default_Width * Common::Extent];
 
     double X_Position;
     double Speed;

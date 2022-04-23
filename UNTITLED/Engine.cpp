@@ -3,7 +3,7 @@
 
 //          HEAD_ENGINE
 
-Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1)
+Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1), Game_Done(false)
 {//Constructor
 }
 
@@ -19,9 +19,9 @@ void Head_Engine::Init_Engine(HWND hwnd) {
 
     srand(file_time.dwLowDateTime);
 
-    Config::Hwnd = hwnd;
+    Common::Hwnd = hwnd;
 
-    Config::Setup_Colors();
+    Common::Setup_Colors();
 
     Fade_Block::Set_Color();
 
@@ -29,7 +29,7 @@ void Head_Engine::Init_Engine(HWND hwnd) {
     Border.Init();
     Platform.Init();
 
-    for (int i = 0; i < Config::Max_Ball_Count; i++) {
+    for (int i = 0; i < Common::Max_Ball_Count; i++) {
         Ball_Pile.Balls[i].Init();
 
         Ball_Pile.Balls[i].Add_Hit_Checker(&Border);
@@ -38,31 +38,41 @@ void Head_Engine::Init_Engine(HWND hwnd) {
     }  
 
     Level.Set_Level(Level::Level_01);
-
-    //Ball.Set_State(BS_Start, Platform.X_Position + Platform.Width - Platform.Width / 2 + 2);
-    //Platform.Set_State(PS_StartGame);
     Platform.Redraw();
 
-    SetTimer(Config::Hwnd, Timer_ID, 1000 / Config::FPS, 0);
+    SetTimer(Common::Hwnd, Timer_ID, 1000 / Common::FPS, 0);
 
     memset(Object_Driver, 0, sizeof(Object_Driver));
     Object_Driver[0] = &Platform;
     Object_Driver[1] = &Ball_Pile;
 
-    memset(Module, 0, sizeof(Module));
-    Module[0] = &Level;
-    Module[1] = &Border;
-    Module[2] = &Platform;
-    Module[3] = &Ball_Pile;
+    Module.push_back(&Level);
+    Module.push_back(&Border);
+    Module.push_back(&Platform);
+    Module.push_back(&Ball_Pile);
 }
 
 void Head_Engine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
     
-    for (int i = 0; i < Config::Max_Module_Count; i++) {
+    ////////////////    TEST    ///////////////
+
+    /*for (int i = 0; i < Common::Max_Module_Count; i++) {
         if (Module[i] != 0) Module[i]->Draw(hdc, paint_area);
-    }
+    }*/
+
+    /*for (int i = 0; i < Module.size(); i++) {
+        Module[i]->Draw(hdc, paint_area);
+    }*/
+
+    /*for(Object_Designer *current_module : Module)
+        current_module->Draw(hdc, paint_area);*/
+
+    ///////////////////////////////////////////
+
+    for (auto *current_module : Module)
+        current_module->Draw(hdc, paint_area);
 
     /*Level.Draw(hdc, paint_area);
     Border.Draw(hdc, paint_area);
@@ -104,7 +114,7 @@ int Head_Engine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_d
 
 int Head_Engine::On_Timer() {
     //Timer that is used to do the actions in time we ask to
-    ++Config::Tick;
+    ++Common::Tick;
 
     switch (Game_State) {
     case GS_Test:
@@ -119,6 +129,7 @@ int Head_Engine::On_Timer() {
     break;
         
     case GS_GameOver:
+        //if (Is_Game_Done == true) break;
         if (Platform.Get_State() == PS_None) {
             Game_State = GS_Restart;
             Platform.Set_State(PS_StartGame);
@@ -133,7 +144,7 @@ int Head_Engine::On_Timer() {
         break;
     }
 
-    Act();   
+    Animate();   
 
     return 0;
 }
@@ -149,7 +160,11 @@ void Head_Engine::Play_Level() {
             Game_State = GS_GameOver;
             Platform.Set_State(PS_PreEndGame);
         }
-    } 
+    }
+
+    if (Level.Is_Level_Done()) {
+        Game_Done = true;
+    }
 
     /*if (Ball_Pile.Balls[0].Is_Test_Finished()) {
         Game_State = GS_Test;
@@ -163,7 +178,7 @@ void Head_Engine::Next_Driver_Step() {
 
     //Platform moving
 
-    for (int i = 0; i < Config::Max_Driver_Count; i++) {
+    for (int i = 0; i < Common::Max_Driver_Count; i++) {
         if (Object_Driver[i] != 0) {
             Object_Driver[i]->Initialization();
             current_speed = Object_Driver[i]->Get_Speed();
@@ -174,22 +189,22 @@ void Head_Engine::Next_Driver_Step() {
     rest_distance = max_speed;
 
     while (rest_distance > 0.0) {
-        for (int i = 0; i < Config::Max_Driver_Count; i++) {
+        for (int i = 0; i < Common::Max_Driver_Count; i++) {
             if (Object_Driver[i] != 0) Object_Driver[i]->Next_Step(max_speed);
         }
-        rest_distance -= Config::Step_Size;
+        rest_distance -= Common::Step_Size;
     }
 
-    for (int i = 0; i < Config::Max_Driver_Count; i++) {
+    for (int i = 0; i < Common::Max_Driver_Count; i++) {
         if (Object_Driver[i] != 0) {
             Object_Driver[i]->Finalization();
         }
     }
 }
 
-void Head_Engine::Act() {
-    Platform.Act();
-    Level.Act();
+void Head_Engine::Animate() {
+    Platform.Animate();
+    Level.Animate();
 
     int index = 0;
     Bonus* falling_bonus;
@@ -206,10 +221,10 @@ void Head_Engine::On_Falling_Bonus(Bonus* falling_bonus) {
         Ball_Pile.Tripple_Balls();
     }
     else if (falling_bonus->Bonus_Type == BNT_Additional_Life) {
-        if (Life_Counter < Config::Max_Life_Counter) Life_Counter++;
+        if (Life_Counter < Common::Max_Life_Counter) Life_Counter++;
     }
     else if (falling_bonus->Bonus_Type == BNT_Floor) {
-        Config::Have_Floor = true;
+        Common::Have_Floor = true;
         Border.Redraw_Floor();
     }
     falling_bonus->Finalize();

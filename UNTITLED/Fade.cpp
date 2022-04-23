@@ -15,10 +15,10 @@ Fade_Block::Fade_Block(EBlock_Type block_type, int x_pos, int y_pos)
     :   Fade_Step(0), Block_Type(block_type)
 {//Constructor
     //Creation of the rectangle in which block is fading
-    Fade_Rect.left = (Config::Level_X_Offset + x_pos * Config::Cell_Width) * Config::Extent;
-    Fade_Rect.top = (Config::Level_Y_Offset + y_pos * Config::Cell_Height) * Config::Extent;
-    Fade_Rect.right = Fade_Rect.left + Config::Block_Width * Config::Extent;
-    Fade_Rect.bottom = Fade_Rect.top + Config::Block_Height * Config::Extent;
+    Fade_Rect.left = (Common::Level_X_Offset + x_pos * Common::Cell_Width) * Common::Extent;
+    Fade_Rect.top = (Common::Level_Y_Offset + y_pos * Common::Cell_Height) * Common::Extent;
+    Fade_Rect.right = Fade_Rect.left + Common::Block_Width * Common::Extent;
+    Fade_Rect.bottom = Fade_Rect.top + Common::Block_Height * Common::Extent;
 }
 
 void Fade_Block::Draw(HDC hdc, RECT& paint_area){
@@ -54,11 +54,11 @@ void Fade_Block::Draw(HDC hdc, RECT& paint_area){
     Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right - 1, Fade_Rect.bottom - 1);
 }
 
-void Fade_Block::Act(){
+void Fade_Block::Animate(){
     //Check our fading process -> redrawing the block
     if(Fade_Step < Max_Fade_Step - 1){
         ++Fade_Step;
-        InvalidateRect(Config::Hwnd, &Fade_Rect, FALSE);
+        InvalidateRect(Common::Hwnd, &Fade_Rect, FALSE);
     }
 }
 
@@ -71,10 +71,10 @@ void Fade_Block::Set_Color(){
     //unsigned char r, g, b;
 
     for(int i = 0; i < Max_Fade_Step; i++){
-        Get_Fade_Color(Config::Blue_Block, Config::BG_Color, i, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
-        Get_Fade_Color(Config::Red_Block, Config::BG_Color, i, Fade_Red_Pen[i], Fade_Red_Brush[i]);
-        Get_Fade_Color(Config::Green_Block, Config::BG_Color, i, Fade_Green_Pen[i], Fade_Green_Brush[i]);
-        Get_Fade_Color(Config::Yellow_Block, Config::BG_Color, i, Fade_Yellow_Pen[i], Fade_Yellow_Brush[i]);
+        Get_Fade_Color(Common::Blue_Block, Common::BG_Color, i, Fade_Blue_Pen[i], Fade_Blue_Brush[i]);
+        Get_Fade_Color(Common::Red_Block, Common::BG_Color, i, Fade_Red_Pen[i], Fade_Red_Brush[i]);
+        Get_Fade_Color(Common::Green_Block, Common::BG_Color, i, Fade_Green_Pen[i], Fade_Green_Brush[i]);
+        Get_Fade_Color(Common::Yellow_Block, Common::BG_Color, i, Fade_Yellow_Pen[i], Fade_Yellow_Brush[i]);
     }
 
 }
@@ -89,7 +89,7 @@ void Fade_Block::Get_Fade_Color(const Color &color, const Color &bg_color,int st
     r = Get_Fade_Channel(color.R, bg_color.R, step);
     g = Get_Fade_Channel(color.G, bg_color.G, step);
     b = Get_Fade_Channel(color.B, bg_color.B, step);
-    Config::Create_PenNBrush(r, g, b, pen, brush);
+    Common::Create_PenNBrush(r, g, b, pen, brush);
 }
 
 //////////////////////////////////////////////////////////////////
