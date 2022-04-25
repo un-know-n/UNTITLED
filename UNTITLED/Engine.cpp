@@ -3,8 +3,12 @@
 
 //          HEAD_ENGINE
 
-Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1), Game_Done(false)
+Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1), Game_Done(false), Game_Over(false)
 {//Constructor
+    Level_Area_Rect.left = Common::Level_X_Offset * Common::Extent;
+    Level_Area_Rect.top = Common::Level_Y_Offset * Common::Extent;
+    Level_Area_Rect.right = Common::Level_Y_Elems * Common::Cell_Width * Common::Extent + Common::Level_X_Offset * Common::Extent;
+    Level_Area_Rect.bottom = Common::Max_Y_Pos * Common::Extent;
 }
 
 void Head_Engine::Init_Engine(HWND hwnd) {
@@ -55,29 +59,29 @@ void Head_Engine::Init_Engine(HWND hwnd) {
 void Head_Engine::Draw_Frame(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
-    
-    ////////////////    TEST    ///////////////
-
-    /*for (int i = 0; i < Common::Max_Module_Count; i++) {
-        if (Module[i] != 0) Module[i]->Draw(hdc, paint_area);
-    }*/
-
-    /*for (int i = 0; i < Module.size(); i++) {
-        Module[i]->Draw(hdc, paint_area);
-    }*/
-
-    /*for(Object_Designer *current_module : Module)
-        current_module->Draw(hdc, paint_area);*/
-
-    ///////////////////////////////////////////
 
     for (auto *current_module : Module)
         current_module->Draw(hdc, paint_area);
+}
 
-    /*Level.Draw(hdc, paint_area);
-    Border.Draw(hdc, paint_area);
-    Platform.Draw(hdc, paint_area);
-    Ball_Pile.Draw(hdc, paint_area);*/
+void Head_Engine::Draw_Ending(HDC hdc, RECT& paint_area) {
+    Platform.Set_State(PS_None);
+    Ball_Pile.Disable_Balls();
+
+    Draw_Level_Rect(hdc);
+    TextOut(hdc, 240, 300, TEXT("You`ve finished the game"), strlen("You`ve finished the game"));
+}
+
+void Head_Engine::Draw_GameOver(HDC hdc, RECT& paint_area) {
+    Draw_Level_Rect(hdc);
+    TextOut(hdc, 272, 300, TEXT("GAME OVER"), strlen("GAME OVER"));
+}
+
+void Head_Engine::Draw_Level_Rect(HDC hdc) {
+    SelectObject(hdc, Common::BG_Pen);
+    SelectObject(hdc, Common::BG_Brush);
+
+    Rectangle(hdc, Level_Area_Rect.left, Level_Area_Rect.top, Level_Area_Rect.right, Level_Area_Rect.bottom);
 }
 
 int Head_Engine::On_Key(EKey_Type key_type, int button, HWND hwnd, bool is_key_down) {
@@ -116,6 +120,13 @@ int Head_Engine::On_Timer() {
     //Timer that is used to do the actions in time we ask to
     ++Common::Tick;
 
+    if (Common::Have_Floor == true) ++Common::Floor_Tick;
+    if (Common::Floor_Tick % 250 == 0) {
+        Common::Have_Floor = false;
+        Common::Floor_Tick = 0;
+        Border.Redraw_Floor();
+    }
+
     switch (Game_State) {
     case GS_Test:
         Ball_Pile.Balls[0].Set_Test();
@@ -129,7 +140,7 @@ int Head_Engine::On_Timer() {
     break;
         
     case GS_GameOver:
-        //if (Is_Game_Done == true) break;
+        //if (Game_Done == true) break;
         if (Platform.Get_State() == PS_None) {
             Game_State = GS_Restart;
             Platform.Set_State(PS_StartGame);
@@ -157,8 +168,9 @@ void Head_Engine::Play_Level() {
         Game_State = GS_Restart;
         Platform.Set_State(PS_StartGame);
         if (Life_Counter == 0) {
-            Game_State = GS_GameOver;
-            Platform.Set_State(PS_PreEndGame);
+            Game_Over = true;
+            //Gaame_State = GS_GameOaver;
+            //Platform.Set_State(PS_PreEndGame);
         }
     }
 

@@ -39,6 +39,7 @@ public:
     static const int Extent = 3;
     static const int FPS = 20;
     static int Tick;
+    static int Floor_Tick;
     static const int Max_Fading_Count = 10;
     static const int Max_Falling_Count = 10;
     static const int Max_Ball_Count = 5;//9

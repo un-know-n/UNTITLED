@@ -121,27 +121,27 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	///////////////////////////////////// ENTRY BUTTONS /////////////////////////////////////////////
 
-	//HWND Start_Btn = CreateWindow( 
-	//	L"BUTTON",  // Predefined class; Unicode assumed 
-	//	L"START",      // Button text 
-	//	WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
-	//	265,         // x position 
-	//	250,         // y position 
-	//	90,        // Button width
-	//	40,        // Button height
-	//	hWnd,     // Parent window
-	//	(HMENU)IDB_Start_Btn,       // Menu.
-	//	(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-	//	NULL);      // Pointer not needed.
+	HWND Start_Btn = CreateWindow( 
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"START",      // Button text 
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+		265,         // x position 
+		250,         // y position 
+		90,        // Button width
+		40,        // Button height
+		hWnd,     // Parent window
+		(HMENU)IDB_Start_Btn,       // Menu.
+		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+		NULL);      // Pointer not needed.
 
-	//HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
-	//	265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
+		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -189,11 +189,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		case IDB_About_Btn:
-			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), nullptr, About);
 
 			BeginPaint(hWnd, nullptr);
-
-			// TODO: Add any drawing code that uses hdc here...
 
 			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
 				L"About", MB_ICONINFORMATION | MB_OK);
@@ -213,26 +210,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		//if(Drawing_Active){
+		if(Drawing_Active){
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			// TODO: Add any drawing code that uses hdc here...
+			// TODO: Add any drawing code that uses hdc here...		
 
-			//if (Engine.Is_Game_Done == true) {
-			//	//TextOut(hdc, 260, 300, TEXT("You`ve finished the game"), strlen("You`ve finished the game"));
+			if (Engine.Game_Done == true) {
+				Engine.Draw_Ending(hdc, ps.rcPaint);
+				InvalidateRect(hWnd, NULL, FALSE);
+				UpdateWindow(hWnd);
+				Sleep(7000);
+				DestroyWindow(hWnd);
+			}
+			else if (Engine.Game_Over == true) {
+				Engine.Draw_GameOver(hdc, ps.rcPaint);
+				InvalidateRect(hWnd, NULL, FALSE);
+				UpdateWindow(hWnd);
+				Sleep(7000);
+				DestroyWindow(hWnd);
+			}
+			else Engine.Draw_Frame(hdc, ps.rcPaint);
 
-			//	RECT rec;
-			//	//       SetRect(rect, x ,y ,width, height)
-			//	SetRect(&rec, 260, 300, 100, 100);
-			//	//       DrawText(HDC, text, text length, drawing area, parameters "DT_XXX")
-			//	DrawText(hdc, TEXT("You`ve finished the game"), strlen("You`ve finished the game"), &rec, DT_TOP | DT_LEFT);
-			//}			
-
-			Engine.Draw_Frame(hdc, ps.rcPaint);
-			if (Engine.Game_Done == true) DestroyWindow(hWnd);
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hdc);
-		//}
+		}
 	}
 	break;
 

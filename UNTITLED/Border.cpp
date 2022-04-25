@@ -104,6 +104,12 @@ void Border::Draw(HDC hdc, RECT& paint_area) {
             for (int i = 0; i < 49; i++)
                 Draw_Floor(hdc, 6 + i * 4, 197);
         }
+    } else {
+        if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
+            SelectObject(hdc, Common::BG_Pen);
+            SelectObject(hdc, Common::BG_Brush);
+            Rectangle(hdc, Floor_Rect.left, Floor_Rect.top, Floor_Rect.right, Floor_Rect.bottom);
+        }
     }
 }
 

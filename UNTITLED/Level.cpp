@@ -71,24 +71,24 @@ char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
 //    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 //};
 
-char Level::Test[Common::Level_X_Elems][Common::Level_Y_Elems] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
+//char Level::Test[Common::Level_X_Elems][Common::Level_Y_Elems] = {
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+//};
 
-Level::Level() : Level_Area{} //Fading_Count(0) //Falling_Count(0)
+Level::Level() : Level_Area{}
 {//Constructor
 }
 
@@ -255,26 +255,6 @@ void Level::Suspend_Animation() {
     Delete_Objects(Falling);
 }
 
-//          OLD VERSION            /////////////
-
-//void Level::Delete_Objects(Object_Designer** object_array, int max_count, int& counter) {
-//    for (int i = 0; i < max_count; i++) {
-//        if (object_array[i] != 0) {
-//            delete object_array[i];
-//            object_array[i] = 0;
-//        }
-//    }
-//    counter = 0;
-//}
-
-/////////////////////////////////////////////////
-
-//void Level::Clear(HDC hdc, RECT &paint_area) {
-//    for (auto* bonus : Falling) {
-//        bonus->Clear(hdc, paint_area);
-//    }
-//}
-
 void Level::Delete_Objects(std::vector<Object_Designer *> & vector_array) {
     std::vector<Object_Designer *>::iterator it;
 
@@ -361,23 +341,6 @@ void Level::Add_Fading(int y_coord, int x_coord, EBlock_Type block_type) {
     Current_Level[y_coord][x_coord] = BT_None;
 }
 
-//          OLD VERSION         //////////////////
-
-//void Level::Animate_Objects(Object_Designer** object_array ,int max_count, int &counter) {
-//    for (int i = 0; i < max_count; i++) {
-//        if (object_array[i] != 0) {
-//            object_array[i]->Animate();
-//            if (object_array[i]->Is_Finished()) {
-//                delete object_array[i];
-//                object_array[i] = 0;
-//                --counter;
-//            }
-//        }
-//    }
-//}
-
-/////////////////////////////////////////////////
-
 void Level::Animate_Objects(std::vector<Object_Designer *> &vector_array) {
 
     std::vector<Object_Designer *>::iterator it;
@@ -402,14 +365,14 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     else if(bonus_random % 2 == 0) bonus_type = BNT_Tripple_Ball;
     else bonus_type = BNT_Additional_Life;
 
-    //bonus_type = BNT_Tripple_Ball;
+    //bonus_type = BNT_Floor;
 
     bonus_x = (x_coord * Common::Cell_Width + Common::Level_X_Offset) * Common::Extent;
     bonus_y = (y_coord * Common::Cell_Height + Common::Level_Y_Offset) * Common::Extent;
     
     if (Falling.size() < Common::Max_Falling_Count) {
         
-        if (rand() % 5 == 0) {
+        if (rand() % 2 == 0) {
 
             
             falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);

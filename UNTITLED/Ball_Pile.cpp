@@ -58,6 +58,10 @@ void Ball_Pile::Set_On_Platform(double platform_pos) {
     for (int i = 1; i < Common::Max_Ball_Count; i++) Balls[i].Set_State(BS_Disabled, platform_pos);
 }
 
+void Ball_Pile::Disable_Balls() {
+    for (int i = 0; i < Common::Max_Ball_Count; i++) Balls[i].Set_State(BS_Disabled, 0);
+}
+
 bool Ball_Pile::If_Balls_Lost() {
     int active_balls = 0, fallen_balls = 0;
 

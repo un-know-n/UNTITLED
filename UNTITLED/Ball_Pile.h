@@ -16,6 +16,7 @@ public:
 
     //void Draw(HDC hdc, RECT& paint_area);
     void Release_Balls(double platform_pos);
+    void Disable_Balls();
     void Set_On_Platform(double platform_pos);
     void Tripple_Balls();
 
