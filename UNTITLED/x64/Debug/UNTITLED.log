@@ -1,2 +1,25 @@
-﻿  Main.cpp
-  UNTITLED.vcxproj -> F:\Курсовая\x64\Debug\UNTITLED.exe
+﻿  Ball.cpp
+  Ball_Pile.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball_Pile.cpp(43,33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball_Pile.cpp(46,41): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball_Pile.cpp(56,34): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball_Pile.cpp(58,86): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Bonus.cpp
+  Border.cpp
+  Config.cpp
+  Engine.cpp
+  Fade.cpp
+  Level.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(136,15): warning C4101: 'y': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(136,12): warning C4101: 'x': unreferenced local variable
+  Main.cpp
+  Platform.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(29,64): warning C4244: '=': conversion from 'double' to 'LONG', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(47,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(73,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(96,15): warning C4101: 'pixel': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(177,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Ball.cpp(229): warning C4715: 'Ball::Is_Test_Finished': not all control paths return a value
+  LINK : C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe not found or not built by the last incremental link; performing full link
+  UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

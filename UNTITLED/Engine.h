@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "Config.h"
 #include "Border.h"
 #include "Platform.h"
 #include "Level.h"
@@ -32,10 +32,7 @@ public:
 
     void Init_Engine(HWND hwnd);
     void Draw_Frame(HDC hdc, RECT &paint_area);
-    void Draw_Ending(HDC hdc, RECT& paint_area);
-    void Draw_GameOver(HDC hdc, RECT& paint_area);
-    void Draw_Level_Rect(HDC hdc);
-    void Animate();
+    void Act();
     void On_Falling_Bonus(Bonus *falling_bonus);
     void Play_Level();
     void Next_Driver_Step();
@@ -45,8 +42,6 @@ public:
 
     int Life_Counter;
 
-    bool Game_Done, Game_Over;
-
     EGame_State Game_State;
 private:
     
@@ -54,11 +49,7 @@ private:
     Platform Platform;
     Border Border;
     Ball_Pile Ball_Pile;
-
-    RECT Level_Area_Rect;
     
-    Driver* Object_Driver[Common::Max_Driver_Count];
-    //Object_Designer* Module[Common::Max_Module_Count];
-
-    std::vector<Object_Designer*> Module;
+    Driver* Object_Driver[Config::Max_Driver_Count];
+    Object_Designer* Module[Config::Max_Module_Count];
 };

@@ -6,15 +6,15 @@
 Border::Border() : Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)
 {//Constructor
-    Floor_Rect.left = (Common::Level_X_Offset - 1) * Common::Extent;
-    Floor_Rect.top = (Common::Max_Y_Pos - Common::Level_Y_Offset) * Common::Extent;
-    Floor_Rect.right = 200 * Common::Extent;
-    Floor_Rect.bottom = Common::Max_Y_Pos * Common::Extent;
+    Floor_Rect.left = (Config::Level_X_Offset - 1) * Config::Extent;
+    Floor_Rect.top = (Config::Max_Y_Pos - Config::Level_Y_Offset) * Config::Extent;
+    Floor_Rect.right = 200 * Config::Extent;
+    Floor_Rect.bottom = Config::Max_Y_Pos * Config::Extent;
 }
 
 void Border::Init(){
-    Common::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
-    Common::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
+    Config::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    Config::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
 }
 
 void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
@@ -23,19 +23,19 @@ void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     SelectObject(hdc, Border_Main_Brush);
 
     if (is_vertical) 
-        Rectangle(hdc, (x + 1) * Common::Extent, y * Common::Extent, (x + 4) * Common::Extent - 1, (y + 4) * Common::Extent - 1);
+        Rectangle(hdc, (x + 1) * Config::Extent, y * Config::Extent, (x + 4) * Config::Extent - 1, (y + 4) * Config::Extent - 1);
     else 
-        Rectangle(hdc, x * Common::Extent, (y + 1) * Common::Extent, (x + 4) * Common::Extent - 1, (y + 4) * Common::Extent - 1);
+        Rectangle(hdc, x * Config::Extent, (y + 1) * Config::Extent, (x + 4) * Config::Extent - 1, (y + 4) * Config::Extent - 1);
 
     //White line
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if (is_vertical) {
-        Rectangle(hdc, x * Common::Extent, y * Common::Extent, (x + 1) * Common::Extent - 2, (y + 4) * Common::Extent - 1);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 1) * Config::Extent - 2, (y + 4) * Config::Extent - 1);
     }
     else {
-        Rectangle(hdc, x * Common::Extent, y * Common::Extent, (x + 6) * Common::Extent - 1, (y + 1) * Common::Extent - 2);
+        Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent - 1, (y + 1) * Config::Extent - 2);
     }
     
 }
@@ -46,20 +46,20 @@ void Border::Draw_Floor(HDC hdc, int x, int y) {
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
-    RoundRect(hdc, x * Common::Extent, y * Common::Extent, (x + 3) * Common::Extent - 1, (y + 1) * Common::Extent - 2, 2, 2);
+    RoundRect(hdc, x * Config::Extent, y * Config::Extent, (x + 3) * Config::Extent - 1, (y + 1) * Config::Extent - 2, 2, 2);
 }
 
 bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     bool collided = false;
 
     //if we`ve collided with LEFT border
-    if (next_x_pos < Common::Level_X_Offset) {
+    if (next_x_pos < Config::Level_X_Offset) {
         collided = true;
         ball->Is_Vertical_Reflect(true);
     }
 
     //if we`ve collided with RIGHT border
-    if (next_x_pos - ball->Radius - 2 > Common::Max_X_Pos + Common::Level_X_Offset - 1) {
+    if (next_x_pos - ball->Radius - 2 > Config::Max_X_Pos + Config::Level_X_Offset - 1) {
         collided = true;
         ball->Is_Vertical_Reflect(true);
     }
@@ -71,11 +71,11 @@ bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     }
 
     //if ball has flown through deathline || he`s collided with floor
-    if (next_y_pos > Common::Max_Y_Pos - 3 * Common::Ball_Size + 2) {
-        if (Common::Have_Floor) {
+    if (next_y_pos > Config::Max_Y_Pos - 3 * Config::Ball_Size + 2) {
+        if (Config::Have_Floor) {
             collided = true;
             ball->Is_Vertical_Reflect(false);
-        } else if (next_y_pos > Common::Max_Y_Pos + Common::Ball_Size)
+        } else if (next_y_pos > Config::Max_Y_Pos + Config::Ball_Size)
             ball->Ball_State = BS_None;
     }
 
@@ -98,22 +98,16 @@ void Border::Draw(HDC hdc, RECT& paint_area) {
     for (int i = 0; i < 50; i++)
         Draw_Element(hdc, 3 + i * 4, 2, FALSE);
 
-    if (Common::Have_Floor) {
+    if (Config::Have_Floor) {
         if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
             //Drawing floor
             for (int i = 0; i < 49; i++)
                 Draw_Floor(hdc, 6 + i * 4, 197);
         }
-    } else {
-        if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
-            SelectObject(hdc, Common::BG_Pen);
-            SelectObject(hdc, Common::BG_Brush);
-            Rectangle(hdc, Floor_Rect.left, Floor_Rect.top, Floor_Rect.right, Floor_Rect.bottom);
-        }
     }
 }
 
-void Border::Animate() {
+void Border::Act() {
     //There`s nothing
 }
 
@@ -123,7 +117,7 @@ bool Border::Is_Finished() {
 }
 
 void Border::Redraw_Floor() {
-    InvalidateRect(Common::Hwnd, &Floor_Rect, FALSE);
+    InvalidateRect(Config::Hwnd, &Floor_Rect, FALSE);
 }
 
 /////////////////////////////////////////////////////////////////////

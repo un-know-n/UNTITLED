@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common.h"
+#include "Config.h"
 
 enum EBall_State {
     BS_Disabled,
@@ -16,7 +16,7 @@ class Ball;
 class Main_Hit_Checker {
 public:
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) = 0;
-    bool Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double& x);
+    bool Dot_Circle_Hit(double y, double next_x_pos, double left_x, double right_x, double radius, double& x);//double &x
 };
 
 class Driver {
@@ -40,7 +40,7 @@ public:
     virtual double Get_Speed();
 
     virtual void Draw(HDC hdc, RECT& paint_area);
-    virtual void Animate();
+    virtual void Act();
     virtual bool Is_Finished();
     
     static void Add_Hit_Checker(Main_Hit_Checker* hit_check);

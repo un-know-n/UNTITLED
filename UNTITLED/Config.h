@@ -2,7 +2,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <vector>
+
 #include <Windows.h>
 
 class Color{
@@ -15,11 +15,11 @@ public:
 class Object_Designer {
 public:
     virtual void Draw(HDC hdc, RECT& paint_area) = 0;
-    virtual void Animate() = 0;
+    virtual void Act() = 0;
     virtual bool Is_Finished() = 0;
 };
 
-class Common{
+class Config{
 public:
 
     static void Setup_Colors();
@@ -39,7 +39,6 @@ public:
     static const int Extent = 3;
     static const int FPS = 20;
     static int Tick;
-    static int Floor_Tick;
     static const int Max_Fading_Count = 10;
     static const int Max_Falling_Count = 10;
     static const int Max_Ball_Count = 5;//9

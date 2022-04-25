@@ -143,7 +143,7 @@
     <ClInclude Include="Ball_Pile.h" />
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="Border.h" />
-    <ClInclude Include="Common.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Fade.h" />
     <ClInclude Include="framework.h" />
@@ -158,7 +158,7 @@
     <ClCompile Include="Ball_Pile.cpp" />
     <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="Border.cpp" />
-    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Level.cpp" />
