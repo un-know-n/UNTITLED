@@ -10,7 +10,7 @@ public:
     virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
 
     virtual void Draw(HDC hdc, RECT& paint_area);
-    virtual void Act();
+    virtual void Animate();
     virtual bool Is_Finished();
 
     void Init();

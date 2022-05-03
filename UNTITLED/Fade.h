@@ -1,5 +1,5 @@
 #pragma once
-#include "Config.h"
+#include "Common.h"
 
 enum EBlock_Type {
     BT_None,
@@ -14,7 +14,7 @@ public:
     Fade_Block(EBlock_Type block_type, int x_pos, int y_pos);
 
     virtual void Draw(HDC hdc, RECT& paint_area);
-    virtual void Act();
+    virtual void Animate();
     virtual bool Is_Finished();
 
     static void Set_Color();

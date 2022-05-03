@@ -6,10 +6,12 @@
 
 #define MAX_LOADSTRING 100
 
+//indexes of the entry menu buttons
 #define IDB_Start_Btn 1
 #define IDB_Exit_Btn 2
 #define IDB_Title_Btn 3
 #define IDB_About_Btn 4
+#define IDB_Rules_Btn 5
 
 // Global Variables:
 bool Drawing_Active = false;
@@ -33,7 +35,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	// TODO: Place code here.
-	Config::Setup_Colors();
+	Common::Setup_Colors();
 
 	// Initialize global strings
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
@@ -81,7 +83,7 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_UNTITLED));
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-	wcex.hbrBackground = Config::BG_Brush;//17, 46, 37
+	wcex.hbrBackground = Common::BG_Brush;//17, 46, 37
 	wcex.lpszMenuName = NULL;//MAKEINTRESOURCEW(IDC_UNTITLED);//NULL
 	wcex.lpszClassName = szWindowClass;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
@@ -103,45 +105,52 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
 	hInst = hInstance; // Store instance handle in our global variable
 
+	//Creation of the main window rectangle
 	RECT window_rect;
 	window_rect.left = 0;
 	window_rect.top = 0;
-	window_rect.right = 207 * 3;//320
-	window_rect.bottom = 195 * 3;//200
+	window_rect.right = 621;
+	window_rect.bottom = 585;
 
+	//Relaying current window to the size we need to
 	AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, TRUE);
 
+	//Creation of the main window
 	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX,
 		0, 0, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, 0, 0, hInstance, 0);
 
 	if (hWnd == 0)
 		return FALSE;
 
+	//Engine initialization
 	Engine.Init_Engine(hWnd);
 
 	///////////////////////////////////// ENTRY BUTTONS /////////////////////////////////////////////
 
-	//HWND Start_Btn = CreateWindow( 
-	//	L"BUTTON",  // Predefined class; Unicode assumed 
-	//	L"START",      // Button text 
-	//	WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
-	//	265,         // x position 
-	//	250,         // y position 
-	//	90,        // Button width
-	//	40,        // Button height
-	//	hWnd,     // Parent window
-	//	(HMENU)IDB_Start_Btn,       // No menu.
-	//	(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-	//	NULL);      // Pointer not needed.
+	HWND Start_Btn = CreateWindow( 
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"START",      // Button text 
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+		265,         // x position 
+		250,         // y position 
+		90,        // Button width
+		40,        // Button height
+		hWnd,     // Parent window
+		(HMENU)IDB_Start_Btn,       // Menu.
+		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+		NULL);      // Pointer not needed.
 
-	//HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 350, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 400, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 300, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 350, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
-	//	265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Rules_Btn = CreateWindow(L"BUTTON", L"RULES", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		265, 300, 90, 40, hWnd, (HMENU)IDB_Rules_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+
+	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
+		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -184,17 +193,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			ShowWindow(GetDlgItem(hWnd, 2), SW_HIDE);
 			ShowWindow(GetDlgItem(hWnd, 3), SW_HIDE);
 			ShowWindow(GetDlgItem(hWnd, 4), SW_HIDE);
+			ShowWindow(GetDlgItem(hWnd, 5), SW_HIDE);
 			break;
 		case IDB_Exit_Btn:
 			DestroyWindow(hWnd);
 			break;
 		case IDB_About_Btn:
-			//DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), nullptr, About);
+
 			BeginPaint(hWnd, nullptr);
-			// TODO: Add any drawing code that uses hdc here...
+
 			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
 				L"About", MB_ICONINFORMATION | MB_OK);
+
 			InvalidateRect(hWnd, NULL, FALSE);
+
+			EndPaint(hWnd, nullptr);
+			UpdateWindow(hWnd);
+			break;
+		case IDB_Rules_Btn:
+
+			BeginPaint(hWnd, nullptr);
+
+			MessageBox(NULL, L"To start the game, you need to click on the \"Start\" button\nThe control is carried out with the keys 'A' and 'D', \nwhen they are pressed, the platform moves left / right. \nWhen you press the spacebar, the ball shoots. \nIt can be reflected from walls and blocks. \nBlocks can collapse and out of them there are different bonuses.\nIf the ball flew out of the platform, then the game ends.",
+				L"Rules", MB_ICONINFORMATION | MB_OK);
+
+			InvalidateRect(hWnd, NULL, FALSE);
+
 			EndPaint(hWnd, nullptr);
 			UpdateWindow(hWnd);
 			break;
@@ -208,14 +232,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		//if(Drawing_Active){
+		if(Drawing_Active){
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
-			// TODO: Add any drawing code that uses hdc here...
+			// TODO: Add any drawing code that uses hdc here...		
 
-			Engine.Draw_Frame(hdc, ps.rcPaint);
+			//////////		THAT THING IS DEFINITELY MAIMED		//////////
+
+			if (Engine.Game_Done == true) {
+				Engine.Draw_Ending(hdc, ps.rcPaint);
+				InvalidateRect(hWnd, NULL, FALSE);
+				UpdateWindow(hWnd);
+				Sleep(7000);
+				DestroyWindow(hWnd);
+			}
+			else if (Engine.Game_Over == true) {
+				Engine.Draw_GameOver(hdc, ps.rcPaint);
+				InvalidateRect(hWnd, NULL, FALSE);
+				UpdateWindow(hWnd);
+				Sleep(7000);
+				DestroyWindow(hWnd);
+			}
+			else Engine.Draw_Frame(hdc, ps.rcPaint);
+
+			//////////////////////////////////////////////////////////////
+
 			EndPaint(hWnd, &ps);
-		//}
+			ReleaseDC(hWnd, hdc);
+		}
 	}
 	break;
 
