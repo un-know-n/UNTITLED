@@ -5,10 +5,10 @@
 
 Head_Engine::Head_Engine() : Game_State(GS_GameOver), Life_Counter(1), Game_Done(false), Game_Over(false)
 {//Constructor
-    Level_Area_Rect.left = Common::Level_X_Offset * Common::Extent;
-    Level_Area_Rect.top = Common::Level_Y_Offset * Common::Extent;
-    Level_Area_Rect.right = Common::Level_Y_Elems * Common::Cell_Width * Common::Extent + Common::Level_X_Offset * Common::Extent;
-    Level_Area_Rect.bottom = Common::Max_Y_Pos * Common::Extent;
+    Level_Area_Rect.left = Common::Level_X_Offset;
+    Level_Area_Rect.top = Common::Level_Y_Offset;
+    Level_Area_Rect.right = Common::Level_Y_Elems * Common::Cell_Width + Common::Level_X_Offset;
+    Level_Area_Rect.bottom = Common::Max_Y_Pos;
 }
 
 void Head_Engine::Init_Engine(HWND hwnd) {
@@ -62,7 +62,7 @@ void Head_Engine::Init_Engine(HWND hwnd) {
     Module.push_back(&Ball_Pile);
 }
 
-void Head_Engine::Draw_Frame(HDC hdc, RECT &paint_area) {
+void Head_Engine::Draw_Screen(HDC hdc, RECT &paint_area) {
     //It draws game screen (hdc - handle to device context)
     SetGraphicsMode(hdc, GM_ADVANCED);
 

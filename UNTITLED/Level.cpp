@@ -3,6 +3,23 @@
 
 //          LEVEL
 
+//char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+//    0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//    0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+//    0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+//    0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+//    0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+//    0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+//};
+
 char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -71,23 +88,6 @@ char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
 //    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 //};
 
-//char Level::Test[Common::Level_X_Elems][Common::Level_Y_Elems] = {
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-//};
-
 Level::Level() : Level_Area{}
 {//Constructor
 }
@@ -95,10 +95,10 @@ Level::Level() : Level_Area{}
 void Level::Init(){
     
     //Creation of the rectangle in which level is put
-    Level_Area.left = Common::Level_X_Offset * Common::Extent;
-    Level_Area.top = Common::Level_Y_Offset * Common::Extent;
-    Level_Area.right = Level_Area.left + Common::Cell_Width * Common::Level_X_Elems * Common::Extent;
-    Level_Area.bottom = Level_Area.top + Common::Cell_Height * Common::Level_Y_Elems * Common::Extent;
+    Level_Area.left = Common::Level_X_Offset;
+    Level_Area.top = Common::Level_Y_Offset;
+    Level_Area.right = Level_Area.left + Common::Cell_Width * Common::Level_X_Elems;
+    Level_Area.bottom = Level_Area.top + Common::Cell_Height * Common::Level_Y_Elems;
 
     //Initializing all the elements of current level with zero values
     memset(Current_Level, 0, sizeof(Current_Level));
@@ -214,10 +214,10 @@ void Level::Draw(HDC hdc, RECT& paint_area) {
     if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
         for (int i = 0; i < Common::Level_X_Elems; i++) {
             for (int j = 0; j < Common::Level_Y_Elems; j++) {
-                block_area.left = (Common::Level_X_Offset + j * Common::Cell_Width) * Common::Extent;
-                block_area.top = (Common::Level_Y_Offset + i * Common::Cell_Height) * Common::Extent;
-                block_area.right = block_area.left + Common::Block_Width * Common::Extent;
-                block_area.bottom = block_area.top + Common::Block_Height * Common::Extent;
+                block_area.left = Common::Level_X_Offset + j * Common::Cell_Width;
+                block_area.top = Common::Level_Y_Offset + i * Common::Cell_Height;
+                block_area.right = block_area.left + Common::Block_Width;
+                block_area.bottom = block_area.top + Common::Block_Height;
                 if ((IntersectRect(&destination_rect, &paint_area, &block_area))) {
                     Draw_Block(hdc, block_area, (EBlock_Type)Current_Level[i][j]);
                 }
@@ -384,12 +384,12 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     //bonus_type = BNT_Floor;
 
     //Applying the coords to the current bonus
-    bonus_x = (x_coord * Common::Cell_Width + Common::Level_X_Offset) * Common::Extent;
-    bonus_y = (y_coord * Common::Cell_Height + Common::Level_Y_Offset) * Common::Extent;
+    bonus_x = x_coord * Common::Cell_Width + Common::Level_X_Offset;
+    bonus_y = y_coord * Common::Cell_Height + Common::Level_Y_Offset;
     
     //If we have place in our array -> go on
     if (Falling.size() < Common::Max_Falling_Count) {
-        if (rand() % 2 == 0) {
+        if (rand() % 1 == 0) {
             //Creation of new example of bonus
             falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
 

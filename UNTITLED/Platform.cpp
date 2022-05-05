@@ -7,35 +7,36 @@ Platform::~Platform() {
     delete[] Platform_Scan;// delete[] - its used when pointer refers to an array
 }
 
-Platform::Platform() : X_Position(0), Y_Position(Common::Platform_Y_Position), Width(28), Height(7), Inner_Platform_Width(21),
+Platform::Platform() : X_Position(0), Y_Position(Common::Platform_Y_Position), Width(84), Height(21), Inner_Platform_Width(63),
 Ellipse_Platform_Brush(0), Ellipse_Platform_Pen(0), Platform_State(PS_None), Platform_Move_State(PMS_Stop), Step_Up(0),
-Platform_Rect{}, Platform_Normal_Width(Width * Common::Extent), Platform_Normal_Height(Height * Common::Extent),
+Platform_Rect{}, Platform_Normal_Width(Width), Platform_Normal_Height(Height),
 Left_Key_Down(false), Right_Key_Down(false), Ellipse_Platform_Pen_Color(255, 255, 255), Rectangle_Platform_Pen_Color(81, 82, 81)
 {//Constructor
-    X_Position = (Common::Max_X) / 2 + 2 * Common::Extent;
+    X_Position = (Common::Max_X) / 2 + 6;
 }
 
 void Platform::Init(){
+    //Initialization of the main pens and brushes
     Common::Create_PenNBrush(255, 255, 255, Ellipse_Platform_Pen, Ellipse_Platform_Brush);
     Common::Create_PenNBrush(81, 82, 81, Rectangle_Platform_Pen, Rectangle_Platform_Brush);
 }
 
 void Platform::Redraw() {
     Prev_Platform_Rect = Platform_Rect;
-    int temp;
-    if (Platform_State == PS_StartGame) temp = Common::Circle_Size;
-    else temp = Width;
+    int temp_width;
+    if (Platform_State == PS_StartGame) temp_width = Common::Circle_Size;
+    else temp_width = Width;
 
-    Platform_Rect.left = (Common::Level_X_Offset + X_Position) * Common::Extent;
-    Platform_Rect.top = Common::Platform_Y_Position * Common::Extent;
-    Platform_Rect.right = Platform_Rect.left + temp * Common::Extent;
-    Platform_Rect.bottom = Platform_Rect.top + Common::Platform_Height * Common::Extent;
+    Platform_Rect.left = Common::Level_X_Offset + X_Position;
+    Platform_Rect.top = Common::Platform_Y_Position;
+    Platform_Rect.right = Platform_Rect.left + temp_width;
+    Platform_Rect.bottom = Platform_Rect.top + Common::Platform_Height;
 
     if(Platform_State == PS_EndGame || Platform_State == PS_StartGame){
-        Prev_Platform_Rect.bottom = 205 * Common::Extent;
+        Prev_Platform_Rect.bottom = 615;
     }
     if (Platform_State == PS_StartGame) {
-        X_Position = (Common::Max_X) / 2 + 2 * Common::Extent;
+        X_Position = (Common::Max_X) / 2 + 6;
     }
 
     InvalidateRect(Common::Hwnd, &Prev_Platform_Rect, FALSE);
@@ -43,7 +44,7 @@ void Platform::Redraw() {
 }
 
 void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
-    //if there`s collision with paint area -> draw the platform
+    //Here we draw platform in normal condition
     int x = Common::Level_X_Offset + X_Position;
     int y = Common::Platform_Y_Position;
     int inner_pl_width = Inner_Platform_Width;
@@ -54,29 +55,27 @@ void Platform::Draw_Normal(HDC hdc, RECT &paint_area){
     SelectObject(hdc, Ellipse_Platform_Pen);
     SelectObject(hdc, Ellipse_Platform_Brush);
 
-    Ellipse(hdc, (x + 1) * Common::Extent, (y + 1) * Common::Extent,
-        (x + 1 + Common::Circle_Size) * Common::Extent - 1, (y + 1 + Common::Circle_Size) * Common::Extent - 1);
-    Ellipse(hdc, (x + 1 + inner_pl_width) * Common::Extent, (y + 1) * Common::Extent,
-        (x + 1 + Common::Circle_Size + inner_pl_width) * Common::Extent - 1, (y + 1 + Common::Circle_Size) * Common::Extent - 1);
+    Ellipse(hdc, x + 3, y + 3, x + 2 + Common::Circle_Size, y + 2 + Common::Circle_Size);
+    Ellipse(hdc, x + 3 + inner_pl_width, y + 3, x + 2 + Common::Circle_Size + inner_pl_width, y + 2 + Common::Circle_Size);
 
     SelectObject(hdc, Rectangle_Platform_Pen);
     SelectObject(hdc, Rectangle_Platform_Brush);
 
-    RoundRect(hdc, (x + 4) * Common::Extent, (y + 1) * Common::Extent,
-        (x + inner_pl_width + 3) * Common::Extent - 1,
-        (y + 6) * Common::Extent - 1, 3, 3);
+    RoundRect(hdc, x + 11, y + 4, x + inner_pl_width + 9, y + 16, 3, 3);
 
     Take_Platform_Scan(hdc);
 }
 
 void Platform::Take_Platform_Scan(HDC hdc) {
-    int x = (Common::Level_X_Offset + X_Position) * Common::Extent;
-    int y = Common::Platform_Y_Position * Common::Extent;
+    //Making the "scan" of the platform due to make final animation
+    int x = Common::Level_X_Offset + X_Position;
+    int y = Common::Platform_Y_Position;
     int offset = 0;
 
     if (Platform_Scan == 0 && Platform_State == PS_Ready) {
         Platform_Scan = new int[Platform_Normal_Width * Platform_Normal_Height];
 
+        //Taking every pixel to the platform scan array
         for (int i = 0; i < Platform_Normal_Height; i++) {
             for (int j = 0; j < Platform_Normal_Width; j++) {
                 Platform_Scan[offset++] = GetPixel(hdc, x + j, y + i);
@@ -86,32 +85,34 @@ void Platform::Take_Platform_Scan(HDC hdc) {
 }
 
 void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
-    
-     Inner_Platform_Width = 21;
+    //Here we draw platform in endgame condition
+     Inner_Platform_Width = 63;
      int x, y, y_offset;
      int column_counter = 0;
-     int area_width = Width * Common::Extent;
-     //int area_height = Common::Platform_Height * Common::Extent;
-     const int max_position = Common::Max_Y_Pos * Common::Extent;
+     int area_width = Width;
+     
+     const int max_position = Common::Max_Y_Pos;
      COLORREF pixel;
      COLORREF bg_pixel = RGB(Common::BG_Color.R, Common::BG_Color.G, Common::BG_Color.B);
      HPEN color_pen;
      int column_length = 0;
 
+     //Going through every column in platform area
      for (int i = 0; i < area_width; i++) {
          if (EndGame_Elem_Position[i] > max_position) continue;
 
          ++column_counter;
 
+         //Making random offset due to prettier animation
          y_offset = rand() % 4 + 1;
          x = Platform_Rect.left + i;
-
-                  
+  
          int j = 0;
          y = EndGame_Elem_Position[i];
 
          MoveToEx(hdc, x, y, 0);
 
+         //While we can take color from column -> we move that column
          while (Get_Platform_Column_Color(i, j, color_pen, column_length)) {
 
              SelectObject(hdc, color_pen);
@@ -121,15 +122,17 @@ void Platform::Draw_EndGame(HDC hdc, RECT &paint_area){
              j += column_length;
          }
 
+         //Drawing over moved area
          y = EndGame_Elem_Position[i];
          MoveToEx(hdc, x, y, 0);
          SelectObject(hdc, Common::BG_Pen);
          LineTo(hdc, x, y + y_offset);
 
-
+         //Moving our index to offset value
          EndGame_Elem_Position[i] += y_offset;
      }
      
+     //If we have no colums -> there`s no platform
      if (column_counter == 0) {
          Platform_State = PS_None;
          Sleep(200);
@@ -144,12 +147,15 @@ bool Platform::Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& col
 
     if (y > Platform_Normal_Height) return false;
 
+    //Going through all platform height
     for (int i = y; i < Platform_Normal_Height; i++) {
+        //if that is first iteration -> start to take the color
         if (i == y) {
             color = Platform_Scan[offset];
             column_length = 1;
         }
         else {
+            //if colors are identical -> continue
             if (color == Platform_Scan[offset]) {
                 column_length++;
             }
@@ -159,6 +165,7 @@ bool Platform::Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& col
         offset += Platform_Normal_Width;
     }
 
+    //Choose the color to painting
     if (color == Ellipse_Platform_Pen_Color.Get_RGB()) {
         color_pen = Ellipse_Platform_Pen;
     }
@@ -174,9 +181,11 @@ bool Platform::Get_Platform_Column_Color(int x, int y, HPEN& color_pen, int& col
 }
 
 void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
-    int x = (Common::Level_X_Offset + X_Position) * Common::Extent;
-    int y = (Common::Level_Y_Offset * Common::Extent + Y_Position) * Common::Extent;
-    int normal_coords = Common::Circle_Size * Common::Extent;
+    //Drawing the start game animation
+    int x = Common::Level_X_Offset + X_Position;
+    int y = Common::Level_Y_Offset * 3 + Y_Position;
+
+    int normal_coords = Common::Circle_Size;
     XFORM xForm, old_xForm;
     double alpha;
 
@@ -204,9 +213,9 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
     SelectObject(hdc, Common::BG_Pen);
     SelectObject(hdc, Common::BG_Brush);
 
-    Rectangle(hdc,-Common::Extent / 2, -normal_coords / 2, Common::Extent / 2, normal_coords / 2);
+    Rectangle(hdc, -3 / 2, -normal_coords / 2, 3 / 2, normal_coords / 2 + 1);
 
-    if (y > Common::Platform_Y_Position * Common::Extent) --Y_Position;
+    if (y > Common::Platform_Y_Position) Y_Position -= 3;
     else {
 
         Platform_State = PS_Extension;
@@ -220,26 +229,28 @@ void Platform::Draw_StartGame(HDC hdc, RECT& paint_area) {
 }
 
 void Platform::Draw_Extension(HDC hdc, RECT& paint_area) {
+    //Draw the extension of the platform
     Draw_Normal(hdc, paint_area);
             
-    if (Inner_Platform_Width <= 21) {
+    if (Inner_Platform_Width <= 63) {
         --X_Position;
-        Inner_Platform_Width += 3;
+        Inner_Platform_Width += 9;
     }
     else {
         Platform_State = PS_Ready;
         Redraw();
-        Inner_Platform_Width = 21;
+        Inner_Platform_Width = 63;
 
     }    
 }
 
 EPlatform_State Platform::Get_State() {
+    //Default getter
     return Platform_State;
 }
 
 void Platform::Set_State(EPlatform_State platform_state) {
-    //if (Platform_State == platform_state) return;
+    //Default setter
     if (platform_state == PS_EndGame) {
         int length = sizeof(EndGame_Elem_Position) / sizeof(EndGame_Elem_Position[0]);
         for (int i = 0; i < length; i++) {
@@ -258,6 +269,7 @@ void Platform::Clear_BG(HDC hdc) {
 }
 
 void Platform::Move_To_Left(bool left_side, bool is_key_down) {
+    //Making right movement system for platform
     if (Get_State() != PS_Normal) return;
 
     if (left_side) Left_Key_Down = is_key_down;
@@ -282,6 +294,7 @@ void Platform::Move_To_Left(bool left_side, bool is_key_down) {
 }
 
 void Platform::Next_Step(double max_speed) {
+    //Making next step, depending on a few factors
     double next_step = Speed / max_speed * Common::Step_Size;
     X_Position += next_step;
     Condition();
@@ -289,6 +302,7 @@ void Platform::Next_Step(double max_speed) {
 }
 
 double Platform::Get_Speed() {
+    //Default getter
     return Speed;
 }
 
@@ -340,12 +354,13 @@ bool Platform::Is_Finished() {
 }
 
 void Platform::Condition() {
-    if (X_Position < Common::Min_X-2) X_Position = Common::Min_X-2;
-    if (X_Position > Common::Max_X+1) X_Position = Common::Max_X+1;
+    //Check border collapse with platform
+    if (X_Position < Common::Min_X-7) X_Position = Common::Min_X-7;
+    if (X_Position > Common::Max_X+3) X_Position = Common::Max_X+3;
 }
 
 void Platform::Initialization() {
-
+    //There`s nothing
 }
 void Platform::Finalization() {
     Redraw();
@@ -353,16 +368,13 @@ void Platform::Finalization() {
 
 bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) {
     double reflection_pos;
-    double inner_top_y = Common::Platform_Y_Position - 5;
+    double inner_top_y = Common::Platform_Y_Position - 15;
     double inner_bottom_y = Common::Platform_Height + Common::Platform_Y_Position - 6;
-    double inner_platform_left = X_Position + 2 * Common::Circle_Size - 1;
-    double inner_platform_right = X_Position + Width + 2 * Common::Circle_Size - 1;
-
-    //ball->Ball_Speed = 3.0;
+    double inner_platform_left = X_Position + 2 * Common::Circle_Size - 3;
+    double inner_platform_right = X_Position + Width + 2 * Common::Circle_Size - 3;
 
     if (next_y_pos + ball->Radius < Common::Platform_Y_Position - 10) return false;
-
-    //ball->Ball_Speed = 0.3;
+    
 
     //We look if our ball is going to the left side 
 
@@ -390,6 +402,8 @@ bool Platform::Check_Colision(double next_x_pos, double next_y_pos, Ball* ball) 
 }
 
 bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* ball, double inner_width) {
+    //The hardest topic
+    //Reflection from the circles on the platform
     double dx_range, dy_range;
     double temporary_distance, radius_summ, platform_ball_radius;
     double platform_ball_x, platform_ball_y;
@@ -398,8 +412,8 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
 
     platform_ball_radius = (double)Common::Circle_Size / 2.0;
 
-    platform_ball_x = Platform_Rect.left / Common::Extent + platform_ball_radius + Common::Extent - 1 + inner_width;
-    platform_ball_y = Platform_Rect.top / Common::Extent - platform_ball_radius;
+    platform_ball_x = Platform_Rect.left / 3 + platform_ball_radius + 2 + inner_width;
+    platform_ball_y = Platform_Rect.top / 3 - platform_ball_radius;
 
     dx_range = next_x_pos - platform_ball_x;
     dy_range = next_y_pos - platform_ball_y;
@@ -430,6 +444,7 @@ bool Platform::Circular_Reflection(double next_x_pos, double next_y_pos, Ball* b
 }
 
 bool Platform::Got_Hit_By(Bonus* falling_bonus) {
+    //Check if platform has collided with bonus
 
     RECT destination_rect, bonus_rect;
 

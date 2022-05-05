@@ -31,7 +31,7 @@ public:
     Head_Engine();
 
     void Init_Engine(HWND hwnd);
-    void Draw_Frame(HDC hdc, RECT &paint_area);
+    void Draw_Screen(HDC hdc, RECT &paint_area);
     void Draw_Ending(HDC hdc, RECT& paint_area);
     void Draw_GameOver(HDC hdc, RECT& paint_area);
     void Draw_Level_Rect(HDC hdc);
@@ -48,7 +48,7 @@ public:
     bool Game_Done, Game_Over;
 
     EGame_State Game_State;
-private:
+//private:
     
     Level Level;
     Platform Platform;

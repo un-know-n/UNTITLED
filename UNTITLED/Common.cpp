@@ -28,7 +28,7 @@ HWND Common::Hwnd;
 int Common::Tick = 0;
 int Common::Floor_Tick = 0;
 
-const double Common::Step_Size = 1.0 / Common::Extent;
+const double Common::Step_Size = 9.0;
 
 bool Common::Have_Floor = false;
 

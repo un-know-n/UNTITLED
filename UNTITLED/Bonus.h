@@ -25,7 +25,7 @@ public:
     const EBonus_Type Bonus_Type;
     const EBlock_Type Block_Type;
 
-    static const int Half_Height = Common::Block_Height * Common::Extent / 2;
+    static const int Half_Height = Common::Block_Height / 2;
 
     int X, Y;
     int Step, Action_Step;
