@@ -6,15 +6,15 @@
 Border::Border() : Border_Main_Pen(0), Border_White_Pen(0),
 Border_Main_Brush(0), Border_White_Brush(0)
 {//Constructor
-    Floor_Rect.left = Common::Level_X_Offset - 3;
-    Floor_Rect.top = Common::Max_Y_Pos - Common::Level_Y_Offset;
-    Floor_Rect.right = 600;
-    Floor_Rect.bottom = Common::Max_Y_Pos;
+    Floor_Rect.left = (Common::Level_X_Offset - 1) * Common::Extent;
+    Floor_Rect.top = (Common::Max_Y_Pos - Common::Level_Y_Offset) * Common::Extent;
+    Floor_Rect.right = 200 * Common::Extent;
+    Floor_Rect.bottom = Common::Max_Y_Pos * Common::Extent;
 }
 
 void Border::Init(){
-    Common::Create_PenNBrush(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
-    Common::Create_PenNBrush(255, 255, 255, Border_White_Pen, Border_White_Brush);
+    Common::Create_DrawSet(133, 13, 37, Border_Main_Pen, Border_Main_Brush);
+    Common::Create_DrawSet(255, 255, 255, Border_White_Pen, Border_White_Brush);
 }
 
 void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
@@ -23,19 +23,19 @@ void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     SelectObject(hdc, Border_Main_Brush);
 
     if (is_vertical) 
-        Rectangle(hdc, x + 3, y, x + 10, y + 8);
+        Rectangle(hdc, (x + 1) * Common::Extent, y * Common::Extent, (x + 4) * Common::Extent - 1, (y + 4) * Common::Extent - 1);
     else 
-        Rectangle(hdc, x, y + 3, x + 6, y + 10);
+        Rectangle(hdc, x * Common::Extent, (y + 1) * Common::Extent, (x + 4) * Common::Extent - 1, (y + 4) * Common::Extent - 1);
 
     //White line
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
     if (is_vertical) {
-        Rectangle(hdc, x, y, x + 1, y + 4);
+        Rectangle(hdc, x * Common::Extent, y * Common::Extent, (x + 1) * Common::Extent - 2, (y + 4) * Common::Extent - 1);
     }
     else {
-        Rectangle(hdc, x, y, x + 6, y + 1);
+        Rectangle(hdc, x * Common::Extent, y * Common::Extent, (x + 6) * Common::Extent - 1, (y + 1) * Common::Extent - 2);
     }
     
 }
@@ -46,7 +46,7 @@ void Border::Draw_Floor(HDC hdc, int x, int y) {
     SelectObject(hdc, Border_White_Pen);
     SelectObject(hdc, Border_White_Brush);
 
-    RoundRect(hdc, x + 5, y, x + 13, y + 3, 2, 2);
+    RoundRect(hdc, x * Common::Extent, y * Common::Extent, (x + 3) * Common::Extent - 1, (y + 1) * Common::Extent - 2, 2, 2);
 }
 
 bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
@@ -59,19 +59,19 @@ bool Border::Check_Colision(double next_x_pos, double next_y_pos, Ball *ball) {
     }
 
     //if we`ve collided with RIGHT border
-    if (next_x_pos - ball->Radius - 6 > Common::Max_X_Pos) {
+    if (next_x_pos - ball->Radius - 2 > Common::Max_X_Pos - 1) {
         collided = true;
         ball->Is_Vertical_Reflect(true);
     }
 
     //if we`ve collided with UPPER border
-    if (next_y_pos - 4 < 0) {
+    if (next_y_pos - ball->Radius < 0) {
         collided = true;
         ball->Is_Vertical_Reflect(false);
     }
 
     //if ball has flown through deathline || he`s collided with floor
-    if (next_y_pos > Common::Max_Y_Pos - 3 * Common::Ball_Size + 5) {
+    if (next_y_pos > Common::Max_Y_Pos - 3 * Common::Ball_Size + 2) {
         if (Common::Have_Floor) {
             collided = true;
             ball->Is_Vertical_Reflect(false);
@@ -87,22 +87,22 @@ void Border::Draw(HDC hdc, RECT& paint_area) {
     RECT destination_rect;
 
     //Drawing left border
-    for (int i = 0; i < 150; i++)
-        Draw_Element(hdc, 6, 9 + i * 4, TRUE);
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 2, 3 + i * 4, TRUE);
 
     //Drawing right border
-    for (int i = 0; i < 150; i++)
-        Draw_Element(hdc, 603, 9 + i * 4, TRUE);
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 201, 3 + i * 4, TRUE);
 
     //Drawing top border
-    for (int i = 0; i < 150; i++)
-        Draw_Element(hdc, 9 + i * 4, 6, FALSE);
+    for (int i = 0; i < 50; i++)
+        Draw_Element(hdc, 3 + i * 4, 2, FALSE);
 
     if (Common::Have_Floor) {
         if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {
             //Drawing floor
-            for (int i = 0; i < 48; i++)//144
-                Draw_Floor(hdc, 18 + i * 12, 591);//4
+            for (int i = 0; i < 49; i++)
+                Draw_Floor(hdc, 6 + i * 4, 197);
         }
     } else {
         if (IntersectRect(&destination_rect, &paint_area, &Floor_Rect)) {

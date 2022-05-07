@@ -64,16 +64,16 @@ public:
     EPlatform_State Platform_State;
     EPlatform_Move_State Platform_Move_State;
 
-    static const int Default_Width = 84;
+    static const int Default_Width = 28;
     static const int Max_Rotation = 36;
-    static const int Platform_Step = 9;
+    static const int Platform_Step = Common::Extent;
         
     int Y_Position;
     int Step_Up;
     int Inner_Platform_Width;
     int Width;
     int Height;
-    int EndGame_Elem_Position[Default_Width];
+    int EndGame_Elem_Position[Default_Width * Common::Extent];
 
     double X_Position;
     double Speed;

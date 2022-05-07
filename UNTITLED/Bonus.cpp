@@ -7,8 +7,8 @@ Bonus::Bonus(EBlock_Type block_type, EBonus_Type bonus_type, int x, int y)
 {//Constructor
     Bonus_Rect.left = X;
     Bonus_Rect.top = Y;
-    Bonus_Rect.right = Bonus_Rect.left + Common::Block_Width;
-    Bonus_Rect.bottom = Bonus_Rect.top + Common::Block_Height;
+    Bonus_Rect.right = Bonus_Rect.left + Common::Block_Width * Common::Extent;
+    Bonus_Rect.bottom = Bonus_Rect.top + Common::Block_Height * Common::Extent;
 
     Prev_Bonus_Rect = Bonus_Rect;
 }
@@ -22,7 +22,7 @@ void Bonus::Draw(HDC hdc, RECT& paint_area) {
         SelectObject(hdc, Common::BG_Pen);
         SelectObject(hdc, Common::BG_Brush);
 
-        Rectangle(hdc, Prev_Bonus_Rect.left, Prev_Bonus_Rect.top, Prev_Bonus_Rect.right - 1, Prev_Bonus_Rect.bottom - 1); //!!
+        Rectangle(hdc, Prev_Bonus_Rect.left, Prev_Bonus_Rect.top, Prev_Bonus_Rect.right - 1, Prev_Bonus_Rect.bottom - 1);
     }
 
     if (Got_Hit == true) {
@@ -41,7 +41,7 @@ void Bonus::Animate() {
     //Check our falling process -> redrawing the block
     if (Got_Hit || Finished) return;
 
-    if (Bonus_Rect.top > Common::Max_Y_Pos + Common::Level_Y_Offset * 2) {
+    if (Bonus_Rect.top > Common::Max_Y_Pos * Common::Extent + Common::Level_Y_Offset * 2) {
         Finalize();
         return;
     }
@@ -51,9 +51,9 @@ void Bonus::Animate() {
     ++Action_Step;
     if (Action_Step % 2 == 0) ++Step;
 
-    Y += 3;
-    Bonus_Rect.top += 3;
-    Bonus_Rect.bottom += 3;
+    Y += Common::Extent;
+    Bonus_Rect.top += Common::Extent;
+    Bonus_Rect.bottom += Common::Extent;
 
     InvalidateRect(Common::Hwnd, &Prev_Bonus_Rect, FALSE);
     InvalidateRect(Common::Hwnd, &Bonus_Rect, FALSE);
@@ -132,13 +132,13 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         SelectObject(hdc, front_pen);
         SelectObject(hdc, front_brush);
 
-        Rectangle(hdc, X, Y + Half_Height / 2 + 3, X + Common::Block_Width, Y + Half_Height + 3);
+        Rectangle(hdc, X, Y + Half_Height / 2 + Common::Extent, X + Common::Block_Width * Common::Extent, Y + Half_Height + Common::Extent);
 
         //Draw back color
         SelectObject(hdc, back_pen);
         SelectObject(hdc, back_brush);
 
-        Rectangle(hdc, X, Y + Half_Height / 2 + 3, X + Common::Block_Width, Y + Half_Height);
+        Rectangle(hdc, X, Y + Half_Height / 2 + Common::Extent, X + Common::Block_Width * Common::Extent, Y + Half_Height);
 
     }
     else {
@@ -152,7 +152,7 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         GetWorldTransform(hdc, &old_xForm);
         SetWorldTransform(hdc, &xForm);
 
-        offset = 3.0 * (1.0 - fabs(xForm.eM22)); //* (double)Common::Extent;
+        offset = 3.0 * (1.0 - fabs(xForm.eM22)) * (double)Common::Extent;
 
         if (Step > 4) Draw_Front_Block_Animation(hdc, front_pen, front_brush, back_pen, back_brush, offset);
         else Draw_Front_Block_Animation(hdc, back_pen, back_brush, front_pen, front_brush, offset);
@@ -161,14 +161,14 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
             SelectObject(hdc, front_pen);
             SelectObject(hdc, front_brush);
             if (Bonus_Type == BNT_Tripple_Ball) {
-                Ellipse(hdc, 15, -Half_Height + 2, 30, Half_Height - 2);
+                Ellipse(hdc, 5 * Common::Extent, -Half_Height + 2, 10 * Common::Extent, Half_Height - 2);
             }
             else if (Bonus_Type == BNT_Additional_Life) {
-                Rectangle(hdc, 15, -Half_Height / 4 + 4, 30, Half_Height / 4 - 3);
-                Rectangle(hdc, Common::Block_Width / 2 - 1, -6, Common::Block_Width / 2 + 2, 6);
+                Rectangle(hdc, 5 * Common::Extent, -Half_Height / 4 + 1, 10 * Common::Extent, Half_Height / 4 - 1);
+                Rectangle(hdc, (Common::Block_Width / 2) * Common::Extent, -2 * Common::Extent, (Common::Block_Width / 2) * Common::Extent + Common::Extent, 2 * Common::Extent);
             }
             else if(Bonus_Type == BNT_Floor) {
-                Rectangle(hdc, 15, -Half_Height / 4 + 3, 30, Half_Height / 4 - 3);
+                Rectangle(hdc, 5 * Common::Extent, -Half_Height / 4 + 1, 10 * Common::Extent, Half_Height / 4 - 1);
             } else return;
         
         }
@@ -183,17 +183,17 @@ void Bonus::Draw_Front_Block_Animation(HDC hdc, HPEN& first_pen, HBRUSH& first_b
     SelectObject(hdc, first_pen);//back
     SelectObject(hdc, first_brush);
 
-    Rectangle(hdc, 0, -Half_Height - (int)round(offset), Common::Block_Width, Half_Height - (int)round(offset));                   
+    Rectangle(hdc, 0, -Half_Height - (int)round(offset), Common::Block_Width * Common::Extent, Half_Height - (int)round(offset));                   
 
     SelectObject(hdc, second_pen);//front
     SelectObject(hdc, second_brush);
 
-    Rectangle(hdc, 0, -Half_Height, Common::Block_Width, Half_Height);
+    Rectangle(hdc, 0, -Half_Height, Common::Block_Width * Common::Extent, Half_Height);
 }
 
 void Bonus::Test_Falling_Bonus(HDC hdc)
 {
-    int X_pos = Common::Cell_Width;
+    int X_pos = Common::Cell_Width * Common::Extent;
 
     for (int i = 0; i < 9; i++) {
         Draw_Block_Animation(hdc);

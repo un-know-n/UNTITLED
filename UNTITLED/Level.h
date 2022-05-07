@@ -22,11 +22,8 @@ public:
     void Design_Objects(HDC hdc, RECT& paint_area, Object_Designer** object_array, int max_counter);
     void What_After_Struck(int y_coord, int x_coord);
     void Add_Fading(int x_coord, int y_coord, EBlock_Type block_type);
-    //void Animate_Objects(Object_Designer** object_array, int max_count, int& counter);
-    void Animate_Objects(std::vector<Object_Designer *>& vector_array);
-
-    //void Delete_Objects(Object_Designer** object_array, int max_count, int& counter);
-    void Delete_Objects(std::vector<Object_Designer *>& vector_array);
+    void Animate_Objects(Object_Designer** object_array, int max_count, int& counter);
+    void Delete_Objects(Object_Designer** object_array, int max_count, int& counter);
 
     void Set_Level(char level[Common::Level_X_Elems][Common::Level_Y_Elems]);
     void Suspend_Animation();
@@ -39,14 +36,11 @@ public:
 
     RECT Level_Area;
 
-    /*int Fading_Count;
-    Fade_Block* Fading[Common::Max_Fading_Count];*/
+    int Fading_Count;
+    Fade_Block* Fading[Common::Max_Fading_Count];
 
-    //int Falling_Count;
-    //Bonus* Falling[Common::Max_Falling_Count];
-
-    std::vector<Object_Designer *> Fading;
-    std::vector<Object_Designer *> Falling;
+    int Falling_Count;
+    Bonus* Falling[Common::Max_Falling_Count];
 
     static char Level_01[Common::Level_X_Elems][Common::Level_Y_Elems];
     static char Level_02[Common::Level_X_Elems][Common::Level_Y_Elems];

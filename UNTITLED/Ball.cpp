@@ -9,12 +9,12 @@ Driver::~Driver() {
 
 ///////////////////////////
 
-const double Ball::Start_Y_Pos = 519.0;
-const double Ball::Radius = 6.0;
+const double Ball::Start_Y_Pos = 173.0;
+const double Ball::Radius = 2.0;
 int Ball::Hit_Counter = 0;
 Main_Hit_Checker* Ball::Hit_Check[] = {};
 
-Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(9.0), Rest_Size(0),
+Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
 Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Test_Active(false), Move_Pos(0), Ball_State(BS_Start) 
 {//Constructor
 }
@@ -107,15 +107,15 @@ void Ball::Get_Center(double& ball_x_pos, double& ball_y_pos) {
 
 void Ball::Init(){
     //Initialization of main pen and brush
-    Common::Create_PenNBrush(255, 255, 255, Ball_Pen, Ball_Brush);
+    Common::Create_DrawSet(255, 255, 255, Ball_Pen, Ball_Brush);
 }
 
 void Ball::Redraw() {
     //Creation of the rectangle area in which ball is placed
-    Ball_Rect.left = (int)(Central_X - Radius);
-    Ball_Rect.top = (int)(Common::Level_Y_Offset + Central_Y - Radius);
-    Ball_Rect.right = (int)(Central_X + Radius);
-    Ball_Rect.bottom = (int)(Common::Level_Y_Offset + Central_Y + Radius);
+    Ball_Rect.left = (int)((Central_X - Radius) * Common::Extent);
+    Ball_Rect.top = (int)(Common::Level_Y_Offset + Central_Y - Radius) * Common::Extent;
+    Ball_Rect.right = (int)((Central_X + Radius) * Common::Extent);
+    Ball_Rect.bottom = (int)(Common::Level_Y_Offset + Central_Y + Radius) * Common::Extent;
 
     //Redrawing old and new places of the ball
     InvalidateRect(Common::Hwnd, &Prev_Ball_Rect, FALSE);
@@ -142,10 +142,10 @@ void Ball::Set_State(EBall_State state, int x_pos) {
 
     case BS_Test:
         Central_X = x_pos;
-        Central_Y = 575;//140
-        Ball_Speed = 9.0;
+        Central_Y = 175;//140
+        Ball_Speed = 3.0;
         Rest_Size = 0.0;
-        Ball_Direction = M_PI_4;//M_PI - M_PI_4
+        Ball_Direction = -(M_PI - M_PI_4);//M_PI - M_PI_4
         break;
 
     case BS_Start:
@@ -160,7 +160,7 @@ void Ball::Set_State(EBall_State state, int x_pos) {
     case BS_Free:
         Central_X = x_pos;
         Central_Y = Start_Y_Pos;//82 - 52
-        Ball_Speed = 9.0;
+        Ball_Speed = 3.0;
         Rest_Size = 0.0;
         Ball_Direction = M_PI - M_PI_4;
         break;
@@ -201,7 +201,7 @@ void Ball::Add_Hit_Checker(Main_Hit_Checker* hit_check) {
 void Ball::Set_Test(){
     //Automatically sets ball to the test mode
     Rest_Test_Size = 30.0;
-    Set_State(BS_Test, 375 + Move_Pos);//85
+    Set_State(BS_Test, 125 + Move_Pos);//85
     ++Move_Pos;
     Test_Active = true;
 }

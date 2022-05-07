@@ -15,10 +15,10 @@ Fade_Block::Fade_Block(EBlock_Type block_type, int x_pos, int y_pos)
     :   Fade_Step(0), Block_Type(block_type)
 {//Constructor
     //Creation of the rectangle in which block is fading
-    Fade_Rect.left = Common::Level_X_Offset + x_pos * Common::Cell_Width;
-    Fade_Rect.top = Common::Level_Y_Offset + y_pos * Common::Cell_Height;
-    Fade_Rect.right = Fade_Rect.left + Common::Block_Width;
-    Fade_Rect.bottom = Fade_Rect.top + Common::Block_Height;
+    Fade_Rect.left = (Common::Level_X_Offset + x_pos * Common::Cell_Width) * Common::Extent;
+    Fade_Rect.top = (Common::Level_Y_Offset + y_pos * Common::Cell_Height) * Common::Extent;
+    Fade_Rect.right = Fade_Rect.left + Common::Block_Width * Common::Extent;
+    Fade_Rect.bottom = Fade_Rect.top + Common::Block_Height * Common::Extent;
 }
 
 void Fade_Block::Draw(HDC hdc, RECT& paint_area){
@@ -51,7 +51,7 @@ void Fade_Block::Draw(HDC hdc, RECT& paint_area){
     SelectObject(hdc, pen);
     SelectObject(hdc, brush);
 
-    Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right - 1, Fade_Rect.bottom - 1); //!!
+    Rectangle(hdc, Fade_Rect.left, Fade_Rect.top, Fade_Rect.right - 1, Fade_Rect.bottom - 1);
 }
 
 void Fade_Block::Animate(){
@@ -90,7 +90,7 @@ void Fade_Block::Get_Fade_Color(const Color &color, const Color &bg_color,int st
     r = Get_Fade_Channel(color.R, bg_color.R, step);
     g = Get_Fade_Channel(color.G, bg_color.G, step);
     b = Get_Fade_Channel(color.B, bg_color.B, step);
-    Common::Create_PenNBrush(r, g, b, pen, brush);
+    Common::Create_DrawSet(r, g, b, pen, brush);
 }
 
 //////////////////////////////////////////////////////////////////

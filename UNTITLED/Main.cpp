@@ -106,18 +106,18 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	hInst = hInstance; // Store instance handle in our global variable
 
 	//Creation of the main window rectangle
-	RECT window_rect;
-	window_rect.left = 0;
-	window_rect.top = 0;
-	window_rect.right = 621;
-	window_rect.bottom = 585;
+	RECT main_window;
+	main_window.left = 0;
+	main_window.top = 0;
+	main_window.right = 621;
+	main_window.bottom = 585;
 
 	//Relaying current window to the size we need to
-	AdjustWindowRect(&window_rect, WS_OVERLAPPEDWINDOW, TRUE);
+	AdjustWindowRect(&main_window, WS_OVERLAPPEDWINDOW, TRUE);
 
 	//Creation of the main window
 	HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX,
-		0, 0, window_rect.right - window_rect.left, window_rect.bottom - window_rect.top, 0, 0, hInstance, 0);
+		0, 0, main_window.right - main_window.left, main_window.bottom - main_window.top, 0, 0, hInstance, 0);
 
 	if (hWnd == 0)
 		return FALSE;
@@ -245,8 +245,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				UpdateWindow(hWnd);
 				Sleep(3000);
 				exit(1);
-				//system("taskkill /f /im UNTITLED.exe");
-				//UNTITLED.exe
 			}
 			else if (Engine.Game_Over == true) {
 				Engine.Draw_GameOver(hdc, ps.rcPaint);
@@ -255,17 +253,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (Engine.Game_Over == true) Sleep(3000);
 				//DestroyWindow(hWnd);
 				//system("taskkill /f /im UNTITLED.exe");
-				
-				Engine.Game_Over = false;
-				Engine.Draw_Level_Rect(hdc);
-				Engine.Level.Set_Level(Level::Level_01);
-				Engine.Ball_Pile.Disable_Balls();
-				Engine.Platform.Set_State(PS_None);
-				Engine.Game_State = GS_GameOver;
-				
+
+				Engine.After_Game_Over(hdc);
 				return 0;
 			}
-			Engine.Draw_Screen(hdc, ps.rcPaint);
+			else Engine.Draw_Screen(hdc, ps.rcPaint);
 
 			//////////////////////////////////////////////////////////////
 

@@ -3,23 +3,6 @@
 
 //          LEVEL
 
-//char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-//    0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
-//    0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//    0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-//    0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-//    0, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-//    0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-//    0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-//    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-//};
-
 char Level::Level_01[Common::Level_X_Elems][Common::Level_Y_Elems] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -95,10 +78,10 @@ Level::Level() : Level_Area{}
 void Level::Init(){
     
     //Creation of the rectangle in which level is put
-    Level_Area.left = Common::Level_X_Offset;
-    Level_Area.top = Common::Level_Y_Offset;
-    Level_Area.right = Level_Area.left + Common::Cell_Width * Common::Level_X_Elems;
-    Level_Area.bottom = Level_Area.top + Common::Cell_Height * Common::Level_Y_Elems;
+    Level_Area.left = Common::Level_X_Offset * Common::Extent;
+    Level_Area.top = Common::Level_Y_Offset * Common::Extent;
+    Level_Area.right = Level_Area.left + Common::Cell_Width * Common::Level_X_Elems * Common::Extent;
+    Level_Area.bottom = Level_Area.top + Common::Cell_Height * Common::Level_Y_Elems * Common::Extent;
 
     //Initializing all the elements of current level with zero values
     memset(Current_Level, 0, sizeof(Current_Level));
@@ -214,31 +197,22 @@ void Level::Draw(HDC hdc, RECT& paint_area) {
     if ((IntersectRect(&destination_rect, &paint_area, &Level_Area))) {
         for (int i = 0; i < Common::Level_X_Elems; i++) {
             for (int j = 0; j < Common::Level_Y_Elems; j++) {
-                block_area.left = Common::Level_X_Offset + j * Common::Cell_Width;
-                block_area.top = Common::Level_Y_Offset + i * Common::Cell_Height;
-                block_area.right = block_area.left + Common::Block_Width;
-                block_area.bottom = block_area.top + Common::Block_Height;
+                block_area.left = (Common::Level_X_Offset + j * Common::Cell_Width) * Common::Extent;
+                block_area.top = (Common::Level_Y_Offset + i * Common::Cell_Height) * Common::Extent;
+                block_area.right = block_area.left + Common::Block_Width * Common::Extent;
+                block_area.bottom = block_area.top + Common::Block_Height * Common::Extent;
                 if ((IntersectRect(&destination_rect, &paint_area, &block_area))) {
                     Draw_Block(hdc, block_area, (EBlock_Type)Current_Level[i][j]);
                 }
             }
         }
 
-        //Design_Objects(hdc, paint_area, (Object_Designer**)&Fading, Common::Max_Fading_Count);
-
         //Redraw every fading block on its own time
-        for (auto* fading : Fading) {
-            fading->Draw(hdc, paint_area);
-        }
+        Design_Objects(hdc, paint_area, (Object_Designer**)&Fading, Common::Max_Fading_Count);
     }
-
-    //Design_Objects(hdc, paint_area, (Object_Designer**)&Falling, Common::Max_Falling_Count);
 
     //Redraw evere bonus on its own time
-    for (auto* falling : Falling) {
-        falling->Draw(hdc, paint_area);
-    }
-
+    Design_Objects(hdc, paint_area, (Object_Designer**)&Falling, Common::Max_Falling_Count);
 }
 
 bool Level::Is_Level_Done() {
@@ -255,25 +229,37 @@ bool Level::Is_Level_Done() {
 
 void Level::Animate() {
     //It continues/starts animation
-    Animate_Objects(Fading);
-    Animate_Objects(Falling);
+    Animate_Objects((Object_Designer**)&Fading, Common::Max_Fading_Count, Fading_Count);
+    Animate_Objects((Object_Designer**)&Falling, Common::Max_Falling_Count, Falling_Count);
 }
 
 void Level::Suspend_Animation() {
     //It stops animation with object deleting
-    Delete_Objects(Fading);
-    Delete_Objects(Falling);
+    Delete_Objects((Object_Designer**)&Fading, Common::Max_Fading_Count, Fading_Count);
+    Delete_Objects((Object_Designer**)&Falling, Common::Max_Falling_Count, Falling_Count);
 }
 
-void Level::Delete_Objects(std::vector<Object_Designer *> & vector_array) {
-    //Creation of the iterator with specified vector type
-    std::vector<Object_Designer *>::iterator it;
+void Level::Delete_Objects(Object_Designer * *object_array, int max_count, int& counter) {
+    for (int i = 0; i < max_count; i++) {
+        if (object_array[i] != 0) {
+        delete object_array[i];
+        object_array[i] = 0;
+        }
+    }
+    counter = 0;
+}
 
-    //Check all the elems in vector and delete them
-    for (it = vector_array.begin(); it != vector_array.end(); it++) delete* it;
-
-    //Erase the vector itself
-    vector_array.erase(vector_array.begin(), vector_array.end());
+void Level::Animate_Objects(Object_Designer** object_array, int max_count, int& counter) {
+    for (int i = 0; i < max_count; i++) {
+        if (object_array[i] != 0) {
+            object_array[i]->Animate();
+            if (object_array[i]->Is_Finished()) {
+                delete object_array[i];
+                object_array[i] = 0;
+                --counter;
+            }
+        }
+    }
 }
 
 bool Level::Is_Finished() {
@@ -342,29 +328,20 @@ void Level::Add_Fading(int y_coord, int x_coord, EBlock_Type block_type) {
     Fade_Block* fading;
 
     //Check if our number of fading blocks is within the array
-    if (Fading.size() >= Common::Max_Fading_Count) return;
+    if (Fading_Count >= Common::Max_Fading_Count) return;
 
-    if(block_type == BT_None) return;
+    if (block_type == BT_None) return;
 
     //Creation of new poiner to the current block
     fading = new Fade_Block(block_type, x_coord, y_coord);
 
-    //Pushing it to the dynamical array
-    Falling.push_back(fading);
-    Current_Level[y_coord][x_coord] = BT_None;
-}
-
-void Level::Animate_Objects(std::vector<Object_Designer *> &vector_array) {
-
-    //Creation of the iterator with specified vector type
-    std::vector<Object_Designer *>::iterator it;
-
-    //Check all the elems in vector -> animate || finished -> erase the elem
-    for (it = vector_array.begin(); it != vector_array.end(); it++) {
-        (*it)->Animate();
-        if ((*it)->Is_Finished()) {
-            delete *it;
-            it = vector_array.erase(it);
+    //Check if we have place in our array and if not -> move to the next cell
+    for (int i = 0; i < Common::Max_Fading_Count; i++) {
+        if (Fading[i] == 0) {
+            Fading[i] = fading;
+            ++Fading_Count;
+            Current_Level[y_coord][x_coord] = BT_None;
+            break;
         }
     }
 }
@@ -384,21 +361,22 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     //bonus_type = BNT_Floor;
 
     //Applying the coords to the current bonus
-    bonus_x = x_coord * Common::Cell_Width + Common::Level_X_Offset;
-    bonus_y = y_coord * Common::Cell_Height + Common::Level_Y_Offset;
+    bonus_x = (x_coord * Common::Cell_Width + Common::Level_X_Offset) * Common::Extent;
+    bonus_y = (y_coord * Common::Cell_Height + Common::Level_Y_Offset) * Common::Extent;
     
     //If we have place in our array -> go on
-    if (Falling.size() < Common::Max_Falling_Count) {
-        if (rand() % 1 == 0) {
-            //Creation of new example of bonus
-            falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
+    if (Falling_Count < Common::Max_Falling_Count) {
+        falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
+        if (rand() % 1 == 1) {
 
-            //Pushing it to the array
-            Falling.push_back(falling_bonus);
-            
-            //Replacing current block with void
-            Current_Level[y_coord][x_coord] = BT_None;
-            
+            for (int i = 0; i < Common::Max_Falling_Count; i++) {
+                if (Falling[i] == 0) {
+                    Falling[i] = falling_bonus;
+                    ++Falling_Count;
+                    Current_Level[y_coord][x_coord] = BT_None;
+                    break;
+                }
+            }
             return true;
         }
     }
@@ -406,13 +384,19 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
 }
 
 bool Level::Have_Next_Bonus(int& index, Bonus** falling_bonus) {
-    //If we have place in array -> go on
-    if (index < Falling.size()) {
-        //Applying address of the next elem in array to our pointer
-        *falling_bonus = (Bonus *)Falling[index++];
-        return true;
-    }
+    Bonus* current_falling;
 
+    if (Falling_Count == 0) return false;
+
+    if (index < 0 || index > Common::Max_Falling_Count) return false;
+
+    while (index < Common::Max_Falling_Count) {
+        current_falling = Falling[index++];
+        if (current_falling != 0) {
+            *falling_bonus = current_falling;
+            return true;
+        }
+    }
     return false;
 }
 

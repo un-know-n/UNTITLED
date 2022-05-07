@@ -1,7 +1,4 @@
-﻿  Platform.cpp
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(30,49): warning C4244: '=': conversion from 'double' to 'LONG', possible loss of data
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(48,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(71,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(95,15): warning C4101: 'pixel': unreferenced local variable
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Platform.cpp(185,11): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+﻿  Engine.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(82,96): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(89,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

@@ -35,6 +35,7 @@ public:
     void Draw_Ending(HDC hdc, RECT& paint_area);
     void Draw_GameOver(HDC hdc, RECT& paint_area);
     void Draw_Level_Rect(HDC hdc);
+    void After_Game_Over(HDC hdc);
     void Animate();
     void On_Falling_Bonus(Bonus *falling_bonus);
     void Play_Level();
@@ -58,7 +59,6 @@ public:
     RECT Level_Area_Rect;
     
     Driver* Object_Driver[Common::Max_Driver_Count];
-    //Object_Designer* Module[Common::Max_Module_Count];
+    Object_Designer* Module[Common::Max_Module_Count];
 
-    std::vector<Object_Designer*> Module;
 };
