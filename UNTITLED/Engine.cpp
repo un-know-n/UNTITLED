@@ -79,7 +79,7 @@ void Head_Engine::Draw_Ending(HDC hdc, RECT& paint_area) {
     Ball_Pile.Disable_Balls();
 
     Draw_Level_Rect(hdc);
-    TextOut(hdc, 240, 300, TEXT("You`ve finished the game"), strlen("You`ve finished the game"));
+    TextOut(hdc, 215, 300, TEXT("YOU`VE FINISHED THE GAME"), strlen("YOU`VE FINISHED THE GAME"));
 }
 
 void Head_Engine::Draw_GameOver(HDC hdc, RECT& paint_area) {

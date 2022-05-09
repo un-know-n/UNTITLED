@@ -41,7 +41,7 @@ public:
     static int Floor_Tick;
     static const int Max_Fading_Count = 50;
     static const int Max_Falling_Count = 50;
-    static const int Max_Ball_Count = 5;//9
+    static const int Max_Ball_Count = 5;
     static const int Max_Driver_Count = 10;
     static const int Max_Life_Counter = 5;
     static const int Max_Module_Count = 5;

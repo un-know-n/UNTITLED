@@ -14,7 +14,7 @@ const double Ball::Radius = 2.0;
 int Ball::Hit_Counter = 0;
 Main_Hit_Checker* Ball::Hit_Check[] = {};
 
-Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(3.0), Rest_Size(0),
+Ball::Ball() : Ball_Pen(0), Ball_Brush(0), Central_X(0), Central_Y(Start_Y_Pos), Ball_Speed(4.5), Rest_Size(0),
 Ball_Direction(M_PI - M_PI_4), Ball_Rect{}, Test_Active(false), Move_Pos(0), Ball_State(BS_Start) 
 {//Constructor
 }
@@ -160,7 +160,7 @@ void Ball::Set_State(EBall_State state, int x_pos) {
     case BS_Free:
         Central_X = x_pos;
         Central_Y = Start_Y_Pos;//82 - 52
-        Ball_Speed = 3.0;
+        Ball_Speed = 4.5;
         Rest_Size = 0.0;
         Ball_Direction = M_PI - M_PI_4;
         break;

@@ -367,7 +367,7 @@ bool Level::Add_Bonus(int y_coord, int x_coord, EBlock_Type block_type) {
     //If we have place in our array -> go on
     if (Falling_Count < Common::Max_Falling_Count) {
         falling_bonus = new Bonus(block_type, bonus_type, bonus_x, bonus_y);
-        if (rand() % 1 == 1) {
+        if (rand() % 3 == 0) {
 
             for (int i = 0; i < Common::Max_Falling_Count; i++) {
                 if (Falling[i] == 0) {

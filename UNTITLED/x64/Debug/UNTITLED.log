@@ -1,4 +1,6 @@
-﻿  Engine.cpp
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(82,96): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Engine.cpp(89,66): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+﻿  Level.cpp
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(137,15): warning C4101: 'y': unreferenced local variable
+C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\UNTITLED\Level.cpp(137,12): warning C4101: 'x': unreferenced local variable
+  Main.cpp
+  Generating Code...
   UNTITLED.vcxproj -> C:\Users\UnKnowN\Documents\Сoursework\C++_Version\UNTITLED\x64\Debug\UNTITLED.exe

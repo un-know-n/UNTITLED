@@ -127,30 +127,30 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	///////////////////////////////////// ENTRY BUTTONS /////////////////////////////////////////////
 
-	//HWND Start_Btn = CreateWindow( 
-	//	L"BUTTON",  // Predefined class; Unicode assumed 
-	//	L"START",      // Button text 
-	//	WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
-	//	265,         // x position 
-	//	250,         // y position 
-	//	90,        // Button width
-	//	40,        // Button height
-	//	hWnd,     // Parent window
-	//	(HMENU)IDB_Start_Btn,       // Menu.
-	//	(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
-	//	NULL);      // Pointer not needed.
+	HWND Start_Btn = CreateWindow( 
+		L"BUTTON",  // Predefined class; Unicode assumed 
+		L"START",      // Button text 
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,  // Styles 
+		265,         // x position 
+		250,         // y position 
+		90,        // Button width
+		40,        // Button height
+		hWnd,     // Parent window
+		(HMENU)IDB_Start_Btn,       // Menu.
+		(HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE),
+		NULL);      // Pointer not needed.
 
-	//HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 400, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Exit_Btn = CreateWindow(L"BUTTON", L"EXIT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 400, 90, 40, hWnd, (HMENU)IDB_Exit_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
-	//	265, 350, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND About_Btn = CreateWindow(L"BUTTON", L"ABOUT", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 
+		265, 350, 90, 40, hWnd, (HMENU)IDB_About_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND Rules_Btn = CreateWindow(L"BUTTON", L"RULES", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
-	//	265, 300, 90, 40, hWnd, (HMENU)IDB_Rules_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Rules_Btn = CreateWindow(L"BUTTON", L"RULES", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+		265, 300, 90, 40, hWnd, (HMENU)IDB_Rules_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
-	//HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
-	//	265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
+	HWND Title_Btn = CreateWindow(L"BUTTON", L"UNTITLED", WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_GROUPBOX, 
+		265, 200, 90, 40, hWnd, (HMENU)IDB_Title_Btn, (HINSTANCE)GetWindowLongPtr(hWnd, GWLP_HINSTANCE), NULL);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -202,7 +202,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			BeginPaint(hWnd, nullptr);
 
-			MessageBox(NULL, L"This program was made by Yevgeny Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
+			MessageBox(NULL, L"This program was made by Yevhenii Dobrovolskiy.\nStudent of PPK, speciality 121 \"Software Engineering\"\nUNTITLED, Version 1.0 \nCopyright (c) 2022",
 				L"About", MB_ICONINFORMATION | MB_OK);
 
 			InvalidateRect(hWnd, NULL, FALSE);
@@ -214,7 +214,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			BeginPaint(hWnd, nullptr);
 
-			MessageBox(NULL, L"To start the game, you need to click on the \"Start\" button\nYou move platform to the left/right with the keys 'A' and 'D', \nWhen you press the spacebar, the ball shoots. \nIt can be reflected from walls and blocks. \nBlocks will collapse and, with a little chance, you can take out of them different bonuses.\nIf the ball fly out of the border, then the game ends.",
+			MessageBox(NULL, L"To start the game, you need to click on the \"Start\" button.You move platform to the left/right with the keys 'A' and 'D'. When you press the spacebar, the ball shoots. It can be reflected from walls and blocks. Blocks will collapse and, with a little chance, you can take different bonuses out of them.If the ball fly out of the border, then the game ends.",
 				L"Rules", MB_ICONINFORMATION | MB_OK);
 
 			InvalidateRect(hWnd, NULL, FALSE);
@@ -232,7 +232,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 	{
-		//if(Drawing_Active){
+		if(Drawing_Active){
 			PAINTSTRUCT ps;
 			HDC hdc = BeginPaint(hWnd, &ps);
 			// TODO: Add any drawing code that uses hdc here...		
@@ -251,9 +251,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				InvalidateRect(hWnd, NULL, FALSE);
 				UpdateWindow(hWnd);
 				if (Engine.Game_Over == true) Sleep(3000);
-				//DestroyWindow(hWnd);
-				//system("taskkill /f /im UNTITLED.exe");
-
 				Engine.After_Game_Over(hdc);
 				return 0;
 			}
@@ -263,7 +260,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			EndPaint(hWnd, &ps);
 			ReleaseDC(hWnd, hdc);
-		//}
+		}
 	}
 	break;
 
