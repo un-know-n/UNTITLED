@@ -3,26 +3,20 @@
 #include <Windows.h>
 #include "Ball.h"
 
-class Border: public Main_Hit_Checker, public Object_Designer{
+class Border: public Main_Hit_Checker{
 public:
     Border();
     
-    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
-
-    virtual void Draw(HDC hdc, RECT& paint_area);
-    virtual void Animate();
-    virtual bool Is_Finished();
-
-    void Init();
-    //void Draw(HDC hdc, RECT& paint_area);
-    void Redraw_Floor();
 
     HPEN Border_Main_Pen, Border_White_Pen;
     HBRUSH Border_Main_Brush, Border_White_Brush;
 
-    RECT Floor_Rect;
+    static bool Have_Floor;
 
+    virtual bool Check_Colision(double next_x_pos, double next_y_pos, Ball* ball);
+    void Init();
+    void Draw(HDC hdc, RECT &paint_area);
+   
 private:
     void Draw_Element(HDC hdc, int x, int y, BOOL is_vertical);
-    void Draw_Floor(HDC hdc, int x, int y);
 };
