@@ -32,6 +32,8 @@ void HeadEngine::Init_Engine(HWND hwnd) {
     Platform.Init();
     Ball.Init();
     
+    Level.Set_Level(Level::Level_01);
+
     Ball::Add_Hit_Checker(&Border);
     Ball::Add_Hit_Checker(&Level);
     Ball::Add_Hit_Checker(&Platform);

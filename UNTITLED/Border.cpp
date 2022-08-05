@@ -35,6 +35,14 @@ void Border::Draw_Element(HDC hdc, int x, int y, BOOL is_vertical) {
     else {
         Rectangle(hdc, x * Config::Extent, y * Config::Extent, (x + 6) * Config::Extent - 1, (y + 1) * Config::Extent - 2);
     }
+
+    //White inner-dot
+    SelectObject(hdc, Border_White_Pen);
+    SelectObject(hdc, Border_White_Brush);
+    if(is_vertical)
+        Rectangle(hdc, (x + 2) * Config::Extent, (y + 1) * Config::Extent, (x + 3) * Config::Extent - 1, (y + 2) * Config::Extent - 1);
+    else
+        Rectangle(hdc, (x + 1) * Config::Extent, (y + 2) * Config::Extent, (x + 2) * Config::Extent - 1, (y + 3) * Config::Extent - 1);
     
 }
 

@@ -4,9 +4,17 @@
 
 enum EBonus_Type {
     BNT_None,
+    BNT_Cancel,
     BNT_Tripple_Ball,
     BNT_Additional_Life,
-    BNT_Floor
+    BNT_Floor,
+    BNT_Inversion,
+    BNT_Speed,
+    BNT_Monsters,
+    BNT_Glue,
+    BNT_Wider,
+    BNT_Laser,
+    BNT_Next_Level
 };
 
 class Bonus : public Object_Designer {
@@ -16,6 +24,7 @@ public:
     const EBonus_Type Bonus_Type;
     const EBlock_Type Block_Type;
     static const int Half_Height = Config::Block_Height * Config::Extent / 2;
+    static const int Max_Rotation_Step = 16;
     int X, Y;
     int Step, Action_Step;
     bool Got_Hit;

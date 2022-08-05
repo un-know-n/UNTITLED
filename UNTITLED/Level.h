@@ -27,10 +27,17 @@ public:
     void Act();
     void Act_Objects(Object_Designer** object_array, int max_count, int& counter);
     bool Have_Next_Bonus(int& index, Bonus** falling_bonus);
+    void Set_Level(char level[Config::Level_X_Elems][Config::Level_Y_Elems]);
+
+    static char Level_01[Config::Level_X_Elems][Config::Level_Y_Elems];
+    static char Level_02[Config::Level_X_Elems][Config::Level_Y_Elems];
+    static char Level_03[Config::Level_X_Elems][Config::Level_Y_Elems];
 
 private:
     double Current_Block_Left_Side, Current_Block_Right_Side;
     double Current_Block_Bottom_Y_Pos, Current_Block_Top_Y_Pos;
+
+    char Current_Level[Config::Level_X_Elems][Config::Level_Y_Elems];
 
     void Draw_Block(HDC hdc, RECT& block_area, EBlock_Type block_type);
 };

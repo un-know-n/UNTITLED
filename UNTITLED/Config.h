@@ -28,8 +28,8 @@ public:
     static const int Extent = 3;
     static const int FPS = 20;
     static int Tick;
-    static const int Max_Fading_Count = 10;
-    static const int Max_Falling_Count = 10;
+    static const int Max_Fading_Count = 50;
+    static const int Max_Falling_Count = 50;
 
 //Level
     static const int Block_Width = 15;

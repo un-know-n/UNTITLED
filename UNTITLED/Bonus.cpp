@@ -118,13 +118,22 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
     HPEN front_pen, back_pen;
     HBRUSH front_brush, back_brush;
 
-    rotation_angle = 2.0 * M_PI / 16.0 * Step;
+    //rotation_angle = 2.0 * M_PI / 16.0 * Step;
 
-    if (Step >= 8)Step = 8;
+    //if (Step >= 8)Step = 8;
+
+    //Check if rotation step is more than 16 -> change it
+    Step = Step % 16;
+    if (Step < 8) {
+        rotation_angle = 2.0 * M_PI / Max_Rotation_Step * Step;
+    }
+    else {
+        rotation_angle = 2.0 * M_PI / Max_Rotation_Step * (Step - 8);
+    }
 
     Change_BG_Color(Block_Type, front_pen, front_brush, back_pen, back_brush);
 
-    if (Step == 4) {// || Step == 12
+    if (Step == 4 || Step == 12) {
 
         //Draw front color
         SelectObject(hdc, front_pen);
@@ -155,10 +164,14 @@ void Bonus::Draw_Block_Animation(HDC hdc) {
         if (Step > 4) Draw_Front_Block_Animation(hdc, front_pen, front_brush, back_pen, back_brush, offset);
         else Draw_Front_Block_Animation(hdc, back_pen, back_brush, front_pen, front_brush, offset);
         
-        if (Step > 4 && Step <= 8) {//Step > 4 && Step < 12
+        if (Step > 4 && Step < 12) {
             SelectObject(hdc, front_pen);
             SelectObject(hdc, front_brush);
             if (Bonus_Type == BNT_Tripple_Ball) {
+                const COLORREF rgbWhite = 0x00B3B3B3;
+                HPEN ellipse_pen = CreatePen(PS_SOLID, 3, rgbWhite);
+                SelectObject(hdc, ellipse_pen);
+                SelectObject(hdc, back_brush);
                 Ellipse(hdc, 5 * Config::Extent, -Half_Height + 2, 10 * Config::Extent, Half_Height - 2);
             }
             else if (Bonus_Type == BNT_Additional_Life) {
@@ -192,8 +205,8 @@ void Bonus::Draw_Front_Block_Animation(HDC hdc, HPEN& first_pen, HBRUSH& first_b
 void Bonus::Test_Falling_Bonus(HDC hdc)
 {
     int X_pos = Config::Cell_Width * Config::Extent;
-
-    for (int i = 0; i < 9; i++) {
+    Step = 5;
+    for (int i = 5; i < 12; i++) {
         Draw_Block_Animation(hdc);
 
         X += X_pos;
